@@ -341,13 +341,18 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 <!-- Auth Modal -->
 <div class="modal-overlay" id="authModal">
 <div class="modal" style="max-width:380px">
-<div class="flex items-center justify-between px-5 pt-4 pb-0"><h2 class="text-lg font-bold" id="authTitle">馃摑 娉ㄥ唽</h2><button class="close" onclick="closeModal('authModal')">脳</button></div>
+<div class="flex items-center justify-between px-5 pt-4 pb-0"><h2 class="text-lg font-bold" id="authTitle">注册</h2><button class="close" onclick="closeModal('authModal')">X</button></div>
 <div class="px-5 pb-5">
-<div class="flex gap-3 mb-3"><button class="flex-1 py-2 rounded-lg text-sm font-semibold bg-blue-50 text-blue-600" id="authTabRegister" onclick="switchAuthTab('register')">娉ㄥ唽</button><button class="flex-1 py-2 rounded-lg text-sm font-semibold text-gray-400" id="authTabLogin" onclick="switchAuthTab('login')">鐧诲綍</button></div>
+<div class="flex gap-3 mb-3"><button class="flex-1 py-2 rounded-lg text-sm font-semibold bg-blue-50 text-blue-600" id="authTabRegister" onclick="switchAuthTab('register')">注册</button><button class="flex-1 py-2 rounded-lg text-sm font-semibold text-gray-400" id="authTabLogin" onclick="switchAuthTab('login')">登录</button></div>
 <div id="authRegisterForm">
-<input type="email" id="authRegEmail" placeholder="閭" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5"><input type="text" id="authRegNick" placeholder="鏄电О" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5"><input type="password" id="authRegPw" placeholder="瀵嗙爜锛堣嚦灏?浣嶏級" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3"><button onclick="doRegister()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">娉ㄥ唽</button></div>
+<input type="email" id="authRegEmail" placeholder="邮箱" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5">
+<input type="text" id="authRegNick" placeholder="昵称" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5">
+<input type="password" id="authRegPw" placeholder="密码 (至少6位)" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3">
+<button onclick="doRegister()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">注册</button></div>
 <div id="authLoginForm" style="display:none">
-<input type="email" id="authLoginEmail" placeholder="閭" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5"><input type="password" id="authLoginPw" placeholder="瀵嗙爜" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3"><button onclick="doLogin()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">鐧诲綍</button></div>
+<input type="email" id="authLoginEmail" placeholder="邮箱" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5">
+<input type="password" id="authLoginPw" placeholder="密码" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3">
+<button onclick="doLogin()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">登录</button></div>
 </div></div></div>
 
 <div class="toast" id="toast"></div>
