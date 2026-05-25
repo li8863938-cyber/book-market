@@ -321,7 +321,7 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 </div>
 
 <div class="toast" id="toast"></div>
-<footer>🏛️ 泰皋阁 · 校园二手书 · 当面验货 · 注意安全</footer>
+<footer>🏛️ 泰皋阁 · 校园二手书 · 当面验货 · 注意安全 <img src="https://hits.sh/li8863938-cyber.github.io/book-market.svg?label=访客&color=4f46e5" style="height:18px;vertical-align:middle;margin-left:4px" alt="访问统计"></footer>
 
 <script>
 const KEY='***';
@@ -575,11 +575,15 @@ function toggleSold(id){
 const books=getBooks();
 const b=books.find(x=>x.id===id);
 if(!b)return;
-if(b.status==='sold'){
+const isCurrentlySold=b.status==='sold';
+const msg=isCurrentlySold?'确定重新上架这本书？':'确定标记为已售出？';
+if(!confirm(msg))return;
+if(isCurrentlySold){
 b.status='active';
 showToast('🔄 已重新上架');
 }else{
 b.status='sold';
+showToast('✅ 已标记为已售');
 }
 saveBooks(books);
 const inDetail=document.getElementById('detailModal').classList.contains('open');
