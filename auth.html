@@ -1,413 +1,273 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>登录 · 泰皋阁</title>
-
-<!-- ====== CDN 依赖 ======
- 备注：Tailwind 和 Google Fonts 在国内网络下可能被墙。
- 如果加载失败，可替换为本地文件或使用国内 CDN 镜像。
- ====== -->
-
-<!-- Tailwind CSS (CDN) -->
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Google Fonts: Inter (中文 fallback) -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<!-- Supabase JS 客户端 (CDN) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- ====== 颜色配置（与首页保持一致） ====== -->
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'] },
-      colors: {
-        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
-      }
-    }
-  }
-}
-</script>
-
 <style>
-/* 平滑滚动与抗锯齿 */
-html { scroll-behavior: smooth; }
-body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f7fa;color:#0f172a;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 
-/* 切换 Tab 下划线动画 */
-.tab-underline { transition: all .35s cubic-bezier(.4,0,.2,1); }
-.tab-btn.active { color: #4f46e5; }
-.tab-btn.active::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 28px;
-  height: 2.5px;
-  border-radius: 2px;
-  background: #4f46e5;
-}
+/* Header */
+.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid #e2e8f0}
+.header-inner{max-width:1080px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:19px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none;letter-spacing:-.3px}
+.logo-text{background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-badge{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;font-size:10px;padding:2px 7px;border-radius:5px;font-weight:600;-webkit-text-fill-color:#fff}
+.back-link{font-size:13px;color:#94a3b8;text-decoration:none;transition:color .2s}
+.back-link:hover{color:#64748b}
 
-/* 淡入动画 */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.fade-in { animation: fadeUp .4s ease both; }
-.fade-in-d1 { animation-delay: .05s; }
-.fade-in-d2 { animation-delay: .1s; }
-.fade-in-d3 { animation-delay: .15s; }
+/* Main */
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 16px}
+.wrap{width:100%;max-width:340px;text-align:center}
+
+/* Brand */
+.brand-icon{font-size:36px;margin-bottom:8px}
+.brand-title{font-size:20px;font-weight:700;background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-sub{font-size:12px;color:#94a3b8;margin-top:4px}
+
+/* Tabs */
+.tabs{display:flex;justify-content:center;gap:32px;margin-top:24px;margin-bottom:20px}
+.tab-btn{font-size:14px;font-weight:600;cursor:pointer;border:0;background:0 0;padding:4px 0;position:relative;transition:color .2s;color:#94a3b8}
+.tab-btn.active{color:#4f46e5}
+.tab-btn.active::after{content:'';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:24px;height:2.5px;border-radius:2px;background:#4f46e5}
+.tab-btn:hover{color:#64748b}
+
+/* Card */
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.06);border:1px solid #e2e8f0;padding:24px}
+.card-form{display:none}
+.card-form.active{display:block}
+
+/* Form */
+.form-group{margin-bottom:16px;text-align:left}
+.form-group label{display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px}
+.form-group input{width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;outline:0;transition:all .2s;background:#f8fafc;font-family:inherit}
+.form-group input:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1);background:#fff}
+.form-group input::placeholder{color:#cbd5e1}
+
+/* Checkbox & Forgot */
+.form-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:16px}
+.form-row label{display:flex;align-items:center;gap:6px;cursor:pointer;color:#94a3b8;transition:color .2s}
+.form-row label:hover{color:#64748b}
+.form-row input[type=checkbox]{width:14px;height:14px;border-radius:4px;border:1px solid #cbd5e1;accent-color:#4f46e5;cursor:pointer}
+.form-row .forgot{background:0 0;border:0;color:#4f46e5;cursor:pointer;font-size:12px;transition:color .2s}
+.form-row .forgot:hover{color:#4338ca}
+
+/* Buttons */
+.btn{width:100%;padding:11px 0;border:0;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+.btn:hover{box-shadow:0 2px 8px rgba(79,70,229,.25)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:disabled:hover{box-shadow:none}
+
+/* Bottom hint */
+.bottom-hint{font-size:12px;color:#94a3b8;margin-top:20px}
+.bottom-hint a{color:#4f46e5;text-decoration:none;font-weight:500;cursor:pointer;transition:color .2s}
+.bottom-hint a:hover{color:#4338ca}
 
 /* Toast */
-.toast {
-  position: fixed; bottom: 28px; left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #1e293b; color: #fff;
-  padding: 10px 24px; border-radius: 10px;
-  font-size: 14px; opacity: 0;
-  transition: all .35s cubic-bezier(.4,0,.2,1);
-  z-index: 200; pointer-events: none;
-  box-shadow: 0 4px 16px rgba(0,0,0,.18);
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast.error { background: #dc2626; }
-.toast.success { background: #059669; }
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);z-index:200;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Loading spinner */
-.spinner {
-  width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin .6s linear infinite;
-  display: inline-block;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+/* Anim */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .35s ease both}
 
-/* 输入框 focus 光晕覆写 */
-input:focus { outline: none; }
+/* Spinner */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+
+/* Policy */
+.policy{font-size:11px;color:#cbd5e1;margin-top:12px;text-align:center}
+
+/* Responsive */
+@media(max-width:480px){.wrap{max-width:100%}.card{border-radius:12px;padding:20px}.header-inner{padding:0 14px}}
 </style>
 </head>
+<body>
 
-<body class="bg-[#f5f7fa] font-sans text-gray-900 min-h-screen flex flex-col">
-
-<!-- ====== ======
-   配置区：在使用前替换为你的 Supabase 项目信息
-   获取方式：
-   1. 登录 https://supabase.com → 新建项目
-   2. 左侧 Settings → API → 复制 Project URL 和 anon/public key
-   ====== ====== -->
-<script>
-// ⚠️ 如果你的 Supabase 在国内被墙，会自动切换到本地模式
-// 本地模式下数据只存在当前浏览器，换设备需要重新注册
-const SUPABASE_URL = 'https://zqhzigukoikdwcbhzkysk.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxaHppZ3Vrb2lkd2NiaHpreXNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3MDg1ODIsImV4cCI6MjA5NTI4NDU4Mn0.4WSfOD7UAnbxFz1DGMihcs-eo6cneBYRWPyLLiOkhdQ';
-
-// 初始化 Supabase 客户端
-let supabase = null;
-let useLocalMode = false; // 是否使用本地模式（Supabase 被墙时自动切换）
-
-try {
-  if (typeof createClient === 'function') {
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-} catch(e) {
-  supabase = null;
-}
-
-// 本地用户存储 key
-const LOCAL_AUTH_KEY = 'taigege_auth';
-</script>
-
-<!-- ====== 导航栏（与首页一致） ====== -->
-<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-1.5 no-underline">
-      <span class="text-xl">🏛️</span>
-      <span class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋阁</span>
-    </a>
-    <a href="index.html" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">← 返回书摊</a>
-  </div>
+<header class="header">
+<div class="header-inner">
+  <a href="index.html" class="logo"><span>🏛️</span><span class="logo-text">泰皋阁</span><span class="logo-badge">校园</span></a>
+  <a href="index.html" class="back-link">← 返回书摊</a>
+</div>
 </header>
 
-<!-- ====== 主容器 ====== -->
-<main class="flex-1 flex items-center justify-center px-4 py-12">
-  <div class="w-full max-w-sm fade-in">
+<main class="main">
+<div class="wrap fade-in">
 
-    <!-- ====== 品牌标识 ====== -->
-    <div class="text-center mb-8">
-      <div class="text-4xl mb-2">🏛️</div>
-      <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-        泰皋阁
-      </h1>
-      <p class="text-xs text-gray-400 mt-1">校园二手书平台</p>
-    </div>
+  <div class="brand-icon">🏛️</div>
+  <div class="brand-title">泰皋阁</div>
+  <p class="brand-sub">校园二手书平台</p>
 
-    <!-- ====== 登录/注册 Tab 切换 ====== -->
-    <div class="flex items-center justify-center gap-8 mb-6 relative">
-      <button id="tabLogin" class="tab-btn active relative text-sm font-semibold text-brand-600 px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors"
-              onclick="switchTab('login')">登录</button>
-      <button id="tabRegister" class="tab-btn relative text-sm font-semibold text-gray-400 px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors hover:text-gray-600"
-              onclick="switchTab('register')">注册</button>
-    </div>
-
-    <!-- ====== 表单容器 ====== -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-7">
-
-      <!-- ====== 登录表单 ====== -->
-      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-        <div class="fade-in fade-in-d1">
-          <label class="block text-xs font-medium text-gray-600 mb-1">邮箱</label>
-          <input type="email" id="loginEmail" required
-                 placeholder="you@school.edu.cn"
-                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
-                        placeholder:text-gray-300">
-        </div>
-        <div class="fade-in fade-in-d2">
-          <label class="block text-xs font-medium text-gray-600 mb-1">密码</label>
-          <input type="password" id="loginPassword" required minlength="6"
-                 placeholder="••••••"
-                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
-                        placeholder:text-gray-300">
-        </div>
-
-        <!-- 记住我 + 忘记密码 -->
-        <div class="flex items-center justify-between text-xs fade-in fade-in-d3">
-          <label class="flex items-center gap-1.5 cursor-pointer text-gray-400 hover:text-gray-600 transition-colors">
-            <input type="checkbox" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500/30">
-            记住我
-          </label>
-          <button type="button" onclick="showToast('📌 忘记密码功能开发中', 'error')"
-                  class="bg-transparent border-0 text-brand-600 hover:text-brand-700 cursor-pointer transition-colors">
-            忘记密码？
-          </button>
-        </div>
-
-        <button type="submit" id="loginBtn"
-                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white
-                       bg-gradient-to-r from-blue-600 to-indigo-600
-                       hover:from-blue-700 hover:to-indigo-700
-                       shadow-sm hover:shadow-md hover:shadow-blue-500/20
-                       transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                       flex items-center justify-center gap-2">
-          登录
-        </button>
-      </form>
-
-      <!-- ====== 注册表单 ====== -->
-      <form id="registerForm" onsubmit="handleRegister(event)" style="display:none" class="space-y-4">
-        <div class="fade-in fade-in-d1">
-          <label class="block text-xs font-medium text-gray-600 mb-1">邮箱 *</label>
-          <input type="email" id="regEmail" required
-                 placeholder="you@school.edu.cn"
-                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
-                        placeholder:text-gray-300">
-        </div>
-        <div class="fade-in fade-in-d1">
-          <label class="block text-xs font-medium text-gray-600 mb-1">昵称 *</label>
-          <input type="text" id="regNickname" required minlength="2" maxlength="20"
-                 placeholder="你的昵称"
-                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
-                        placeholder:text-gray-300">
-        </div>
-        <div class="fade-in fade-in-d2">
-          <label class="block text-xs font-medium text-gray-600 mb-1">密码 *</label>
-          <input type="password" id="regPassword" required minlength="6"
-                 placeholder="至少 6 位"
-                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
-                        placeholder:text-gray-300">
-        </div>
-        <div class="fade-in fade-in-d2">
-          <label class="block text-xs font-medium text-gray-600 mb-1">手机号 <span class="text-gray-300 font-normal">(选填)</span></label>
-          <input type="tel" id="regPhone" placeholder="138xxxx8888"
-                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
-                        placeholder:text-gray-300">
-        </div>
-
-        <button type="submit" id="registerBtn"
-                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white
-                       bg-gradient-to-r from-blue-600 to-indigo-600
-                       hover:from-blue-700 hover:to-indigo-700
-                       shadow-sm hover:shadow-md hover:shadow-blue-500/20
-                       transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                       flex items-center justify-center gap-2">
-          注册
-        </button>
-
-        <!-- 注册协议提示 -->
-        <p class="text-center text-[11px] text-gray-300 mt-1">
-          点击注册即表示同意《用户协议》和《隐私政策》
-        </p>
-      </form>
-
-    </div>
-
-    <!-- ====== 底部提示 ====== -->
-    <p class="text-center text-xs text-gray-400 mt-6">
-      <span id="switchHint">还没有账号？</span>
-      <a href="#" id="switchLink" onclick="event.preventDefault(); switchTab('register')"
-         class="text-brand-600 hover:text-brand-700 transition-colors font-medium">
-        立即注册
-      </a>
-    </p>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button id="tabLogin" class="tab-btn active" onclick="switchTab('login')">登录</button>
+    <button id="tabRegister" class="tab-btn" onclick="switchTab('register')">注册</button>
   </div>
+
+  <!-- Card -->
+  <div class="card">
+
+    <!-- 登录 -->
+    <form id="loginForm" class="card-form active" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>邮箱</label>
+        <input type="email" id="loginEmail" required placeholder="you@school.edu.cn">
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="loginPassword" required minlength="6" placeholder="••••••">
+      </div>
+      <div class="form-row">
+        <label><input type="checkbox"> 记住我</label>
+        <button type="button" class="forgot" onclick="showToast('📌 忘记密码功能开发中')">忘记密码？</button>
+      </div>
+      <button type="submit" id="loginBtn" class="btn">登录</button>
+    </form>
+
+    <!-- 注册 -->
+    <form id="registerForm" class="card-form" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label>邮箱 *</label>
+        <input type="email" id="regEmail" required placeholder="you@school.edu.cn">
+      </div>
+      <div class="form-group">
+        <label>昵称 *</label>
+        <input type="text" id="regNickname" required minlength="2" maxlength="20" placeholder="你的昵称">
+      </div>
+      <div class="form-group">
+        <label>密码 *</label>
+        <input type="password" id="regPassword" required minlength="6" placeholder="至少 6 位">
+      </div>
+      <div class="form-group">
+        <label>手机号 <span style="color:#cbd5e1;font-weight:400">(选填)</span></label>
+        <input type="tel" id="regPhone" placeholder="138xxxx8888">
+      </div>
+      <button type="submit" id="registerBtn" class="btn">注册</button>
+      <p class="policy">点击注册即表示同意《用户协议》和《隐私政策》</p>
+    </form>
+
+  </div>
+
+  <p class="bottom-hint">
+    <span id="switchHint">还没有账号？</span>
+    <a id="switchLink" onclick="switchTab('register')">立即注册</a>
+  </p>
+</div>
 </main>
 
-<!-- ====== Toast 提示 ====== -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================
-// Tab 切换逻辑
-// ============================================
+const LOCAL_AUTH_KEY = 'taigege_auth';
+
+// 本地用户数据
 let currentTab = 'login';
 
 function switchTab(tab) {
   currentTab = tab;
-  const isLogin = tab === 'login';
-
-  // 切换 Tab 按钮激活状态
-  document.getElementById('tabLogin').className =
-    'tab-btn relative text-sm font-semibold px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors ' +
-    (isLogin ? 'active text-brand-600' : 'text-gray-400 hover:text-gray-600');
-  document.getElementById('tabRegister').className =
-    'tab-btn relative text-sm font-semibold px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors ' +
-    (isLogin ? 'text-gray-400 hover:text-gray-600' : 'active text-brand-600');
-
-  // 切换表单显示
-  document.getElementById('loginForm').style.display = isLogin ? '' : 'none';
-  document.getElementById('registerForm').style.display = isLogin ? 'none' : '';
-
-  // 切换底部提示文字
+  var isLogin = tab === 'login';
+  document.getElementById('tabLogin').className = 'tab-btn' + (isLogin ? ' active' : '');
+  document.getElementById('tabRegister').className = 'tab-btn' + (isLogin ? '' : ' active');
+  document.getElementById('loginForm').className = 'card-form' + (isLogin ? ' active' : '');
+  document.getElementById('registerForm').className = 'card-form' + (isLogin ? '' : ' active');
   document.getElementById('switchHint').textContent = isLogin ? '还没有账号？' : '已有账号？';
   document.getElementById('switchLink').textContent = isLogin ? '立即注册' : '去登录';
-  document.getElementById('switchLink').onclick = function(e) {
-    e.preventDefault();
-    switchTab(isLogin ? 'register' : 'login');
-  };
+  document.getElementById('switchLink').onclick = function(e) { e.preventDefault(); switchTab(isLogin ? 'register' : 'login'); };
 }
 
-// ============================================
-// Toast 提示
-// ============================================
-function showToast(msg, type) {
+function showToast(msg) {
   var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (type ? ' ' + type : '');
-  // 触发 reflow 确保动画重新运行
-  void t.offsetWidth;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+  t._timer = setTimeout(function(){t.classList.remove('show')}, 2500);
 }
 
-// ============================================
-// 按钮加载状态
-// ============================================
-function setLoading(btnId, loading) {
-  var btn = document.getElementById(btnId);
+function setLoading(id, loading) {
+  var btn = document.getElementById(id);
   btn.disabled = loading;
-  if (loading) {
-    btn.innerHTML = '<span class="spinner"></span> 处理中...';
-  } else {
-    btn.innerHTML = btnId === 'loginBtn' ? '登录' : '注册';
-  }
+  btn.innerHTML = loading ? '<span class="spinner"></span> 处理中...' : (id === 'loginBtn' ? '登录' : '注册');
 }
 
-// ============================================
-// 登录逻辑
-// ============================================
-async function handleLogin(e) {
-// ============================================
-// 登录逻辑（Supabase + 本地回退）
-// ============================================
-async function handleLogin(e) {
+// 登录
+function handleLogin(e) {
   e.preventDefault();
   var email = document.getElementById('loginEmail').value.trim();
-  var password = document.getElementById('loginPassword').value;
+  var pw = document.getElementById('loginPassword').value;
   setLoading('loginBtn', true);
 
-  // 优先 Supabase
-  if (supabase) {
-    try {
-      var result = await supabase.auth.signInWithPassword({ email: email, password: password });
-      if (!result.error) {
-        showToast('✅ 登录成功！', 'success');
-        localStorage.setItem(LOCAL_AUTH_KEY+'_user', JSON.stringify({email:email,nickname:email.split('@')[0]}));
-        setTimeout(function(){window.location.href='index.html'},800); return;
-      }
-      showToast('❌ '+(result.error.message.includes('Invalid login')?'邮箱或密码错误':'登录失败'), 'error');
-      setLoading('loginBtn',false); return;
-    } catch(e) { useLocalMode = true; }
-  }
-
-  // 本地回退
-  if (!supabase || useLocalMode) {
-    var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
-    if (!users[email]) { showToast('❌ 该邮箱未注册','error'); setLoading('loginBtn',false); return; }
-    if (users[email].password !== password) { showToast('❌ 密码错误','error'); setLoading('loginBtn',false); return; }
-    showToast('✅ 登录成功！（本地模式）','success');
-    localStorage.setItem(LOCAL_AUTH_KEY+'_user', JSON.stringify(users[email]));
-    setTimeout(function(){window.location.href='index.html'},800);
+  // 先尝试 Supabase（如果 CDN 加载成功）
+  if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+    supabaseClient.auth.signInWithPassword({email:email,password:pw}).then(function(r){
+      if (!r.error) { loginSuccess(email, email.split('@')[0]); return; }
+      showToast('❌ ' + (r.error.message.includes('Invalid')?'邮箱或密码错误':'登录失败'));
+      setLoading('loginBtn',false);
+    }).catch(function(){ tryLocalLogin(email,pw); });
+  } else {
+    tryLocalLogin(email,pw);
   }
 }
 
-// ============================================
-// 注册逻辑（Supabase + 本地回退）
-// ============================================
-async function handleRegister(e) {
+function tryLocalLogin(email, pw) {
+  var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
+  if (!users[email]) { showToast('❌ 该邮箱未注册'); setLoading('loginBtn',false); return; }
+  if (users[email].password !== pw) { showToast('❌ 密码错误'); setLoading('loginBtn',false); return; }
+  loginSuccess(email, users[email].nickname);
+}
+
+function loginSuccess(email, nick) {
+  localStorage.setItem(LOCAL_AUTH_KEY+'_user', JSON.stringify({email:email,nickname:nick}));
+  showToast('✅ 登录成功！');
+  setTimeout(function(){window.location.href='index.html'}, 800);
+}
+
+// 注册
+function handleRegister(e) {
   e.preventDefault();
   var email = document.getElementById('regEmail').value.trim();
-  var nickname = document.getElementById('regNickname').value.trim();
-  var password = document.getElementById('regPassword').value;
+  var nick = document.getElementById('regNickname').value.trim();
+  var pw = document.getElementById('regPassword').value;
   var phone = document.getElementById('regPhone').value.trim();
-  if (!nickname||nickname.length<2){showToast('⚠️ 昵称至少2个字符','error');return}
+  if (!nick||nick.length<2){showToast('⚠️ 昵称至少2个字符');return}
   setLoading('registerBtn',true);
 
-  if (supabase) {
-    try {
-      var result = await supabase.auth.signUp({email:email,password:password,options:{data:{nickname:nickname,phone:phone||null}}});
-      if (!result.error) {
-        showToast('✅ 注册成功！请查收验证邮件','success');
-        localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nickname}));
-        setLoading('registerBtn',false);
-        setTimeout(function(){window.location.href='index.html'},2000); return;
-      }
-      showToast('❌ '+(result.error.message.includes('already registered')?'该邮箱已注册':'注册失败'),'error');
-      setLoading('registerBtn',false); return;
-    } catch(e) { useLocalMode = true; }
-  }
-
-  if (!supabase || useLocalMode) {
-    var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
-    if (users[email]){showToast('❌ 该邮箱已注册','error');setLoading('registerBtn',false);return}
-    users[email]={email:email,nickname:nickname,password:password,phone:phone};
-    localStorage.setItem(LOCAL_AUTH_KEY+'_users',JSON.stringify(users));
-    showToast('✅ 注册成功！（本地模式）','success');
-    localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nickname}));
-    setLoading('registerBtn',false);
-    setTimeout(function(){window.location.href='index.html'},1000);
+  // 先尝试 Supabase
+  if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+    supabaseClient.auth.signUp({email:email,password:pw,options:{data:{nickname:nick,phone:phone||null}}}).then(function(r){
+      if (!r.error) { showToast('✅ 注册成功！'); saveLocalUser(email,nick,pw,phone); setTimeout(function(){window.location.href='index.html'},1000); return; }
+      showToast('❌ ' + (r.error.message.includes('already')?'该邮箱已注册':'注册失败'));
+      setLoading('registerBtn',false);
+    }).catch(function(){ tryLocalRegister(email,nick,pw,phone); });
+  } else {
+    tryLocalRegister(email,nick,pw,phone);
   }
 }
 
-// ============================================
-// 回车键提交
-// ============================================
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && currentTab === 'login') document.getElementById('loginForm').requestSubmit();
-  if (e.key === 'Enter' && currentTab === 'register') document.getElementById('registerForm').requestSubmit();
-});
+function tryLocalRegister(email, nick, pw, phone) {
+  var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
+  if (users[email]) { showToast('❌ 该邮箱已注册'); setLoading('registerBtn',false); return; }
+  users[email] = {email:email,nickname:nick,password:pw,phone:phone};
+  localStorage.setItem(LOCAL_AUTH_KEY+'_users', JSON.stringify(users));
+  showToast('✅ 注册成功！');
+  saveLocalUser(email,nick,pw,phone);
+  setTimeout(function(){window.location.href='index.html'}, 1000);
+}
+
+function saveLocalUser(email,nick){localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nick}));setLoading('registerBtn',false)}
+
+// 页面加载后异步加载 Supabase
+(function(){
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  s.onload = function() {
+    try {
+      window.supabaseClient = createClient('https://zqhzigukoikdwcbhzkysk.supabase.co', 'eyJhbG…khdQ');
+    } catch(e){ window.supabaseClient = null; }
+  };
+  s.onerror = function(){ window.supabaseClient = null; };
+  document.head.appendChild(s);
+})();
 </script>
+
 </body>
 </html>
