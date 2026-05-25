@@ -418,24 +418,40 @@ saveFavs();
 if(currentPage==='favorites')renderFavs();else render();
 }
 
-// ISBN lookup
+// ISBN lookup with fallback APIs
 function lookupIsbn(){
 const isbn=document.getElementById('bookIsbn').value.trim();
 if(!isbn||isbn.length<10){showToast('请输入有效的ISBN');return;}
 const s=document.getElementById('isbnStatus');
 s.textContent='⏳ 查询中...';
+
+// Try Douban API (works in China), fallback to OpenLibrary
+function fillBook(title,author){
+document.getElementById('bookTitle').value=title||'';
+if(author)document.getElementById('bookAuthor').value=author;
+s.textContent='✅ 已自动填写：'+esc(title||author);
+showToast('✅ ISBN 查询成功');
+updatePriceRef();
+}
+
+// Try Douban first
+fetch('https://douban.uieee.xyz/v2/book/isbn/'+isbn).then(r=>r.json()).then(d=>{
+if(d&&d.title){fillBook(d.title,d.author&&d.author[0]&&d.author[0].name);return true}
+}).catch(()=>{}).then(function(done){
+if(done)return;
+// Fallback to OpenLibrary
 fetch('https://openlibrary.org/api/books?bibkeys=ISBN:'+isbn+'&format=json&jscmd=data').then(r=>r.json()).then(d=>{
 const info=d['ISBN:'+isbn];
-if(info){
-document.getElementById('bookTitle').value=info.title||'';
-if(info.authors&&info.authors[0])document.getElementById('bookAuthor').value=info.authors[0].name||'';
-s.textContent='✅ 已自动填写：'+esc(info.title);
-showToast('✅ ISBN 查询成功');
-}else{
+if(info){fillBook(info.title,info.authors&&info.authors[0]&&info.authors[0].name)}else{
 s.textContent='❌ 未找到该书，请手动填写';
 showToast('未找到该书信息');
 }
-}).catch(()=>{s.textContent='❌ 查询失败，请手动填写';showToast('查询失败，检查网络')})
+}).catch(()=>{
+s.textContent='❌ 查询失败，请手动填写';
+showToast('查询失败，检查网络');
+})
+})
+}
 }
 
 // ISBN Scanner
