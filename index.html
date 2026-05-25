@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="校园二手书市 — 同校同学之间买卖二手教材，省钱又环保">
 <title>校园二手书市</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="qrcode.min.js"></script>
 <style>
   :root {
     --primary: #4f46e5;
@@ -231,33 +231,48 @@
   }
 
   /* Contact modal */
-  .contact-modal { max-width: 380px; }
-  .qrcode-wrap {
+  .contact-modal { max-width: 360px; text-align: center; }
+  .contact-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--radius);
+    padding: 32px 20px 24px;
+    color: white;
+    margin-bottom: 16px;
+  }
+  .contact-card .avatar {
+    width: 64px; height: 64px;
+    background: rgba(255,255,255,.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 12px;
+    backdrop-filter: blur(4px);
+  }
+  .contact-card .label { font-size: 12px; opacity: .7; margin-bottom: 2px; }
+  .contact-card .value {
+    font-size: 20px; font-weight: 700;
+    letter-spacing: .5px;
+    background: rgba(255,255,255,.15);
     display: inline-block;
+    padding: 6px 20px;
+    border-radius: 8px;
+  }
+  .contact-qr-wrap {
     background: white;
-    padding: 16px;
     border-radius: var(--radius-sm);
+    padding: 16px;
+    display: inline-block;
     box-shadow: var(--shadow);
     margin: 8px 0;
   }
-  .qrcode-wrap canvas, .qrcode-wrap img { display: block !important; margin: 0 auto; }
-  .contact-info {
-    margin: 12px 0;
-    padding: 14px;
-    background: #f1f5f9;
-    border-radius: var(--radius-sm);
-    font-size: 18px;
-    font-weight: 600;
-    word-break: break-all;
-    color: var(--text);
-    letter-spacing: .5px;
-  }
-  .contact-label {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 400;
-    margin-bottom: 6px;
-  }
+  .contact-qr-wrap canvas, .contact-qr-wrap img { display: block !important; margin: 0 auto; }
+  .contact-tip { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+  .contact-btns { display: flex; gap: 8px; margin-top: 12px; }
+  .contact-btns .btn { flex: 1; }
+  .btn-copy { background: var(--primary); color: white; }
+  .btn-copy:hover { background: var(--primary-dark); }
+  .btn-close-sm { background: #f1f5f9; color: var(--text-secondary); }
+  .btn-close-sm:hover { background: var(--border); }
 
   @media (max-width: 600px) {
     .hero h1 { font-size: 22px; }
@@ -407,11 +422,21 @@
       <h2>📱 联系卖家</h2>
       <button class="close" onclick="closeModal('contactModal')">&times;</button>
     </div>
-    <div id="contactContent" style="text-align:center">
-      <div class="qrcode-wrap" id="qrcodeContainer"></div>
-      <div id="contactInfoDisplay" class="contact-info"></div>
-      <button class="btn btn-contact" id="copyContactBtn" onclick="copyContact()" style="margin-top:12px">📋 复制联系方式</button>
-      <p style="margin-top:16px;font-size:13px;color:var(--text-muted)">💡 截图二维码或复制信息，到微信/QQ添加好友</p>
+    <div id="contactContent">
+      <div class="contact-card">
+        <div class="avatar">👤</div>
+        <div class="label">卖家联系方式</div>
+        <div class="value" id="contactInfoDisplay">—</div>
+      </div>
+      <div style="text-align:center">
+        <p style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">📸 扫二维码加好友</p>
+        <div class="contact-qr-wrap" id="qrcodeContainer"></div>
+      </div>
+      <div class="contact-btns">
+        <button class="btn btn-copy" onclick="copyContact()">📋 复制联系方式</button>
+        <button class="btn btn-close-sm" onclick="closeModal('contactModal')">关闭</button>
+      </div>
+      <p class="contact-tip">💡 截图二维码或复制号码，到微信/QQ搜索添加</p>
     </div>
   </div>
 </div>
@@ -587,23 +612,26 @@ function showDetail(id) {
 
 function contactSeller(contact) {
   closeModal('detailModal');
-  document.getElementById('contactInfoDisplay').innerHTML =
-    '<div class="contact-label">卖家联系方式</div>' + esc(contact);
+  document.getElementById('contactInfoDisplay').textContent = contact;
 
   // Generate QR code
   const container = document.getElementById('qrcodeContainer');
   container.innerHTML = '';
   try {
-    new QRCode(container, {
-      text: contact,
-      width: 200,
-      height: 200,
-      colorDark: '#1e293b',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.H
-    });
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(container, {
+        text: contact,
+        width: 180,
+        height: 180,
+        colorDark: '#1e293b',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } else {
+      container.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:48px;flex-direction:column;gap:4px;color:var(--text-muted);">📱<span style="font-size:12px">二维码加载中...</span></div>';
+    }
   } catch(e) {
-    container.innerHTML = '<div class="qrcode-fallback" style="width:200px;height:200px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:64px;margin:0 auto">📱</div>';
+    container.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px;flex-direction:column;gap:4px;color:var(--text-muted);">📱<span style="font-size:12px">扫描上方号码</span></div>';
   }
 
   document.getElementById('contactModal').classList.add('open');
