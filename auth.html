@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -103,14 +103,25 @@ input:focus { outline: none; }
    2. 左侧 Settings → API → 复制 Project URL 和 anon/public key
    ====== ====== -->
 <script>
-// ⚠️ 请替换为你的实际 Supabase 项目 URL 和匿名 Key
+// ⚠️ 如果你的 Supabase 在国内被墙，会自动切换到本地模式
+// 本地模式下数据只存在当前浏览器，换设备需要重新注册
 const SUPABASE_URL = 'https://zqhzigukoikdwcbhzkysk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxaHppZ3Vrb2lkd2NiaHpreXNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3MDg1ODIsImV4cCI6MjA5NTI4NDU4Mn0.4WSfOD7UAnbxFz1DGMihcs-eo6cneBYRWPyLLiOkhdQ';
 
 // 初始化 Supabase 客户端
-const supabase = typeof createClient === 'function'
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+let supabase = null;
+let useLocalMode = false; // 是否使用本地模式（Supabase 被墙时自动切换）
+
+try {
+  if (typeof createClient === 'function') {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch(e) {
+  supabase = null;
+}
+
+// 本地用户存储 key
+const LOCAL_AUTH_KEY = 'taigege_auth';
 </script>
 
 <!-- ====== 导航栏（与首页一致） ====== -->
@@ -318,108 +329,75 @@ function setLoading(btnId, loading) {
 // 登录逻辑
 // ============================================
 async function handleLogin(e) {
+// ============================================
+// 登录逻辑（Supabase + 本地回退）
+// ============================================
+async function handleLogin(e) {
   e.preventDefault();
-
-  // 检查 Supabase 是否可用
-  if (!supabase) {
-    showToast('⚠️ Supabase 未配置，请在代码顶部设置 SUPABASE_URL 和 SUPABASE_ANON_KEY', 'error');
-    return;
-  }
-
   var email = document.getElementById('loginEmail').value.trim();
   var password = document.getElementById('loginPassword').value;
-  var remember = document.getElementById('loginForm').querySelector('[type=checkbox]').checked;
-
   setLoading('loginBtn', true);
 
-  try {
-    // 调用 Supabase 登录接口
-    var result = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+  // 优先 Supabase
+  if (supabase) {
+    try {
+      var result = await supabase.auth.signInWithPassword({ email: email, password: password });
+      if (!result.error) {
+        showToast('✅ 登录成功！', 'success');
+        localStorage.setItem(LOCAL_AUTH_KEY+'_user', JSON.stringify({email:email,nickname:email.split('@')[0]}));
+        setTimeout(function(){window.location.href='index.html'},800); return;
+      }
+      showToast('❌ '+(result.error.message.includes('Invalid login')?'邮箱或密码错误':'登录失败'), 'error');
+      setLoading('loginBtn',false); return;
+    } catch(e) { useLocalMode = true; }
+  }
 
-    if (result.error) {
-      // 根据错误类型给出中文提示
-      var msg = result.error.message;
-      if (msg.includes('Invalid login')) msg = '邮箱或密码错误';
-      else if (msg.includes('Email not confirmed')) msg = '请先验证邮箱';
-      else if (msg.includes('Rate limit')) msg = '操作过于频繁，请稍后再试';
-      showToast('❌ ' + msg, 'error');
-      setLoading('loginBtn', false);
-      return;
-    }
-
-    // 登录成功
-    showToast('✅ 登录成功！', 'success');
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 800);
-
-  } catch (err) {
-    showToast('❌ 网络异常，请检查连接', 'error');
-    setLoading('loginBtn', false);
+  // 本地回退
+  if (!supabase || useLocalMode) {
+    var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
+    if (!users[email]) { showToast('❌ 该邮箱未注册','error'); setLoading('loginBtn',false); return; }
+    if (users[email].password !== password) { showToast('❌ 密码错误','error'); setLoading('loginBtn',false); return; }
+    showToast('✅ 登录成功！（本地模式）','success');
+    localStorage.setItem(LOCAL_AUTH_KEY+'_user', JSON.stringify(users[email]));
+    setTimeout(function(){window.location.href='index.html'},800);
   }
 }
 
 // ============================================
-// 注册逻辑
+// 注册逻辑（Supabase + 本地回退）
 // ============================================
 async function handleRegister(e) {
   e.preventDefault();
-
-  if (!supabase) {
-    showToast('⚠️ Supabase 未配置，请在代码顶部设置 SUPABASE_URL 和 SUPABASE_ANON_KEY', 'error');
-    return;
-  }
-
   var email = document.getElementById('regEmail').value.trim();
   var nickname = document.getElementById('regNickname').value.trim();
   var password = document.getElementById('regPassword').value;
   var phone = document.getElementById('regPhone').value.trim();
+  if (!nickname||nickname.length<2){showToast('⚠️ 昵称至少2个字符','error');return}
+  setLoading('registerBtn',true);
 
-  if (!nickname || nickname.length < 2) {
-    showToast('⚠️ 昵称至少 2 个字符', 'error');
-    return;
+  if (supabase) {
+    try {
+      var result = await supabase.auth.signUp({email:email,password:password,options:{data:{nickname:nickname,phone:phone||null}}});
+      if (!result.error) {
+        showToast('✅ 注册成功！请查收验证邮件','success');
+        localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nickname}));
+        setLoading('registerBtn',false);
+        setTimeout(function(){window.location.href='index.html'},2000); return;
+      }
+      showToast('❌ '+(result.error.message.includes('already registered')?'该邮箱已注册':'注册失败'),'error');
+      setLoading('registerBtn',false); return;
+    } catch(e) { useLocalMode = true; }
   }
 
-  setLoading('registerBtn', true);
-
-  try {
-    // 调用 Supabase 注册接口
-    var result = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: {
-          nickname: nickname,
-          phone: phone || null,
-        },
-      },
-    });
-
-    if (result.error) {
-      var msg = result.error.message;
-      if (msg.includes('already registered')) msg = '该邮箱已注册';
-      else if (msg.includes('weak')) msg = '密码强度不够，至少 6 位';
-      else if (msg.includes('Rate limit')) msg = '操作过于频繁，请稍后再试';
-      showToast('❌ ' + msg, 'error');
-      setLoading('registerBtn', false);
-      return;
-    }
-
-    // 注册成功
-    showToast('✅ 注册成功！请查收验证邮件', 'success');
-    setLoading('registerBtn', false);
-
-    // 延迟跳转到首页
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 2000);
-
-  } catch (err) {
-    showToast('❌ 网络异常，请检查连接', 'error');
-    setLoading('registerBtn', false);
+  if (!supabase || useLocalMode) {
+    var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
+    if (users[email]){showToast('❌ 该邮箱已注册','error');setLoading('registerBtn',false);return}
+    users[email]={email:email,nickname:nickname,password:password,phone:phone};
+    localStorage.setItem(LOCAL_AUTH_KEY+'_users',JSON.stringify(users));
+    showToast('✅ 注册成功！（本地模式）','success');
+    localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nickname}));
+    setLoading('registerBtn',false);
+    setTimeout(function(){window.location.href='index.html'},1000);
   }
 }
 
@@ -427,14 +405,9 @@ async function handleRegister(e) {
 // 回车键提交
 // ============================================
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && currentTab === 'login') {
-    document.getElementById('loginForm').requestSubmit();
-  }
-  if (e.key === 'Enter' && currentTab === 'register') {
-    document.getElementById('registerForm').requestSubmit();
-  }
+  if (e.key === 'Enter' && currentTab === 'login') document.getElementById('loginForm').requestSubmit();
+  if (e.key === 'Enter' && currentTab === 'register') document.getElementById('registerForm').requestSubmit();
 });
 </script>
-
 </body>
 </html>
