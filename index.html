@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>泰皋阁 · 校园二手书</title>
 
-<!-- Tailwind CSS + Inter 字体 + Supabase SDK -->
+<!-- Tailwind CSS + Inter 字体（只需样式，无需 Supabase CDN） -->
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
 <script>
@@ -44,8 +43,18 @@ body { -webkit-font-smoothing: antialiased; }
 @keyframes shimmer { 0%{opacity:.5} 50%{opacity:1} 100%{opacity:.5} }
 .skel { animation: shimmer 1.5s ease-in-out infinite; background: #e2e8f0; border-radius: 8px; }
 
-/* 自定义滚动条 (分类筛选) */
+/* 分类筛选滚动条隐藏 */
 .filters-wrap::-webkit-scrollbar { height: 0; }
+
+/* 品相筛选标签样式 */
+.filter-tag {
+  display: inline-block; padding: 6px 16px; border-radius: 999px;
+  font-size: 13px; font-weight: 500; border: 1px solid #e2e8f0;
+  background: #fff; cursor: pointer; transition: all .2s;
+  color: #475569; white-space: nowrap; flex-shrink: 0; user-select: none;
+}
+.filter-tag:hover { border-color: #6366f1; color: #6366f1; }
+.filter-tag.active { background: #6366f1; color: #fff; border-color: #6366f1; }
 </style>
 </head>
 <body class="bg-[#f5f7fa] font-sans text-gray-900 min-h-screen">
@@ -139,20 +148,19 @@ body { -webkit-font-smoothing: antialiased; }
 
 <script>
 /* =============================================================
- * Supabase 配置
+ * Supabase 配置（使用 REST API + fetch，无需外部 SDK CDN）
  * ============================================================= */
 const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* =============================================================
  * 状态变量
  * ============================================================= */
 let allBooks = [];           // 所有在售书籍
-let filteredBooks = [];      // 当前筛选后的书籍
 let activeFilter = '全部';   // 当前选中的品相筛选
 let searchQ = '';            // 当前搜索关键词
 let currentUser = null;      // 当前登录用户
+let currentToken = null;     // 当前用户的 access_token
 
 /* =============================================================
  * 工具函数
@@ -174,13 +182,60 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
+/* 构造 Supabase REST 请求头 */
+function supabaseHeaders(token) {
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY),
+    'Content-Type': 'application/json',
+  };
+}
+
+/* 通用 GET 请求 */
+async function supabaseGet(url) {
+  var res = await fetch(url, { headers: supabaseHeaders() });
+  if (!res.ok) throw new Error('API ' + res.status);
+  return await res.json();
+}
+
+/* =============================================================
+ * 从 localStorage 读取 Supabase 登录 session
+ *（auth.html 用 Supabase JS SDK 登录后会自动存 localStorage）
+ * ============================================================= */
+function getStoredSession() {
+  for (var key in localStorage) {
+    if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
+      try {
+        var data = JSON.parse(localStorage.getItem(key));
+        if (data && data.access_token) return data;
+      } catch(e) {}
+    }
+  }
+  return null;
+}
+
+/* =============================================================
+ * 从 Supabase Auth REST API 获取当前用户
+ * ============================================================= */
+async function fetchCurrentUser() {
+  var session = getStoredSession();
+  if (!session) return null;
+  try {
+    var res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+      headers: supabaseHeaders(session.access_token),
+    });
+    if (!res.ok) return null;
+    currentToken = session.access_token;
+    return await res.json();
+  } catch(e) { return null; }
+}
+
 /* =============================================================
  * 导航栏渲染（根据登录状态）
  * ============================================================= */
 function renderNav() {
   var el = document.getElementById('navRight');
   if (currentUser) {
-    // 已登录
     var email = currentUser.email || '用户';
     el.innerHTML =
       '<span class="text-gray-500 text-xs sm:text-sm hidden sm:inline" title="' + escHtml(email) + '">👤 ' + escHtml(email) + '</span>' +
@@ -188,7 +243,6 @@ function renderNav() {
       '<a href="#" onclick="event.preventDefault();showToast(\'📌 订单功能即将上线\',\'info\')" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline hidden sm:inline">订单</a>' +
       '<button onclick="handleLogout()" class="text-gray-400 hover:text-gray-600 px-2 py-1 bg-transparent border-0 cursor-pointer text-sm">退出</button>';
   } else {
-    // 未登录
     el.innerHTML =
       '<a href="auth.html?redirect=index.html" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline">登录</a>' +
       '<span class="text-gray-300">|</span>' +
@@ -197,12 +251,24 @@ function renderNav() {
 }
 
 /* =============================================================
- * 退出登录
+ * 退出登录（REST API + 清除 localStorage）
  * ============================================================= */
 async function handleLogout() {
   try {
-    await supabase.auth.signOut();
+    if (currentToken) {
+      await fetch(SUPABASE_URL + '/auth/v1/logout', {
+        method: 'POST',
+        headers: supabaseHeaders(currentToken),
+      });
+    }
+    // 清除所有 Supabase session 缓存
+    for (var key in localStorage) {
+      if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
+        localStorage.removeItem(key);
+      }
+    }
     currentUser = null;
+    currentToken = null;
     renderNav();
     showToast('已退出登录', 'info');
   } catch (err) {
@@ -211,7 +277,7 @@ async function handleLogout() {
 }
 
 /* =============================================================
- * 加载书籍数据
+ * 加载书籍数据（REST API）
  * ============================================================= */
 async function loadBooks() {
   var grid = document.getElementById('bookGrid');
@@ -231,23 +297,17 @@ async function loadBooks() {
   }
 
   try {
-    // ====== 获取当前用户 ======
-    var { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      currentUser = session.user;
-    }
+    // ====== 读取当前登录用户 ======
+    currentUser = await fetchCurrentUser();
     renderNav();
 
-    // ====== 查询在售书籍，按发布时间倒序 ======
-    var { data: books, error } = await supabase
-      .from('books')
-      .select('*')
-      .eq('status', '在售')
-      .order('created_at', { ascending: false });
+    // ====== REST API 查询在售书籍，按发布时间倒序 ======
+    var apiUrl = SUPABASE_URL + '/rest/v1/books' +
+      '?select=*' +
+      '&status=eq.在售' +
+      '&order=created_at.desc';
 
-    if (error) throw error;
-
-    allBooks = books || [];
+    allBooks = await supabaseGet(apiUrl) || [];
   } catch (err) {
     console.error('数据加载失败:', err);
     showToast('⚠️ 数据加载失败，请检查网络', 'error');
@@ -294,8 +354,6 @@ function applyFilters() {
       return b.condition === activeFilter;
     });
   }
-
-  filteredBooks = filtered;
 
   // 更新统计
   document.getElementById('totalBooks').textContent = filtered.length;
@@ -353,7 +411,6 @@ function doSearch() {
 
 function setFilter(filter) {
   activeFilter = filter;
-  // 更新筛选按钮高亮
   var tags = document.querySelectorAll('.filter-tag');
   for (var i = 0; i < tags.length; i++) {
     tags[i].className = tags[i].className.replace(' active', '');
@@ -369,34 +426,6 @@ function setFilter(filter) {
  * ============================================================= */
 loadBooks();
 </script>
-
-<style>
-/* 品相筛选标签样式（内联 Tailwind 不方便处理的动态 active） */
-.filter-tag {
-  display: inline-block;
-  padding: 6px 16px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 500;
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  cursor: pointer;
-  transition: all .2s;
-  color: #475569;
-  white-space: nowrap;
-  flex-shrink: 0;
-  user-select: none;
-}
-.filter-tag:hover {
-  border-color: #6366f1;
-  color: #6366f1;
-}
-.filter-tag.active {
-  background: #6366f1;
-  color: #fff;
-  border-color: #6366f1;
-}
-</style>
 
 </body>
 </html>
