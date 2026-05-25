@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>泰皋阁 - 校园二手书平台</title>
-<script src="qrcode.min.js"></script>
-<script src="html5-qrcode.min.js"></script>
 <style>
 :root{--p:#4f46e5;--pl:#eef2ff;--pd:#3730a3;--bg:#f8fafc;--c:#fff;--t:#1e293b;--t2:#64748b;--t3:#94a3b8;--b:#e2e8f0;--s:#10b981;--d:#ef4444;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.08);--sh-lg:0 8px 30px rgba(0,0,0,.12)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -640,5 +638,7 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('cl
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(el=>el.classList.remove('open'))});
 render();
 </script>
+<script defer src="qrcode.min.js"></script>
+<script defer src="html5-qrcode.min.js"></script>
 </body>
 </html>
