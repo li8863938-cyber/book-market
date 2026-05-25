@@ -418,13 +418,6 @@ saveFavs();
 if(currentPage==='favorites')renderFavs();else render();
 }
 
-// ISBN lookup with fallback APIs
-function lookupIsbn(){
-const isbn=document.getElementById('bookIsbn').value.trim();
-if(!isbn||isbn.length<10){showToast('请输入有效的ISBN');return;}
-const s=document.getElementById('isbnStatus');
-s.textContent='⏳ 查询中...';
-
 // ISBN lookup with fast timeout
 function lookupIsbn(){
 const isbn=document.getElementById('bookIsbn').value.trim();
