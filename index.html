@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -200,9 +200,10 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 <div class="logo" onclick="showPage('market')">🏛️ 泰皋阁<span class="badge">二手书</span></div>
 <nav>
 <button onclick="showPage('market')" id="navMarket">📖 书摊</button>
-<button onclick="showPage('mine')" id="navMine">👤 我的</button>
+<button onclick="openAuth()" id="navAuth">👤 <span id="authState">登录</span></button>
+<button onclick="showPage('mine')" id="navMine">我的</button>
 <button onclick="showPage('favorites')" id="navFav">⭐ <span id="favCount">0</span></button>
-<button onclick="showPage('about')">ℹ️ 关于</button>
+<button onclick="showPage('about')">ℹ️</button>
 <button class="sell-btn" onclick="openAddBook()">➕ 卖书</button>
 </nav>
 </div>
@@ -336,6 +337,18 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 </div>
 </div>
 </div>
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+<div class="modal" style="max-width:380px">
+<div class="flex items-center justify-between px-5 pt-4 pb-0"><h2 class="text-lg font-bold" id="authTitle">馃摑 娉ㄥ唽</h2><button class="close" onclick="closeModal('authModal')">脳</button></div>
+<div class="px-5 pb-5">
+<div class="flex gap-3 mb-3"><button class="flex-1 py-2 rounded-lg text-sm font-semibold bg-blue-50 text-blue-600" id="authTabRegister" onclick="switchAuthTab('register')">娉ㄥ唽</button><button class="flex-1 py-2 rounded-lg text-sm font-semibold text-gray-400" id="authTabLogin" onclick="switchAuthTab('login')">鐧诲綍</button></div>
+<div id="authRegisterForm">
+<input type="email" id="authRegEmail" placeholder="閭" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5"><input type="text" id="authRegNick" placeholder="鏄电О" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5"><input type="password" id="authRegPw" placeholder="瀵嗙爜锛堣嚦灏?浣嶏級" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3"><button onclick="doRegister()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">娉ㄥ唽</button></div>
+<div id="authLoginForm" style="display:none">
+<input type="email" id="authLoginEmail" placeholder="閭" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5"><input type="password" id="authLoginPw" placeholder="瀵嗙爜" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3"><button onclick="doLogin()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">鐧诲綍</button></div>
+</div></div></div>
 
 <div class="toast" id="toast"></div>
 <footer>🏛️ 泰皋阁 · 校园二手书 · 当面验货 · 注意安全 <img src="https://hits.sh/li8863938-cyber.github.io/book-market.svg?label=访客&color=4f46e5" style="height:18px;vertical-align:middle;margin-left:4px" alt="访问统计"></footer>
@@ -678,6 +691,13 @@ function showToast(m){const t=document.getElementById('toast');t.textContent=m;t
 document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(el=>el.classList.remove('open'))});
 render();
+
+// Auth modal
+function openAuth(){document.getElementById('authModal').classList.add('open');switchAuthTab('register')}
+function switchAuthTab(t){var r=t==='register';document.getElementById('authTitle').textContent=r?'📝 注册':'🔑 登录';document.getElementById('authRegisterForm').style.display=r?'':'none';document.getElementById('authLoginForm').style.display=r?'none':'';['authTabRegister','authTabLogin'].forEach(function(id){document.getElementById(id).className='flex-1 py-2 rounded-lg text-sm font-semibold '+(id==='authTabRegister'===r?'bg-blue-50 text-blue-600':'text-gray-400 hover:text-gray-600')})}
+function doRegister(){var e=document.getElementById('authRegEmail').value.trim(),n=document.getElementById('authRegNick').value.trim(),p=document.getElementById('authRegPw').value;if(!e||!n||!p){showToast('请填写完整');return}var u=JSON.parse(localStorage.getItem('***_users')||'{}');if(u[e]){showToast('❌ 该邮箱已注册');return}u[e]={email:e,nickname:n,password:p};localStorage.setItem('***_users',JSON.stringify(u));localStorage.setItem('***_user',JSON.stringify({email:e,nickname:n}));document.getElementById('authState').textContent=n;closeModal('authModal');showToast('✅ 注册成功！')}
+function doLogin(){var e=document.getElementById('authLoginEmail').value.trim(),p=document.getElementById('authLoginPw').value;if(!e||!p){showToast('请填写完整');return}var u=JSON.parse(localStorage.getItem('***_users')||'{}');if(!u[e]){showToast('❌ 该邮箱未注册');return}if(u[e].password!==p){showToast('❌ 密码错误');return}localStorage.setItem('***_user',JSON.stringify({email:e,nickname:u[e].nickname}));document.getElementById('authState').textContent=u[e].nickname;closeModal('authModal');showToast('✅ 登录成功！')}
+(function(){var u=JSON.parse(localStorage.getItem('***_user')||'null');if(u&&u.nickname)document.getElementById('authState').textContent=u.nickname})();
 </script>
 <script defer src="qrcode.min.js"></script>
 <script defer src="html5-qrcode.min.js"></script>
