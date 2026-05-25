@@ -109,7 +109,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
   <div class="card">
 
     <!-- 登录 -->
-    <form id="loginForm" class="card-form active" onsubmit="handleLogin(event)">
+    <form id="loginForm" class="card-form active">
       <div class="form-group">
         <label>邮箱</label>
         <input type="email" id="loginEmail" required placeholder="you@school.edu.cn">
@@ -122,11 +122,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
         <label><input type="checkbox"> 记住我</label>
         <button type="button" class="forgot" onclick="showToast('📌 忘记密码功能开发中')">忘记密码？</button>
       </div>
-      <button type="submit" id="loginBtn" class="btn">登录</button>
+      <button type="button" id="loginBtn" class="btn" onclick="handleLogin()">登录</button>
     </form>
 
     <!-- 注册 -->
-    <form id="registerForm" class="card-form" onsubmit="handleRegister(event)">
+    <form id="registerForm" class="card-form">
       <div class="form-group">
         <label>邮箱 *</label>
         <input type="email" id="regEmail" required placeholder="you@school.edu.cn">
@@ -143,7 +143,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
         <label>手机号 <span style="color:#cbd5e1;font-weight:400">(选填)</span></label>
         <input type="tel" id="regPhone" placeholder="138xxxx8888">
       </div>
-      <button type="submit" id="registerBtn" class="btn">注册</button>
+      <button type="button" id="registerBtn" class="btn" onclick="handleRegister()">注册</button>
       <p class="policy">点击注册即表示同意《用户协议》和《隐私政策》</p>
     </form>
 
@@ -176,8 +176,7 @@ function showToast(msg) { var t=document.getElementById('toast');t.textContent=m
 function setLoading(id,loading) { var btn=document.getElementById(id);btn.disabled=loading;btn.innerHTML=loading?'<span class="spinner"></span> 处理中...':(id==='loginBtn'?'登录':'注册') }
 
 // 登录 （纯本地存储）
-function handleLogin(e) {
-  e.preventDefault();
+function handleLogin() {
   var email=document.getElementById('loginEmail').value.trim();
   var pw=document.getElementById('loginPassword').value;
   setLoading('loginBtn',true);
@@ -190,8 +189,7 @@ function handleLogin(e) {
 }
 
 // 注册 （纯本地存储）
-function handleRegister(e) {
-  e.preventDefault();
+function handleRegister() {
   var email=document.getElementById('regEmail').value.trim();
   var nick=document.getElementById('regNickname').value.trim();
   var pw=document.getElementById('regPassword').value;
@@ -209,8 +207,8 @@ function handleRegister(e) {
 }
 
 document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&currentTab==='login')document.getElementById('loginForm').requestSubmit();
-  if(e.key==='Enter'&&currentTab==='register')document.getElementById('registerForm').requestSubmit();
+  if(e.key==='Enter'&&currentTab==='login')handleLogin();
+  if(e.key==='Enter'&&currentTab==='register')handleRegister();
 });
 </script>
 </body>
