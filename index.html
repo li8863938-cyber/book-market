@@ -163,6 +163,9 @@ nav button.active{background:var(--pl);color:var(--p)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.loading{background:var(--p)}
 
+/* Auth modal */
+.auth-modal{max-width:380px}.auth-modal .auth-tabs{display:flex;gap:8px;margin-bottom:16px}.auth-modal .auth-tab{flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:0;transition:.2s}.auth-modal .auth-tab.active{background:var(--pl);color:var(--p)}.auth-modal .auth-tab.inactive{background:0 0;color:var(--t3)}.auth-modal .auth-tab.inactive:hover{color:var(--t2)}.auth-modal .auth-field{width:100%;padding:11px 14px;border:1px solid var(--b);border-radius:10px;font-size:14px;outline:0;transition:.2s;background:var(--bg);font-family:inherit;box-sizing:border-box}.auth-modal .auth-field:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,.1);background:#fff}.auth-modal .auth-field+.auth-field{margin-top:10px}.auth-modal .auth-btn{width:100%;padding:12px;border:0;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;transition:.2s;font-family:inherit;margin-top:16px}.auth-modal .auth-btn:hover{box-shadow:0 2px 8px rgba(79,70,229,.25)}
+
 footer{text-align:center;padding:18px;color:var(--t3);font-size:13px;border-top:1px solid var(--b)}
 
 @media(max-width:640px){
@@ -340,19 +343,19 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 
 <!-- Auth Modal -->
 <div class="modal-overlay" id="authModal">
-<div class="modal" style="max-width:380px">
-<div class="flex items-center justify-between px-5 pt-4 pb-0"><h2 class="text-lg font-bold" id="authTitle">注册</h2><button class="close" onclick="closeModal('authModal')">X</button></div>
-<div class="px-5 pb-5">
-<div class="flex gap-3 mb-3"><button class="flex-1 py-2 rounded-lg text-sm font-semibold bg-blue-50 text-blue-600" id="authTabRegister" onclick="switchAuthTab('register')">注册</button><button class="flex-1 py-2 rounded-lg text-sm font-semibold text-gray-400" id="authTabLogin" onclick="switchAuthTab('login')">登录</button></div>
+<div class="modal auth-modal">
+<div class="modal-header"><h2 id="authTitle">注册</h2><button class="close" onclick="closeModal('authModal')">&times;</button></div>
+<div style="padding:0 24px 24px">
+<div class="auth-tabs"><button class="auth-tab active" id="authTabRegister" onclick="switchAuthTab('register')">注册</button><button class="auth-tab inactive" id="authTabLogin" onclick="switchAuthTab('login')">登录</button></div>
 <div id="authRegisterForm">
-<input type="email" id="authRegEmail" placeholder="邮箱" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5">
-<input type="text" id="authRegNick" placeholder="昵称" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5">
-<input type="password" id="authRegPw" placeholder="密码 (至少6位)" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3">
-<button onclick="doRegister()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">注册</button></div>
+<input class="auth-field" type="email" id="authRegEmail" placeholder="邮箱">
+<input class="auth-field" type="text" id="authRegNick" placeholder="昵称">
+<input class="auth-field" type="password" id="authRegPw" placeholder="密码">
+<button class="auth-btn" onclick="doRegister()">注册</button></div>
 <div id="authLoginForm" style="display:none">
-<input type="email" id="authLoginEmail" placeholder="邮箱" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-2.5">
-<input type="password" id="authLoginPw" placeholder="密码" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm mb-3">
-<button onclick="doLogin()" class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all">登录</button></div>
+<input class="auth-field" type="email" id="authLoginEmail" placeholder="邮箱">
+<input class="auth-field" type="password" id="authLoginPw" placeholder="密码">
+<button class="auth-btn" onclick="doLogin()">登录</button></div>
 </div></div></div>
 
 <div class="toast" id="toast"></div>
@@ -699,7 +702,7 @@ render();
 
 // Auth modal
 function openAuth(){document.getElementById('authModal').classList.add('open');switchAuthTab('register')}
-function switchAuthTab(t){var r=t==='register';document.getElementById('authTitle').textContent=r?'📝 注册':'🔑 登录';document.getElementById('authRegisterForm').style.display=r?'':'none';document.getElementById('authLoginForm').style.display=r?'none':'';['authTabRegister','authTabLogin'].forEach(function(id){document.getElementById(id).className='flex-1 py-2 rounded-lg text-sm font-semibold '+(id==='authTabRegister'===r?'bg-blue-50 text-blue-600':'text-gray-400 hover:text-gray-600')})}
+function switchAuthTab(t){var r=t==='register';document.getElementById('authTitle').textContent=r?'注册':'登录';document.getElementById('authRegisterForm').style.display=r?'':'none';document.getElementById('authLoginForm').style.display=r?'none':'';document.getElementById('authTabRegister').className='auth-tab '+(r?'active':'inactive');document.getElementById('authTabLogin').className='auth-tab '+(r?'inactive':'active')}
 function doRegister(){var e=document.getElementById('authRegEmail').value.trim(),n=document.getElementById('authRegNick').value.trim(),p=document.getElementById('authRegPw').value;if(!e||!n||!p){showToast('请填写完整');return}var u=JSON.parse(localStorage.getItem('***_users')||'{}');if(u[e]){showToast('❌ 该邮箱已注册');return}u[e]={email:e,nickname:n,password:p};localStorage.setItem('***_users',JSON.stringify(u));localStorage.setItem('***_user',JSON.stringify({email:e,nickname:n}));document.getElementById('authState').textContent=n;closeModal('authModal');showToast('✅ 注册成功！')}
 function doLogin(){var e=document.getElementById('authLoginEmail').value.trim(),p=document.getElementById('authLoginPw').value;if(!e||!p){showToast('请填写完整');return}var u=JSON.parse(localStorage.getItem('***_users')||'{}');if(!u[e]){showToast('❌ 该邮箱未注册');return}if(u[e].password!==p){showToast('❌ 密码错误');return}localStorage.setItem('***_user',JSON.stringify({email:e,nickname:u[e].nickname}));document.getElementById('authState').textContent=u[e].nickname;closeModal('authModal');showToast('✅ 登录成功！')}
 (function(){var u=JSON.parse(localStorage.getItem('***_user')||'null');if(u&&u.nickname)document.getElementById('authState').textContent=u.nickname})();
