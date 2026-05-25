@@ -5,16 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>泰皋�?· 校园二手�?/title>
 
-<!-- Tailwind CSS + Inter 字体（只需样式，无需 Supabase CDN�?-->
+<!-- Tailwind CSS（jsdelivr CDN，国内基本可用） -->
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
 <script>
 tailwind.config = {
   theme: {
     extend: {
-      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'] },
-      colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3' } }
+      fontFamily: { sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'] },
+      colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } }
     }
   }
 }
@@ -22,8 +21,6 @@ tailwind.config = {
 
 <style>
 body { -webkit-font-smoothing: antialiased; }
-
-/* Toast */
 .toast {
   position: fixed; bottom: 28px; left: 50%;
   transform: translateX(-50%) translateY(100px);
@@ -31,7 +28,6 @@ body { -webkit-font-smoothing: antialiased; }
   font-size: 14px; font-weight: 500; opacity: 0;
   transition: all .35s cubic-bezier(.4,0,.2,1);
   z-index: 200; pointer-events: none;
-  box-shadow: 0 6px 24px rgba(0,0,0,.18);
   max-width: 90vw;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -39,14 +35,9 @@ body { -webkit-font-smoothing: antialiased; }
 .toast.success { background: #065f46; color: #fff; }
 .toast.info    { background: #1e293b; color: #fff; }
 
-/* 骨架屏动�?*/
 @keyframes shimmer { 0%{opacity:.5} 50%{opacity:1} 100%{opacity:.5} }
 .skel { animation: shimmer 1.5s ease-in-out infinite; background: #e2e8f0; border-radius: 8px; }
-
-/* 分类筛选滚动条隐藏 */
 .filters-wrap::-webkit-scrollbar { height: 0; }
-
-/* 品相筛选标签样�?*/
 .filter-tag {
   display: inline-block; padding: 6px 16px; border-radius: 999px;
   font-size: 13px; font-weight: 500; border: 1px solid #e2e8f0;
@@ -57,360 +48,249 @@ body { -webkit-font-smoothing: antialiased; }
 .filter-tag.active { background: #6366f1; color: #fff; border-color: #6366f1; }
 </style>
 </head>
-<body class="bg-[#f5f7fa] font-sans text-gray-900 min-h-screen">
+<body class="bg-[#f5f7fa] text-gray-900 min-h-screen" style="font-family:system-ui,-apple-system,sans-serif">
 
-<!-- ====== 导航�?====== -->
+<!-- Nav -->
 <header class="sticky top-0 z-50 bg-white/88 backdrop-blur-md border-b border-gray-200">
 <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-
-  <!-- Logo -->
   <a href="index.html" class="flex items-center gap-1.5 no-underline shrink-0">
-    <span class="text-lg">🏛�?/span>
-    <span class="text-[19px] font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋�?/span>
-    <span class="text-[10px] font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-1.5 py-0.5 rounded" style="-webkit-text-fill-color:#fff;">校园</span>
+    <span class="text-lg">???</span>
+    <span class="text-[19px] font-bold tracking-tight" style="background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">&#x6CF0;&#x768A;&#x9601;</span>
+    <span class="text-[10px] font-semibold text-white px-1.5 py-0.5 rounded" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">&#x6821;&#x56ED;</span>
   </a>
-
-  <!-- 导航右侧：根据登录状态动态渲�?-->
-  <div class="flex items-center gap-1 sm:gap-2 text-sm" id="navRight">
-    <!-- JS 动态注�?-->
-  </div>
+  <div class="flex items-center gap-1 sm:gap-2 text-sm" id="navRight"></div>
 </div>
 </header>
 
-<!-- ====== 英雄�?/ 搜索�?====== -->
+<!-- Hero + Search -->
 <section class="text-center px-4 pt-10 pb-6 sm:pt-14 sm:pb-8">
 <div class="max-w-xl mx-auto">
 
-  <!-- 标题 + 标语 -->
   <h1 class="text-[26px] sm:text-[30px] font-extrabold tracking-tight leading-tight">
-    泰承文韵�?span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">皋聚书香</span>
+    &#x6CF0;&#x627F;&#x6587;&#x97F5;&#xFF0C;<span style="background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">&#x768A;&#x805A;&#x4E66;&#x9999;</span>
   </h1>
-  <p class="text-sm text-gray-500 mt-2 max-w-xs mx-auto">和同校同学直接交易二手教材，便宜又靠�?/p>
+  <p class="text-sm text-gray-500 mt-2 max-w-xs mx-auto">&#x548C;&#x540C;&#x6821;&#x540C;&#x5B66;&#x76F4;&#x63A5;&#x4EA4;&#x6613;&#x4E8C;&#x624B;&#x6559;&#x6750;&#xFF0C;&#x4FBF;&#x5B9C;&#x53C8;&#x9760;&#x8C31;</p>
 
-  <!-- 搜索�?-->
   <div class="flex gap-2 max-w-md mx-auto mt-5">
     <input type="text" id="searchInput"
-           placeholder="搜书名、作者�?
+           placeholder="&#x641C;&#x4E66;&#x540D;&#x3001;&#x4F5C;&#x8005;..."
            oninput="doSearch()"
-           class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none transition-all bg-white focus:border-brand-500 focus:ring-3 focus:ring-brand-500/12 placeholder:text-gray-300">
+           class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none transition-all bg-white focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/12">
     <button onclick="doSearch()"
-            class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-md hover:from-blue-700 hover:to-indigo-700 transition-all cursor-pointer shrink-0">
-      搜索
+            class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white cursor-pointer shrink-0" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
+      &#x641C;&#x7D22;
     </button>
   </div>
 
-  <!-- 统计数据 -->
   <div class="flex justify-center gap-6 sm:gap-10 mt-4 text-xs text-gray-400">
-    <span>📚 <strong class="text-sm text-gray-800" id="totalBooks">0</strong> 本书</span>
-    <span>💰 均价 <strong class="text-sm text-gray-800" id="avgPrice">�?</strong></span>
-    <span>🏫 同校交易</span>
+    <span>&#x1F4DA; <strong class="text-sm text-gray-800" id="totalBooks">0</strong> &#x672C;&#x4E66;</span>
+    <span>&#x1F4B0; &#x5747;&#x4EF7; <strong class="text-sm text-gray-800" id="avgPrice">&#xFFE5;0</strong></span>
+    <span>&#x1F3EB; &#x540C;&#x6821;&#x4EA4;&#x6613;</span>
   </div>
 
-  <!-- 品相分类筛�?-->
   <div class="filters-wrap flex gap-2 justify-center mt-4 overflow-x-auto pb-1">
-    <span class="filter-tag active" data-filter="全部" onclick="setFilter('全部')">全部</span>
-    <span class="filter-tag" data-filter="全新" onclick="setFilter('全新')">全新</span>
-    <span class="filter-tag" data-filter="九成�? onclick="setFilter('九成�?)">九成�?/span>
-    <span class="filter-tag" data-filter="八成�? onclick="setFilter('八成�?)">八成�?/span>
-    <span class="filter-tag" data-filter="有笔�? onclick="setFilter('有笔�?)">有笔�?/span>
-    <span class="filter-tag" data-filter="有破�? onclick="setFilter('有破�?)">有破�?/span>
+    <span class="filter-tag active" data-filter="&#x5168;&#x90E8;" onclick="setFilter('all')">&#x5168;&#x90E8;</span>
+    <span class="filter-tag" data-filter="&#x5168;&#x65B0;" onclick="setFilter('new')">&#x5168;&#x65B0;</span>
+    <span class="filter-tag" data-filter="&#x4E5D;&#x6210;&#x65B0;" onclick="setFilter('90')">&#x4E5D;&#x6210;&#x65B0;</span>
+    <span class="filter-tag" data-filter="&#x516B;&#x6210;&#x65B0;" onclick="setFilter('80')">&#x516B;&#x6210;&#x65B0;</span>
+    <span class="filter-tag" data-filter="&#x6709;&#x7B14;&#x8BB0;" onclick="setFilter('notes')">&#x6709;&#x7B14;&#x8BB0;</span>
+    <span class="filter-tag" data-filter="&#x6709;&#x7834;&#x635F;" onclick="setFilter('damaged')">&#x6709;&#x7834;&#x635F;</span>
   </div>
-
 </div>
 </section>
 
-<!-- ====== 书籍网格 ====== -->
+<!-- Book Grid -->
 <div class="max-w-6xl mx-auto px-4 pb-12">
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="bookGrid"></div>
 </div>
 
-<!-- ====== 关于我们 ====== -->
+<!-- About -->
 <section class="border-t border-gray-200 bg-white py-10 mt-4">
 <div class="max-w-3xl mx-auto px-4 text-center">
-  <div class="text-2xl mb-2">🏛�?/div>
-  <h2 class="text-sm font-bold text-gray-700">关于泰皋�?/h2>
+  <div class="text-2xl mb-2">???</div>
+  <h2 class="text-sm font-bold text-gray-700">&#x5173;&#x4E8E;&#x6CF0;&#x768A;&#x9601;</h2>
   <p class="text-xs text-gray-400 mt-2 leading-relaxed max-w-md mx-auto">
-    「泰承文韵，皋聚书香�?br>
-    泰皋阁是面向校园的二手教材交易平台，由同学自发搭建�?br>
-    我们相信每一本旧书都值得被再次翻阅�?    在这里，你可以低价买到学长学姐的教材，也可以把自己用过的书转给需要的同学�?  </p>
+    &#x300C;&#x6CF0;&#x627F;&#x6587;&#x97F5;&#xFF0C;&#x768A;&#x805A;&#x4E66;&#x9999;&#x300D;<br>
+    &#x6CF0;&#x768A;&#x9601;&#x662F;&#x9762;&#x5411;&#x6821;&#x56ED;&#x7684;&#x4E8C;&#x624B;&#x6559;&#x6750;&#x4EA4;&#x6613;&#x5E73;&#x53F0;&#xFF0C;&#x7531;&#x540C;&#x5B66;&#x81EA;&#x53D1;&#x642D;&#x5EFA;&#x3002;
+  </p>
   <div class="flex justify-center gap-6 mt-4 text-xs text-gray-300">
-    <span>📖 只限同校交易</span>
-    <span>🤝 当面验货</span>
-    <span>💰 价格自由</span>
+    <span>&#x1F4D6; &#x53EA;&#x9650;&#x540C;&#x6821;&#x4EA4;&#x6613;</span>
+    <span>&#x1F91D; &#x5F53;&#x9762;&#x9A8C;&#x8D27;</span>
+    <span>&#x1F4B0; &#x4EF7;&#x683C;&#x81EA;&#x7531;</span>
   </div>
 </div>
 </section>
 
-<!-- ====== Toast ====== -->
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-/* =============================================================
- * Supabase 配置（使�?REST API + fetch，无需外部 SDK CDN�? * ============================================================= */
-const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
+/* Supabase REST API */
+var SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
 
-/* =============================================================
- * 状态变�? * ============================================================= */
-let allBooks = [];           // 所有在售书�?let activeFilter = '全部';   // 当前选中的品相筛�?let searchQ = '';            // 当前搜索关键�?let currentUser = null;      // 当前登录用户
-let currentToken = null;     // 当前用户�?access_token
+var allBooks = [];
+var activeFilter = 'all';
+var searchQ = '';
 
-/* =============================================================
- * 工具函数
- * ============================================================= */
-function showToast(msg, type) {
+function sh(token) {
+  return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': '***' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
+}
+
+var _t = null;
+function showToast(m, type) {
   var t = document.getElementById('toast');
-  t.textContent = msg;
+  t.textContent = m;
   t.className = 'toast ' + (type || 'info');
   void t.offsetWidth;
   t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.classList.remove('show'); }, 3000);
+  clearTimeout(_t);
+  _t = setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-function escHtml(s) {
-  if (!s) return '';
-  var d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
+function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+/* 8s timeout fetch helper */
+function fetchWithTimeout(url, opt, ms) {
+  var c = new AbortController();
+  var id = setTimeout(function() { c.abort(); }, ms || 8000);
+  return fetch(url, Object.assign({}, opt, { signal: c.signal })).then(function(r) { clearTimeout(id); return r; });
 }
 
-/* 构�?Supabase REST 请求�?*/
-function supabaseHeaders(token) {
-  return {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY),
-    'Content-Type': 'application/json',
-  };
-}
-
-/* 通用 GET 请求 */
-async function supabaseGet(url) {
-  var res = await fetch(url, { headers: supabaseHeaders() });
-  if (!res.ok) throw new Error('API ' + res.status);
-  return await res.json();
-}
-
-/* =============================================================
- * �?localStorage 读取 Supabase 登录 session
- *（auth.html �?Supabase JS SDK 登录后会自动�?localStorage�? * ============================================================= */
-function getStoredSession() {
-  for (var key in localStorage) {
-    if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
-      try {
-        var data = JSON.parse(localStorage.getItem(key));
-        if (data && data.access_token) return data;
-      } catch(e) {}
+/* Read session from localStorage */
+function getSession() {
+  for (var k in localStorage) {
+    if (k.indexOf('sb-') === 0 && k.indexOf('-auth-token') > 0) {
+      try { var d = JSON.parse(localStorage.getItem(k)); if (d && d.access_token) return d; } catch(e) {}
     }
   }
   return null;
 }
 
-/* =============================================================
- * �?Supabase Auth REST API 获取当前用户
- * ============================================================= */
-async function fetchCurrentUser() {
-  var session = getStoredSession();
-  if (!session) return null;
-  try {
-    var res = await fetch(SUPABASE_URL + '/auth/v1/user', {
-      headers: supabaseHeaders(session.access_token),
-    });
-    if (!res.ok) return null;
-    currentToken = session.access_token;
-    return await res.json();
-  } catch(e) { return null; }
-}
-
-/* =============================================================
- * 导航栏渲染（根据登录状态）
- * ============================================================= */
-function renderNav() {
+/* Nav render */
+function renderNav(user) {
   var el = document.getElementById('navRight');
-  if (currentUser) {
-    var email = currentUser.email || '用户';
-    el.innerHTML =
-      '<span class="text-gray-500 text-xs sm:text-sm hidden sm:inline" title="' + escHtml(email) + '">👤 ' + escHtml(email) + '</span>' +
-      '<a href="sell.html" class="text-brand-600 hover:text-brand-700 font-medium px-2 py-1 no-underline">发布</a>' +
-      '<a href="#" onclick="event.preventDefault();showToast(\'📌 订单功能即将上线\',\'info\')" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline hidden sm:inline">订单</a>' +
-      '<button onclick="handleLogout()" class="text-gray-400 hover:text-gray-600 px-2 py-1 bg-transparent border-0 cursor-pointer text-sm">退�?/button>';
+  if (user) {
+    el.innerHTML = '<span class="text-gray-500 text-xs sm:text-sm hidden sm:inline" title="' + esc(user.email) + '">\u{1F464} ' + esc(user.email) + '</span>' +
+      '<a href="sell.html" class="text-indigo-600 hover:text-indigo-700 font-medium px-2 py-1 no-underline">\u53D1\u5E03</a>' +
+      '<a href="#" onclick="event.preventDefault();showToast(\'\u{1F4CC} \u8BA2\u5355\u529F\u80FD\u5373\u5C06\u4E0A\u7EBF\',\'info\')" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline hidden sm:inline">\u8BA2\u5355</a>' +
+      '<button onclick="logout()" class="text-gray-400 hover:text-gray-600 px-2 py-1 bg-transparent border-0 cursor-pointer text-sm">\u9000\u51FA</button>';
   } else {
-    el.innerHTML =
-      '<a href="auth.html?redirect=index.html" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline">登录</a>' +
+    el.innerHTML = '<a href="auth.html?redirect=index.html" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline">\u767B\u5F55</a>' +
       '<span class="text-gray-300">|</span>' +
-      '<a href="auth.html?redirect=index.html" class="text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-md px-3 py-1.5 rounded-lg font-medium no-underline">注册</a>';
+      '<a href="auth.html?redirect=index.html" class="text-white px-3 py-1.5 rounded-lg font-medium no-underline" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">\u6CE8\u518C</a>';
   }
 }
 
-/* =============================================================
- * 退出登录（REST API + 清除 localStorage�? * ============================================================= */
-async function handleLogout() {
-  try {
-    if (currentToken) {
-      await fetch(SUPABASE_URL + '/auth/v1/logout', {
-        method: 'POST',
-        headers: supabaseHeaders(currentToken),
-      });
-    }
-    // 清除所�?Supabase session 缓存
-    for (var key in localStorage) {
-      if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
-        localStorage.removeItem(key);
-      }
-    }
-    currentUser = null;
-    currentToken = null;
-    renderNav();
-    showToast('已退出登�?, 'info');
-  } catch (err) {
-    showToast('退出失�?, 'error');
+/* Logout */
+async function logout() {
+  var s = getSession();
+  if (s && s.access_token) {
+    try { await fetch(SUPABASE_URL + '/auth/v1/logout', { method: 'POST', headers: sh(s.access_token) }); } catch(e) {}
+    for (var k in localStorage) { if (k.indexOf('sb-') === 0 && k.indexOf('-auth-token') > 0) localStorage.removeItem(k); }
   }
+  renderNav(null);
+  showToast('\u5DF2\u9000\u51FA\u767B\u5F55', 'info');
 }
 
-/* =============================================================
- * 加载书籍数据（REST API�? * ============================================================= */
+/* Load books */
 async function loadBooks() {
   var grid = document.getElementById('bookGrid');
 
-  // ====== 显示骨架�?======
+  // Skeleton
   grid.innerHTML = '';
   for (var i = 0; i < 8; i++) {
-    grid.innerHTML +=
-      '<div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">' +
-        '<div class="aspect-[3/4] skel"></div>' +
-        '<div class="p-3 space-y-2">' +
-          '<div class="skel h-3.5 w-3/4"></div>' +
-          '<div class="skel h-3 w-1/2"></div>' +
-          '<div class="skel h-4 w-2/3"></div>' +
-        '</div>' +
-      '</div>';
+    grid.innerHTML += '<div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm"><div class="aspect-[3/4] skel"></div><div class="p-3 space-y-2"><div class="skel h-3.5 w-3/4"></div><div class="skel h-3 w-1/2"></div><div class="skel h-4 w-2/3"></div></div></div>';
   }
 
+  var timeoutTimer = setTimeout(function() {
+    if (grid) grid.innerHTML = '<div class="col-span-full text-center py-16"><p class="text-4xl mb-3">\u26A0\uFE0F</p><p class="text-gray-400 text-sm">\u52A0\u8F7D\u8D85\u65F6\uFF0C\u8BF7\u5237\u65B0\u91CD\u8BD5</p><button onclick="location.reload()" class="mt-3 px-5 py-2 rounded-lg text-sm font-semibold text-white border-0 cursor-pointer" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">\u5237\u65B0</button></div>';
+  }, 8000);
+
   try {
-    // ====== 读取当前登录用户 ======
-    currentUser = await fetchCurrentUser();
-    renderNav();
+    var session = getSession();
+    var user = null;
+    if (session) {
+      try {
+        var r = await fetchWithTimeout(SUPABASE_URL + '/auth/v1/user', { headers: sh(session.access_token) }, 5000);
+        if (r.ok) user = await r.json();
+      } catch(e) {}
+    }
+    renderNav(user);
 
-    // ====== REST API 查询在售书籍，按发布时间倒序 ======
-    var apiUrl = SUPABASE_URL + '/rest/v1/books' +
-      '?select=*' +
-      '&status=eq.在售' +
-      '&order=created_at.desc';
-
-    allBooks = await supabaseGet(apiUrl) || [];
-  } catch (err) {
-    console.error('数据加载失败:', err);
-    showToast('⚠️ 数据加载失败，请检查网�?, 'error');
+    var url = SUPABASE_URL + '/rest/v1/books?select=*&status=eq.\u5728\u552E&order=created_at.desc';
+    var r2 = await fetchWithTimeout(url, { headers: sh() });
+    if (r2.ok) allBooks = await r2.json() || [];
+  } catch(e) {
     allBooks = [];
   }
 
-  // ====== 渲染 ======
-  applyFilters();
+  clearTimeout(timeoutTimer);
+  applyFilter();
 }
 
-/* =============================================================
- * 品相标签样式映射
- * ============================================================= */
-function getCondStyle(condition) {
-  var map = {
-    '全新':   'bg-green-50 text-green-700 border border-green-200',
-    '九成�?: 'bg-blue-50 text-blue-700 border border-blue-200',
-    '八成�?: 'bg-amber-50 text-amber-700 border border-amber-200',
-    '有笔�?: 'bg-orange-50 text-orange-700 border border-orange-200',
-    '有破�?: 'bg-red-50 text-red-700 border border-red-200',
-  };
-  return map[condition] || 'bg-gray-50 text-gray-600 border border-gray-200';
+function condCls(c) {
+  var m = { '\u5168\u65B0': 'bg-green-50 text-green-700 border border-green-200', '\u4E5D\u6210\u65B0': 'bg-blue-50 text-blue-700 border border-blue-200', '\u516B\u6210\u65B0': 'bg-amber-50 text-amber-700 border border-amber-200', '\u6709\u7B14\u8BB0': 'bg-orange-50 text-orange-700 border border-orange-200', '\u6709\u7834\u635F': 'bg-red-50 text-red-700 border border-red-200' };
+  return m[c] || 'bg-gray-50 text-gray-600 border border-gray-200';
 }
 
-/* =============================================================
- * 筛�?+ 渲染
- * ============================================================= */
-function applyFilters() {
+function condName(c) {
+  var m = { 'all': '\u5168\u90E8', 'new': '\u5168\u65B0', '90': '\u4E5D\u6210\u65B0', '80': '\u516B\u6210\u65B0', 'notes': '\u6709\u7B14\u8BB0', 'damaged': '\u6709\u7834\u635F' };
+  return m[c] || c;
+}
+
+/* Apply filters & render */
+function applyFilter() {
   var grid = document.getElementById('bookGrid');
+  var filtered = allBooks;
 
-  // 先按搜索词筛�?  var filtered = allBooks;
-  if (searchQ) {
-    var q = searchQ.toLowerCase();
-    filtered = filtered.filter(function(b) {
-      return (b.title && b.title.toLowerCase().includes(q)) ||
-             (b.author && b.author.toLowerCase().includes(q));
-    });
+  // Search
+  var q = (document.getElementById('searchInput').value || '').toLowerCase();
+  if (q) {
+    filtered = filtered.filter(function(b) { return (b.title && b.title.toLowerCase().indexOf(q) >= 0) || (b.author && b.author.toLowerCase().indexOf(q) >= 0); });
   }
 
-  // 再按品相筛�?  if (activeFilter !== '全部') {
-    filtered = filtered.filter(function(b) {
-      return b.condition === activeFilter;
-    });
+  // Condition filter
+  var cond = condName(activeFilter);
+  if (cond !== '\u5168\u90E8') {
+    filtered = filtered.filter(function(b) { return b.condition === cond; });
   }
 
-  // 更新统计
+  // Stats
   document.getElementById('totalBooks').textContent = filtered.length;
-  var avg = filtered.length > 0
-    ? (filtered.reduce(function(s, b) { return s + parseFloat(b.price || 0); }, 0) / filtered.length).toFixed(1)
-    : '0';
-  document.getElementById('avgPrice').textContent = '�? + avg;
+  var avg = filtered.length > 0 ? (filtered.reduce(function(s, b) { return s + parseFloat(b.price || 0); }, 0) / filtered.length).toFixed(1) : '0';
+  document.getElementById('avgPrice').textContent = '\uFFE5' + avg;
 
-  // ====== 空状�?======
+  // Empty state
   if (filtered.length === 0) {
-    var isSearchEmpty = activeFilter !== '全部' || searchQ;
-    grid.innerHTML =
-      '<div class="col-span-full text-center py-16 sm:py-20">' +
-        '<div class="text-4xl mb-3">' + (isSearchEmpty ? '🔍' : '📭') + '</div>' +
-        '<p class="text-sm text-gray-400 mb-1">' +
-          (isSearchEmpty ? '没有找到匹配的书�? : '暂无在售书籍') +
-        '</p>' +
-        (!isSearchEmpty
-          ? '<a href="sell.html" class="inline-block mt-3 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-md transition-all no-underline">📤 去发布一本吧</a>'
-          : '<a href="index.html" class="inline-block mt-3 px-5 py-2 rounded-lg text-sm text-brand-600 hover:text-brand-700 no-underline">清除筛�?/a>') +
-      '</div>';
+    var empty = q || cond !== '\u5168\u90E8';
+    grid.innerHTML = '<div class="col-span-full text-center py-16"><div class="text-4xl mb-3">' + (empty ? '\uD83D\uDD0D' : '\uD83D\uDCED') + '</div><p class="text-sm text-gray-400 mb-1">' + (empty ? '\u6CA1\u6709\u627E\u5230\u5339\u914D\u7684\u4E66\u7C4D' : '\u6682\u65E0\u5728\u552E\u4E66\u7C4D') + '</p>' + (empty ? '' : '<a href="sell.html" class="inline-block mt-3 px-6 py-2.5 rounded-xl text-sm font-semibold text-white no-underline" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">\uD83D\uDCE4 \u53BB\u53D1\u5E03\u4E00\u672C\u5427</a>') + '</div>';
     return;
   }
 
-  // ====== 渲染卡片 ======
+  // Cards
   grid.innerHTML = filtered.map(function(b) {
-    var condStyle = getCondStyle(b.condition);
     var cover = b.cover_url
-      ? '<img src="' + escHtml(b.cover_url) + '" alt="" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="hidden items-center justify-center h-full text-3xl text-brand-500">📚</div>'
-      : '<div class="flex items-center justify-center h-full text-3xl text-brand-500">📚</div>';
+      ? '<img src="' + esc(b.cover_url) + '" alt="" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="hidden items-center justify-center h-full text-3xl" style="color:#6366f1">\uD83D\uDCDA</div>'
+      : '<div class="flex items-center justify-center h-full text-3xl" style="color:#6366f1">\uD83D\uDCDA</div>';
 
     return '<a href="book.html?id=' + b.id + '" class="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 no-underline text-inherit">' +
-      '<div class="aspect-[3/4] bg-gradient-to-br from-brand-50 to-indigo-50 overflow-hidden relative">' +
-        cover +
-      '</div>' +
+      '<div class="aspect-[3/4] overflow-hidden relative" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff)">' + cover + '</div>' +
       '<div class="p-3 sm:p-3.5">' +
-        '<div class="text-sm font-semibold text-gray-900 leading-snug truncate mb-0.5">' + escHtml(b.title) + '</div>' +
-        '<div class="text-xs text-gray-400 truncate mb-2">' + escHtml(b.author) + '</div>' +
+        '<div class="text-sm font-semibold text-gray-900 leading-snug truncate mb-0.5">' + esc(b.title) + '</div>' +
+        '<div class="text-xs text-gray-400 truncate mb-2">' + esc(b.author) + '</div>' +
         '<div class="flex items-center justify-between">' +
-          '<span class="text-base sm:text-lg font-bold text-red-500">�? + b.price + '</span>' +
-          '<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold border ' + condStyle + '">' + b.condition + '</span>' +
+          '<span class="text-base sm:text-lg font-bold" style="color:#ef4444">\uFFE5' + b.price + '</span>' +
+          '<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold border ' + condCls(b.condition) + '">' + b.condition + '</span>' +
         '</div>' +
       '</div>' +
     '</a>';
   }).join('');
 }
 
-/* =============================================================
- * 搜索 & 筛�? * ============================================================= */
-function doSearch() {
-  searchQ = document.getElementById('searchInput').value;
-  applyFilters();
-}
+function doSearch() { applyFilter(); }
+function setFilter(f) { activeFilter = f; var t = document.querySelectorAll('.filter-tag'); for (var i = 0; i < t.length; i++) { t[i].className = t[i].className.replace(' active', ''); if (t[i].getAttribute('data-filter') === f) t[i].className += ' active'; } applyFilter(); }
 
-function setFilter(filter) {
-  activeFilter = filter;
-  var tags = document.querySelectorAll('.filter-tag');
-  for (var i = 0; i < tags.length; i++) {
-    tags[i].className = tags[i].className.replace(' active', '');
-    if (tags[i].getAttribute('data-filter') === filter) {
-      tags[i].className += ' active';
-    }
-  }
-  applyFilters();
-}
-
-/* =============================================================
- * 启动
- * ============================================================= */
 loadBooks();
 </script>
 
