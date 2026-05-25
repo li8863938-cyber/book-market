@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -158,15 +158,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
 
 <div class="toast" id="toast"></div>
 
-<script>
-const LOCAL_AUTH_KEY = 'taigege_auth';
-
-// 本地用户数据
+const LOCAL_AUTH_KEY = '***';
 let currentTab = 'login';
 
 function switchTab(tab) {
-  currentTab = tab;
-  var isLogin = tab === 'login';
+  currentTab = tab; var isLogin = tab === 'login';
   document.getElementById('tabLogin').className = 'tab-btn' + (isLogin ? ' active' : '');
   document.getElementById('tabRegister').className = 'tab-btn' + (isLogin ? '' : ' active');
   document.getElementById('loginForm').className = 'card-form' + (isLogin ? ' active' : '');
@@ -176,98 +172,47 @@ function switchTab(tab) {
   document.getElementById('switchLink').onclick = function(e) { e.preventDefault(); switchTab(isLogin ? 'register' : 'login'); };
 }
 
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function(){t.classList.remove('show')}, 2500);
-}
+function showToast(msg) { var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show')},2500) }
 
-function setLoading(id, loading) {
-  var btn = document.getElementById(id);
-  btn.disabled = loading;
-  btn.innerHTML = loading ? '<span class="spinner"></span> 处理中...' : (id === 'loginBtn' ? '登录' : '注册');
-}
+function setLoading(id,loading) { var btn=document.getElementById(id);btn.disabled=loading;btn.innerHTML=loading?'<span class="spinner"></span> 处理中...':(id==='loginBtn'?'登录':'注册') }
 
-// 登录
+// 登录 — 纯本地存储
 function handleLogin(e) {
   e.preventDefault();
-  var email = document.getElementById('loginEmail').value.trim();
-  var pw = document.getElementById('loginPassword').value;
-  setLoading('loginBtn', true);
-
-  // 先尝试 Supabase（如果 CDN 加载成功）
-  if (typeof supabaseClient !== 'undefined' && supabaseClient) {
-    supabaseClient.auth.signInWithPassword({email:email,password:pw}).then(function(r){
-      if (!r.error) { loginSuccess(email, email.split('@')[0]); return; }
-      showToast('❌ ' + (r.error.message.includes('Invalid')?'邮箱或密码错误':'登录失败'));
-      setLoading('loginBtn',false);
-    }).catch(function(){ tryLocalLogin(email,pw); });
-  } else {
-    tryLocalLogin(email,pw);
-  }
-}
-
-function tryLocalLogin(email, pw) {
-  var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
-  if (!users[email]) { showToast('❌ 该邮箱未注册'); setLoading('loginBtn',false); return; }
-  if (users[email].password !== pw) { showToast('❌ 密码错误'); setLoading('loginBtn',false); return; }
-  loginSuccess(email, users[email].nickname);
-}
-
-function loginSuccess(email, nick) {
-  localStorage.setItem(LOCAL_AUTH_KEY+'_user', JSON.stringify({email:email,nickname:nick}));
+  var email=document.getElementById('loginEmail').value.trim();
+  var pw=document.getElementById('loginPassword').value;
+  setLoading('loginBtn',true);
+  var users=JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
+  if(!users[email]){showToast('❌ 该邮箱未注册');setLoading('loginBtn',false);return}
+  if(users[email].password!==pw){showToast('❌ 密码错误');setLoading('loginBtn',false);return}
+  localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:users[email].nickname}));
   showToast('✅ 登录成功！');
-  setTimeout(function(){window.location.href='index.html'}, 800);
+  setTimeout(function(){window.location.href='index.html'},800);
 }
 
-// 注册
+// 注册 — 纯本地存储
 function handleRegister(e) {
   e.preventDefault();
-  var email = document.getElementById('regEmail').value.trim();
-  var nick = document.getElementById('regNickname').value.trim();
-  var pw = document.getElementById('regPassword').value;
-  var phone = document.getElementById('regPhone').value.trim();
-  if (!nick||nick.length<2){showToast('⚠️ 昵称至少2个字符');return}
+  var email=document.getElementById('regEmail').value.trim();
+  var nick=document.getElementById('regNickname').value.trim();
+  var pw=document.getElementById('regPassword').value;
+  var phone=document.getElementById('regPhone').value.trim();
+  if(!nick||nick.length<2){showToast('⚠️ 昵称至少2个字符');return}
   setLoading('registerBtn',true);
-
-  // 先尝试 Supabase
-  if (typeof supabaseClient !== 'undefined' && supabaseClient) {
-    supabaseClient.auth.signUp({email:email,password:pw,options:{data:{nickname:nick,phone:phone||null}}}).then(function(r){
-      if (!r.error) { showToast('✅ 注册成功！'); saveLocalUser(email,nick,pw,phone); setTimeout(function(){window.location.href='index.html'},1000); return; }
-      showToast('❌ ' + (r.error.message.includes('already')?'该邮箱已注册':'注册失败'));
-      setLoading('registerBtn',false);
-    }).catch(function(){ tryLocalRegister(email,nick,pw,phone); });
-  } else {
-    tryLocalRegister(email,nick,pw,phone);
-  }
-}
-
-function tryLocalRegister(email, nick, pw, phone) {
-  var users = JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
-  if (users[email]) { showToast('❌ 该邮箱已注册'); setLoading('registerBtn',false); return; }
-  users[email] = {email:email,nickname:nick,password:pw,phone:phone};
-  localStorage.setItem(LOCAL_AUTH_KEY+'_users', JSON.stringify(users));
+  var users=JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
+  if(users[email]){showToast('❌ 该邮箱已注册');setLoading('registerBtn',false);return}
+  users[email]={email:email,nickname:nick,password:pw,phone:phone};
+  localStorage.setItem(LOCAL_AUTH_KEY+'_users',JSON.stringify(users));
+  localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nick}));
   showToast('✅ 注册成功！');
-  saveLocalUser(email,nick,pw,phone);
-  setTimeout(function(){window.location.href='index.html'}, 1000);
+  setLoading('registerBtn',false);
+  setTimeout(function(){window.location.href='index.html'},1000);
 }
 
-function saveLocalUser(email,nick){localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nick}));setLoading('registerBtn',false)}
-
-// 页面加载后异步加载 Supabase
-(function(){
-  var s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-  s.onload = function() {
-    try {
-      window.supabaseClient = createClient('https://zqhzigukoikdwcbhzkysk.supabase.co', 'eyJhbG…khdQ');
-    } catch(e){ window.supabaseClient = null; }
-  };
-  s.onerror = function(){ window.supabaseClient = null; };
-  document.head.appendChild(s);
-})();
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&currentTab==='login')document.getElementById('loginForm').requestSubmit();
+  if(e.key==='Enter'&&currentTab==='register')document.getElementById('registerForm').requestSubmit();
+});
 </script>
-
 </body>
 </html>
