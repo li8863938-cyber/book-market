@@ -460,7 +460,6 @@ function stopScan(){
   document.getElementById('scanModal').classList.remove('open')
   if(html5QrCode){try{html5QrCode.stop().catch(()=>{})}catch(e){}html5QrCode=null}
 }
-}
 
 // Price reference
 function updatePriceRef(){
