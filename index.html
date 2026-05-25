@@ -101,7 +101,7 @@ nav .sell-btn:hover{background:var(--primary-dark)}
 .btn-success:hover{background:#059669}
 
 /* DETAIL MODAL — 闲鱼 style */
-.detail-modal{max-width:700px;max-height:90vh}.detail-modal .detail-scroll{overflow-y:auto;max-height:calc(90vh - 52px)}
+.detail-modal{max-width:700px;max-height:90vh;display:flex;flex-direction:column}.detail-modal .detail-scroll{overflow-y:auto;flex:1;min-height:0}
 .detail-top{position:relative;width:100%;max-height:360px;overflow:hidden;background:linear-gradient(135deg,var(--primary-light),#e0e7ff)}
 .detail-top img{width:100%;max-height:360px;object-fit:contain;display:block;background:#fff}
 .detail-top .no-img{display:flex;align-items:center;justify-content:center;padding:60px 20px;font-size:64px;color:var(--primary)}
@@ -334,7 +334,8 @@ footer{text-align:center;padding:20px;color:var(--text3);font-size:13px;border-t
 <h2>📖 商品详情</h2>
 <button class="close" onclick="closeModal('detailModal')">&times;</button>
 </div>
-<div class="detail-scroll"><div id="detailContent"></div></div>
+<div class="detail-scroll" id="detailScroll"><div id="detailContent"></div></div>
+    <div class="detail-bottom" id="detailBottom"></div>
 </div>
 </div>
 
@@ -437,7 +438,7 @@ function resetAll(){document.getElementById('searchInput').value='';document.get
 
 // Add book modal
 function openAddBook(){document.getElementById('addModal').classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='detailModal')document.getElementById('detailBottom').innerHTML=''}
 
 let bookPhotos=[];
 function previewBookPhoto(e){
@@ -523,11 +524,10 @@ descHtml+
 '<div class="left"><div class="avatar">👤</div><div><div class="sname">校园卖家</div><div class="stime">'+timeAgo(b.time)+'发布</div></div></div>'+
 '<button class="btn-contact" onclick="contactSeller(\''+esc(b.contact)+'\',\''+(b.qrData||'')+'\')">📱 联系卖家</button>'+
 '</div>'+
-'</div>'+
-'<div class="detail-bottom">'+
-'<button class="btn btn-success btn-lg" onclick="contactSeller(\''+esc(b.contact)+'\',\''+(b.qrData||'')+'\')">📱 联系卖家</button>'+
-'<button class="btn" style="background:#f1f5f9;color:var(--text2);border:1px solid var(--border)" onclick="deleteBook('+b.id+')">🗑️ 下架</button>'+
 '</div>';
+document.getElementById('detailBottom').innerHTML=
+'<button class="btn btn-success btn-lg" onclick="contactSeller(\''+esc(b.contact)+'\',\''+(b.qrData||'')+'\')">📱 联系卖家</button>'+
+'<button class="btn" style="background:#f1f5f9;color:var(--text2);border:1px solid var(--border)" onclick="deleteBook('+b.id+')">🗑️ 下架</button>';
 document.getElementById('detailModal').classList.add('open');
 }
 
