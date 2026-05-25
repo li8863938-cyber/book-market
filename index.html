@@ -4,182 +4,281 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>泰皋阁 · 校园二手书</title>
-<style>
-:root{--p:#6366f1;--pl:#eef2ff;--pd:#4f46e5;--bg:#f5f7fa;--c:#fff;--t:#0f172a;--t2:#475569;--t3:#94a3b8;--b:#e2e8f0;--s:#10b981;--d:#ef4444;--r:14px;--rs:10px;--sh:0 1px 2px rgba(0,0,0,.04),0 1px 4px rgba(0,0,0,.06);--sh-lg:0 4px 20px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.04)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
 
-header{background:rgba(255,255,255,.88);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-.header-in{max-width:1080px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
-.logo{font-size:19px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none;letter-spacing:-.3px}
-.logo-badge{background:var(--p);color:#fff;font-size:10px;padding:2px 7px;border-radius:5px;font-weight:600}
-.nav-right{display:flex;align-items:center;gap:8px;font-size:13px}
-.nav-right a{text-decoration:none;transition:color .2s}
-.nav-right .btn-p{background:var(--p);color:#fff;padding:5px 12px;border-radius:8px;font-weight:500}
-.nav-right .btn-p:hover{background:var(--pd)}
-.nav-right .btn-g{color:var(--t2);padding:5px 10px;border-radius:8px}
-.nav-right .btn-g:hover{background:var(--pl);color:var(--p)}
-
-.hero{text-align:center;padding:48px 16px 28px}
-.hero h1{font-size:28px;font-weight:800;letter-spacing:-.5px}
-.hero h1 .hl{background:linear-gradient(135deg,var(--p),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{color:var(--t2);font-size:14px;max-width:400px;margin:4px auto 16px}
-.search-in{display:flex;gap:6px;max-width:440px;margin:0 auto}
-.search-in input{flex:1;padding:10px 14px;border:1px solid var(--b);border-radius:10px;font-size:14px;outline:0;transition:.2s;background:#fff}
-.search-in input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
-.search-in button{padding:10px 18px;border:0;border-radius:10px;font-size:14px;cursor:pointer;background:var(--p);color:#fff;font-weight:600}
-.search-in button:hover{background:var(--pd)}
-.stats{display:flex;justify-content:center;gap:28px;margin-top:16px;font-size:13px;color:var(--t3)}
-.stats strong{color:var(--t);font-size:15px;font-weight:700}
-.filters{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.filters .tag{padding:5px 14px;border-radius:20px;font-size:13px;border:1px solid var(--b);background:#fff;cursor:pointer;transition:.2s;color:var(--t2)}
-.filters .tag:hover{border-color:var(--p);color:var(--p)}
-.filters .active{background:var(--p);color:#fff;border-color:var(--p)}
-
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:14px 0 40px;max-width:1080px;margin:0 auto;padding-left:20px;padding-right:20px}
-.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);border:1px solid var(--b);overflow:hidden;text-decoration:none;color:inherit;display:block}
-.card:hover{box-shadow:var(--sh-lg);transform:translateY(-4px);border-color:var(--p)}
-.card .img-w{width:100%;aspect-ratio:3/4;overflow:hidden;background:linear-gradient(135deg,var(--pl),#e0e7ff);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--p)}
-.card img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
-.card:hover img{transform:scale(1.04)}
-.card .body{padding:12px 14px 14px}
-.card .title{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.card .author{font-size:12px;color:var(--t2);margin-bottom:5px}
-.card .meta{display:flex;justify-content:space-between;align-items:center}
-.card .price{font-size:18px;font-weight:700;color:var(--d)}
-.cond{padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600}
-.cond-全新{background:#d1fae5;color:#065f46}.cond-九成新{background:#dbeafe;color:#1e40af}.cond-八成新{background:#fef3c7;color:#92400e}.cond-有笔记{background:#fed7aa;color:#9a3412}.cond-有破损{background:#fce4ec;color:#b91c1c}
-
-.empty{text-align:center;padding:60px 16px;color:var(--t2);grid-column:1/-1}
-.empty .icon{font-size:48px;margin-bottom:8px}
-.empty p{font-size:14px}
-.empty a{display:inline-block;margin-top:12px;padding:10px 24px;background:var(--p);color:#fff;border-radius:10px;text-decoration:none;font-size:14px;font-weight:500}
-
-@keyframes sh{0%{opacity:.6}50%{opacity:1}100%{opacity:.6}}
-.skel{animation:sh 1.5s ease-in-out infinite;background:#e2e8f0;border-radius:8px}
-
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);z-index:200;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.18)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-@media(max-width:640px){
-.hero{padding:32px 14px 22px}.hero h1{font-size:23px}.hero p{font-size:13px}
-.grid{grid-template-columns:1fr;gap:12px;padding:8px 16px 24px}.card .img-w{aspect-ratio:16/10}
-.stats{gap:14px;font-size:11px;flex-wrap:wrap}.filters{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}.filters .tag{flex-shrink:0}
-}
-</style>
-</head>
-<body>
+<!-- Tailwind CSS + Inter 字体 + Supabase SDK -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
 <script>
-// ====== Supabase 配置（替换为你的真实密钥） ======
-const SUPABASE_URL = 'https://zqhzigukoikdwcbhzkysk.supabase.co';
-const SUPABASE_ANON_KEY = '***';
-
-// ====== Supabase REST API 辅助函数（无需 CDN 库） ======
-async function supabaseQuery(table, params) {
-  var url = SUPABASE_URL + '/rest/v1/' + table + '?select=*';
-  if (params) {
-    for (var k in params) {
-      url += '&' + k + '=' + encodeURIComponent(params[k]);
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'] },
+      colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3' } }
     }
   }
-  var res = await fetch(url, {
-    headers: {
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-      'Accept': 'application/json',
-    }
-  });
-  if (!res.ok) throw new Error('API error: ' + res.status);
-  return await res.json();
-}
-
-async function supabaseInsert(table, data) {
-  var res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
-    method: 'POST',
-    headers: {
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal',
-    },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Insert error: ' + res.status);
-  return true;
 }
 </script>
 
-<header>
-<div class="header-in">
-  <a href="index.html" class="logo">🏛️ 泰皋阁<span class="logo-badge">校园</span></a>
-  <div class="nav-right" id="navRight">
-    <a href="auth.html" class="btn-g">登录</a>
-    <a href="auth.html" class="btn-p">注册</a>
+<style>
+body { -webkit-font-smoothing: antialiased; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  padding: 12px 28px; border-radius: 12px;
+  font-size: 14px; font-weight: 500; opacity: 0;
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+  z-index: 200; pointer-events: none;
+  box-shadow: 0 6px 24px rgba(0,0,0,.18);
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.error   { background: #991b1b; color: #fff; }
+.toast.success { background: #065f46; color: #fff; }
+.toast.info    { background: #1e293b; color: #fff; }
+
+/* 骨架屏动画 */
+@keyframes shimmer { 0%{opacity:.5} 50%{opacity:1} 100%{opacity:.5} }
+.skel { animation: shimmer 1.5s ease-in-out infinite; background: #e2e8f0; border-radius: 8px; }
+
+/* 自定义滚动条 (分类筛选) */
+.filters-wrap::-webkit-scrollbar { height: 0; }
+</style>
+</head>
+<body class="bg-[#f5f7fa] font-sans text-gray-900 min-h-screen">
+
+<!-- ====== 导航栏 ====== -->
+<header class="sticky top-0 z-50 bg-white/88 backdrop-blur-md border-b border-gray-200">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+
+  <!-- Logo -->
+  <a href="index.html" class="flex items-center gap-1.5 no-underline shrink-0">
+    <span class="text-lg">🏛️</span>
+    <span class="text-[19px] font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋阁</span>
+    <span class="text-[10px] font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-1.5 py-0.5 rounded" style="-webkit-text-fill-color:#fff;">校园</span>
+  </a>
+
+  <!-- 导航右侧：根据登录状态动态渲染 -->
+  <div class="flex items-center gap-1 sm:gap-2 text-sm" id="navRight">
+    <!-- JS 动态注入 -->
   </div>
 </div>
 </header>
 
-<section class="hero">
+<!-- ====== 英雄区 / 搜索区 ====== -->
+<section class="text-center px-4 pt-10 pb-6 sm:pt-14 sm:pb-8">
 <div class="max-w-xl mx-auto">
-  <h1>二手教材，<span class="hl">便宜又靠谱</span></h1>
-  <p>和同校同学直接交易，当面看货，省下一半书费</p>
-  <div class="search-in">
-    <input type="text" id="searchInput" placeholder="搜书名、作者..." oninput="doSearch()">
-    <button onclick="doSearch()">搜索</button>
+
+  <!-- 标题 + 标语 -->
+  <h1 class="text-[26px] sm:text-[30px] font-extrabold tracking-tight leading-tight">
+    泰承文韵，<span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">皋聚书香</span>
+  </h1>
+  <p class="text-sm text-gray-500 mt-2 max-w-xs mx-auto">和同校同学直接交易二手教材，便宜又靠谱</p>
+
+  <!-- 搜索框 -->
+  <div class="flex gap-2 max-w-md mx-auto mt-5">
+    <input type="text" id="searchInput"
+           placeholder="搜书名、作者…"
+           oninput="doSearch()"
+           class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none transition-all bg-white focus:border-brand-500 focus:ring-3 focus:ring-brand-500/12 placeholder:text-gray-300">
+    <button onclick="doSearch()"
+            class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-md hover:from-blue-700 hover:to-indigo-700 transition-all cursor-pointer shrink-0">
+      搜索
+    </button>
   </div>
-  <div class="stats">
-    <span>📚 <strong id="totalBooks">0</strong> 本书</span>
-    <span>💰 均价 <strong id="avgPrice">¥0</strong></span>
+
+  <!-- 统计数据 -->
+  <div class="flex justify-center gap-6 sm:gap-10 mt-4 text-xs text-gray-400">
+    <span>📚 <strong class="text-sm text-gray-800" id="totalBooks">0</strong> 本书</span>
+    <span>💰 均价 <strong class="text-sm text-gray-800" id="avgPrice">￥0</strong></span>
     <span>🏫 同校交易</span>
   </div>
-  <div class="filters" id="filters"></div>
+
+  <!-- 品相分类筛选 -->
+  <div class="filters-wrap flex gap-2 justify-center mt-4 overflow-x-auto pb-1">
+    <span class="filter-tag active" data-filter="全部" onclick="setFilter('全部')">全部</span>
+    <span class="filter-tag" data-filter="全新" onclick="setFilter('全新')">全新</span>
+    <span class="filter-tag" data-filter="九成新" onclick="setFilter('九成新')">九成新</span>
+    <span class="filter-tag" data-filter="八成新" onclick="setFilter('八成新')">八成新</span>
+    <span class="filter-tag" data-filter="有笔记" onclick="setFilter('有笔记')">有笔记</span>
+    <span class="filter-tag" data-filter="有破损" onclick="setFilter('有破损')">有破损</span>
+  </div>
+
 </div>
 </section>
 
-<div class="grid" id="bookGrid"></div>
+<!-- ====== 书籍网格 ====== -->
+<div class="max-w-6xl mx-auto px-4 pb-12">
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="bookGrid"></div>
+</div>
 
+<!-- ====== 关于我们 ====== -->
+<section class="border-t border-gray-200 bg-white py-10 mt-4">
+<div class="max-w-3xl mx-auto px-4 text-center">
+  <div class="text-2xl mb-2">🏛️</div>
+  <h2 class="text-sm font-bold text-gray-700">关于泰皋阁</h2>
+  <p class="text-xs text-gray-400 mt-2 leading-relaxed max-w-md mx-auto">
+    「泰承文韵，皋聚书香」<br>
+    泰皋阁是面向校园的二手教材交易平台，由同学自发搭建。<br>
+    我们相信每一本旧书都值得被再次翻阅。
+    在这里，你可以低价买到学长学姐的教材，也可以把自己用过的书转给需要的同学。
+  </p>
+  <div class="flex justify-center gap-6 mt-4 text-xs text-gray-300">
+    <span>📖 只限同校交易</span>
+    <span>🤝 当面验货</span>
+    <span>💰 价格自由</span>
+  </div>
+</div>
+</section>
+
+<!-- ====== Toast ====== -->
 <div class="toast" id="toast"></div>
 
 <script>
-const CATS = ['全部','理工','文科','外语','计算机','医学','考试','小说','其他'];
-var allBooks = [];
-var activeCat = '全部';
-var searchQ = '';
+/* =============================================================
+ * Supabase 配置
+ * ============================================================= */
+const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_pub…5iz7';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function showToast(m) { var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show')},2500) }
+/* =============================================================
+ * 状态变量
+ * ============================================================= */
+let allBooks = [];           // 所有在售书籍
+let filteredBooks = [];      // 当前筛选后的书籍
+let activeFilter = '全部';   // 当前选中的品相筛选
+let searchQ = '';            // 当前搜索关键词
+let currentUser = null;      // 当前登录用户
 
-// ====== 加载书籍 ======
+/* =============================================================
+ * 工具函数
+ * ============================================================= */
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'info');
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+/* =============================================================
+ * 导航栏渲染（根据登录状态）
+ * ============================================================= */
+function renderNav() {
+  var el = document.getElementById('navRight');
+  if (currentUser) {
+    // 已登录
+    var email = currentUser.email || '用户';
+    el.innerHTML =
+      '<span class="text-gray-500 text-xs sm:text-sm hidden sm:inline" title="' + escHtml(email) + '">👤 ' + escHtml(email) + '</span>' +
+      '<a href="sell.html" class="text-brand-600 hover:text-brand-700 font-medium px-2 py-1 no-underline">发布</a>' +
+      '<a href="#" onclick="event.preventDefault();showToast(\'📌 订单功能即将上线\',\'info\')" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline hidden sm:inline">订单</a>' +
+      '<button onclick="handleLogout()" class="text-gray-400 hover:text-gray-600 px-2 py-1 bg-transparent border-0 cursor-pointer text-sm">退出</button>';
+  } else {
+    // 未登录
+    el.innerHTML =
+      '<a href="auth.html?redirect=index.html" class="text-gray-500 hover:text-gray-700 px-2 py-1 no-underline">登录</a>' +
+      '<span class="text-gray-300">|</span>' +
+      '<a href="auth.html?redirect=index.html" class="text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-md px-3 py-1.5 rounded-lg font-medium no-underline">注册</a>';
+  }
+}
+
+/* =============================================================
+ * 退出登录
+ * ============================================================= */
+async function handleLogout() {
+  try {
+    await supabase.auth.signOut();
+    currentUser = null;
+    renderNav();
+    showToast('已退出登录', 'info');
+  } catch (err) {
+    showToast('退出失败', 'error');
+  }
+}
+
+/* =============================================================
+ * 加载书籍数据
+ * ============================================================= */
 async function loadBooks() {
   var grid = document.getElementById('bookGrid');
+
+  // ====== 显示骨架屏 ======
   grid.innerHTML = '';
   for (var i = 0; i < 8; i++) {
-    grid.innerHTML += '<div class="card" style="cursor:default;pointer-events:none;padding:0;border:none"><div class="img-w skel" style="aspect-ratio:3/4"></div><div class="body" style="padding:12px 14px"><div class="skel" style="height:14px;width:75%;margin-bottom:6px"></div><div class="skel" style="height:12px;width:50%;margin-bottom:8px"></div><div class="skel" style="height:16px;width:60%"></div></div></div>';
+    grid.innerHTML +=
+      '<div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">' +
+        '<div class="aspect-[3/4] skel"></div>' +
+        '<div class="p-3 space-y-2">' +
+          '<div class="skel h-3.5 w-3/4"></div>' +
+          '<div class="skel h-3 w-1/2"></div>' +
+          '<div class="skel h-4 w-2/3"></div>' +
+        '</div>' +
+      '</div>';
   }
 
   try {
-    // 从 Supabase 查询在售书籍
-    allBooks = await supabaseQuery('books', { 'status': 'eq.在售', 'order': 'created_at.desc' });
-  } catch(e) {
-    showToast('⚠️ 数据加载失败');
+    // ====== 获取当前用户 ======
+    var { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+    }
+    renderNav();
+
+    // ====== 查询在售书籍，按发布时间倒序 ======
+    var { data: books, error } = await supabase
+      .from('books')
+      .select('*')
+      .eq('status', '在售')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    allBooks = books || [];
+  } catch (err) {
+    console.error('数据加载失败:', err);
+    showToast('⚠️ 数据加载失败，请检查网络', 'error');
     allBooks = [];
   }
 
-  renderFilters();
-  renderBooks();
+  // ====== 渲染 ======
+  applyFilters();
 }
 
-// ====== 渲染分类筛选 ======
-function renderFilters() {
-  var el = document.getElementById('filters');
-  el.innerHTML = CATS.map(function(c) {
-    return '<span class="tag' + (c === activeCat ? ' active' : '') + '" onclick="setCat(\'' + c + '\')">' + c + '</span>';
-  }).join('');
+/* =============================================================
+ * 品相标签样式映射
+ * ============================================================= */
+function getCondStyle(condition) {
+  var map = {
+    '全新':   'bg-green-50 text-green-700 border border-green-200',
+    '九成新': 'bg-blue-50 text-blue-700 border border-blue-200',
+    '八成新': 'bg-amber-50 text-amber-700 border border-amber-200',
+    '有笔记': 'bg-orange-50 text-orange-700 border border-orange-200',
+    '有破损': 'bg-red-50 text-red-700 border border-red-200',
+  };
+  return map[condition] || 'bg-gray-50 text-gray-600 border border-gray-200';
 }
 
-// ====== 渲染书籍 ======
-function renderBooks() {
+/* =============================================================
+ * 筛选 + 渲染
+ * ============================================================= */
+function applyFilters() {
   var grid = document.getElementById('bookGrid');
+
+  // 先按搜索词筛选
   var filtered = allBooks;
   if (searchQ) {
     var q = searchQ.toLowerCase();
@@ -188,34 +287,116 @@ function renderBooks() {
              (b.author && b.author.toLowerCase().includes(q));
     });
   }
-  if (activeCat !== '全部') {
-    filtered = filtered.filter(function(b) { return b.category === activeCat; });
+
+  // 再按品相筛选
+  if (activeFilter !== '全部') {
+    filtered = filtered.filter(function(b) {
+      return b.condition === activeFilter;
+    });
   }
 
-  document.getElementById('totalBooks').textContent = filtered.length;
-  var avg = filtered.length > 0 ? (filtered.reduce(function(s,b){return s+parseFloat(b.price||0)},0)/filtered.length).toFixed(1) : '0';
-  document.getElementById('avgPrice').textContent = '¥' + avg;
+  filteredBooks = filtered;
 
+  // 更新统计
+  document.getElementById('totalBooks').textContent = filtered.length;
+  var avg = filtered.length > 0
+    ? (filtered.reduce(function(s, b) { return s + parseFloat(b.price || 0); }, 0) / filtered.length).toFixed(1)
+    : '0';
+  document.getElementById('avgPrice').textContent = '￥' + avg;
+
+  // ====== 空状态 ======
   if (filtered.length === 0) {
-    var msg = activeCat !== '全部' || searchQ ? '没有找到匹配的书籍' : '暂无在售书籍，去发布一本吧！';
-    grid.innerHTML = '<div class="empty"><div class="icon">📭</div><p>' + msg + '</p>' + (activeCat==='全部'&&!searchQ?'<a href="sell.html">📤 发布书籍</a>':'') + '</div>';
+    var isSearchEmpty = activeFilter !== '全部' || searchQ;
+    grid.innerHTML =
+      '<div class="col-span-full text-center py-16 sm:py-20">' +
+        '<div class="text-4xl mb-3">' + (isSearchEmpty ? '🔍' : '📭') + '</div>' +
+        '<p class="text-sm text-gray-400 mb-1">' +
+          (isSearchEmpty ? '没有找到匹配的书籍' : '暂无在售书籍') +
+        '</p>' +
+        (!isSearchEmpty
+          ? '<a href="sell.html" class="inline-block mt-3 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-md transition-all no-underline">📤 去发布一本吧</a>'
+          : '<a href="index.html" class="inline-block mt-3 px-5 py-2 rounded-lg text-sm text-brand-600 hover:text-brand-700 no-underline">清除筛选</a>') +
+      '</div>';
     return;
   }
 
+  // ====== 渲染卡片 ======
   grid.innerHTML = filtered.map(function(b) {
-    var cc = 'cond-' + b.condition;
-    var cover = b.cover_url ? '<img src="' + esc(b.cover_url) + '" alt="">' : '<div style="font-size:36px">📚</div>';
-    return '<a href="book.html?id=' + b.id + '" class="card"><div class="img-w">' + cover + '</div><div class="body"><div class="title">' + esc(b.title) + '</div><div class="author">' + esc(b.author) + '</div><div class="meta"><span class="price">¥' + b.price + '</span><span class="cond ' + cc + '">' + b.condition + '</span></div></div></a>';
+    var condStyle = getCondStyle(b.condition);
+    var cover = b.cover_url
+      ? '<img src="' + escHtml(b.cover_url) + '" alt="" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="hidden items-center justify-center h-full text-3xl text-brand-500">📚</div>'
+      : '<div class="flex items-center justify-center h-full text-3xl text-brand-500">📚</div>';
+
+    return '<a href="book.html?id=' + b.id + '" class="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 no-underline text-inherit">' +
+      '<div class="aspect-[3/4] bg-gradient-to-br from-brand-50 to-indigo-50 overflow-hidden relative">' +
+        cover +
+      '</div>' +
+      '<div class="p-3 sm:p-3.5">' +
+        '<div class="text-sm font-semibold text-gray-900 leading-snug truncate mb-0.5">' + escHtml(b.title) + '</div>' +
+        '<div class="text-xs text-gray-400 truncate mb-2">' + escHtml(b.author) + '</div>' +
+        '<div class="flex items-center justify-between">' +
+          '<span class="text-base sm:text-lg font-bold text-red-500">￥' + b.price + '</span>' +
+          '<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold border ' + condStyle + '">' + b.condition + '</span>' +
+        '</div>' +
+      '</div>' +
+    '</a>';
   }).join('');
 }
 
-function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function doSearch(){searchQ=document.getElementById('searchInput').value;renderBooks()}
-function setCat(c){activeCat=c;renderFilters();renderBooks()}
+/* =============================================================
+ * 搜索 & 筛选
+ * ============================================================= */
+function doSearch() {
+  searchQ = document.getElementById('searchInput').value;
+  applyFilters();
+}
 
-// ====== 启动 ======
+function setFilter(filter) {
+  activeFilter = filter;
+  // 更新筛选按钮高亮
+  var tags = document.querySelectorAll('.filter-tag');
+  for (var i = 0; i < tags.length; i++) {
+    tags[i].className = tags[i].className.replace(' active', '');
+    if (tags[i].getAttribute('data-filter') === filter) {
+      tags[i].className += ' active';
+    }
+  }
+  applyFilters();
+}
+
+/* =============================================================
+ * 启动
+ * ============================================================= */
 loadBooks();
 </script>
+
+<style>
+/* 品相筛选标签样式（内联 Tailwind 不方便处理的动态 active） */
+.filter-tag {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  transition: all .2s;
+  color: #475569;
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
+}
+.filter-tag:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+.filter-tag.active {
+  background: #6366f1;
+  color: #fff;
+  border-color: #6366f1;
+}
+</style>
 
 </body>
 </html>
