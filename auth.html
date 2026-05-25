@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 · 泰皋阁</title>
+
+<!-- ====== CDN 依赖 ======
+ 备注：Tailwind 和 Google Fonts 在国内网络下可能被墙。
+ 如果加载失败，可替换为本地文件或使用国内 CDN 镜像。
+ ====== -->
+
+<!-- Tailwind CSS (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Inter (中文 fallback) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Supabase JS 客户端 (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ====== 颜色配置（与首页保持一致） ====== -->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'] },
+      colors: {
+        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+      }
+    }
+  }
+}
+</script>
+
+<style>
+/* 平滑滚动与抗锯齿 */
+html { scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* 切换 Tab 下划线动画 */
+.tab-underline { transition: all .35s cubic-bezier(.4,0,.2,1); }
+.tab-btn.active { color: #4f46e5; }
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: #4f46e5;
+}
+
+/* 淡入动画 */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeUp .4s ease both; }
+.fade-in-d1 { animation-delay: .05s; }
+.fade-in-d2 { animation-delay: .1s; }
+.fade-in-d3 { animation-delay: .15s; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1e293b; color: #fff;
+  padding: 10px 24px; border-radius: 10px;
+  font-size: 14px; opacity: 0;
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+  z-index: 200; pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.error { background: #dc2626; }
+.toast.success { background: #059669; }
+
+/* Loading spinner */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 输入框 focus 光晕覆写 */
+input:focus { outline: none; }
+</style>
+</head>
+
+<body class="bg-[#f5f7fa] font-sans text-gray-900 min-h-screen flex flex-col">
+
+<!-- ====== ======
+   配置区：在使用前替换为你的 Supabase 项目信息
+   获取方式：
+   1. 登录 https://supabase.com → 新建项目
+   2. 左侧 Settings → API → 复制 Project URL 和 anon/public key
+   ====== ====== -->
+<script>
+// ⚠️ 请替换为你的实际 Supabase 项目 URL 和匿名 Key
+const SUPABASE_URL = 'https://your-project.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+
+// 初始化 Supabase 客户端
+const supabase = typeof createClient === 'function'
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+</script>
+
+<!-- ====== 导航栏（与首页一致） ====== -->
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-1.5 no-underline">
+      <span class="text-xl">🏛️</span>
+      <span class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋阁</span>
+    </a>
+    <a href="index.html" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">← 返回书摊</a>
+  </div>
+</header>
+
+<!-- ====== 主容器 ====== -->
+<main class="flex-1 flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-sm fade-in">
+
+    <!-- ====== 品牌标识 ====== -->
+    <div class="text-center mb-8">
+      <div class="text-4xl mb-2">🏛️</div>
+      <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        泰皋阁
+      </h1>
+      <p class="text-xs text-gray-400 mt-1">校园二手书平台</p>
+    </div>
+
+    <!-- ====== 登录/注册 Tab 切换 ====== -->
+    <div class="flex items-center justify-center gap-8 mb-6 relative">
+      <button id="tabLogin" class="tab-btn active relative text-sm font-semibold text-brand-600 px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors"
+              onclick="switchTab('login')">登录</button>
+      <button id="tabRegister" class="tab-btn relative text-sm font-semibold text-gray-400 px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors hover:text-gray-600"
+              onclick="switchTab('register')">注册</button>
+    </div>
+
+    <!-- ====== 表单容器 ====== -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-7">
+
+      <!-- ====== 登录表单 ====== -->
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div class="fade-in fade-in-d1">
+          <label class="block text-xs font-medium text-gray-600 mb-1">邮箱</label>
+          <input type="email" id="loginEmail" required
+                 placeholder="you@school.edu.cn"
+                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
+                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
+                        placeholder:text-gray-300">
+        </div>
+        <div class="fade-in fade-in-d2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">密码</label>
+          <input type="password" id="loginPassword" required minlength="6"
+                 placeholder="••••••"
+                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
+                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
+                        placeholder:text-gray-300">
+        </div>
+
+        <!-- 记住我 + 忘记密码 -->
+        <div class="flex items-center justify-between text-xs fade-in fade-in-d3">
+          <label class="flex items-center gap-1.5 cursor-pointer text-gray-400 hover:text-gray-600 transition-colors">
+            <input type="checkbox" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500/30">
+            记住我
+          </label>
+          <button type="button" onclick="showToast('📌 忘记密码功能开发中', 'error')"
+                  class="bg-transparent border-0 text-brand-600 hover:text-brand-700 cursor-pointer transition-colors">
+            忘记密码？
+          </button>
+        </div>
+
+        <button type="submit" id="loginBtn"
+                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white
+                       bg-gradient-to-r from-blue-600 to-indigo-600
+                       hover:from-blue-700 hover:to-indigo-700
+                       shadow-sm hover:shadow-md hover:shadow-blue-500/20
+                       transition-all disabled:opacity-50 disabled:cursor-not-allowed
+                       flex items-center justify-center gap-2">
+          登录
+        </button>
+      </form>
+
+      <!-- ====== 注册表单 ====== -->
+      <form id="registerForm" onsubmit="handleRegister(event)" style="display:none" class="space-y-4">
+        <div class="fade-in fade-in-d1">
+          <label class="block text-xs font-medium text-gray-600 mb-1">邮箱 *</label>
+          <input type="email" id="regEmail" required
+                 placeholder="you@school.edu.cn"
+                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
+                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
+                        placeholder:text-gray-300">
+        </div>
+        <div class="fade-in fade-in-d1">
+          <label class="block text-xs font-medium text-gray-600 mb-1">昵称 *</label>
+          <input type="text" id="regNickname" required minlength="2" maxlength="20"
+                 placeholder="你的昵称"
+                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
+                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
+                        placeholder:text-gray-300">
+        </div>
+        <div class="fade-in fade-in-d2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">密码 *</label>
+          <input type="password" id="regPassword" required minlength="6"
+                 placeholder="至少 6 位"
+                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
+                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
+                        placeholder:text-gray-300">
+        </div>
+        <div class="fade-in fade-in-d2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">手机号 <span class="text-gray-300 font-normal">(选填)</span></label>
+          <input type="tel" id="regPhone" placeholder="138xxxx8888"
+                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
+                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all
+                        placeholder:text-gray-300">
+        </div>
+
+        <button type="submit" id="registerBtn"
+                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white
+                       bg-gradient-to-r from-blue-600 to-indigo-600
+                       hover:from-blue-700 hover:to-indigo-700
+                       shadow-sm hover:shadow-md hover:shadow-blue-500/20
+                       transition-all disabled:opacity-50 disabled:cursor-not-allowed
+                       flex items-center justify-center gap-2">
+          注册
+        </button>
+
+        <!-- 注册协议提示 -->
+        <p class="text-center text-[11px] text-gray-300 mt-1">
+          点击注册即表示同意《用户协议》和《隐私政策》
+        </p>
+      </form>
+
+    </div>
+
+    <!-- ====== 底部提示 ====== -->
+    <p class="text-center text-xs text-gray-400 mt-6">
+      <span id="switchHint">还没有账号？</span>
+      <a href="#" id="switchLink" onclick="event.preventDefault(); switchTab('register')"
+         class="text-brand-600 hover:text-brand-700 transition-colors font-medium">
+        立即注册
+      </a>
+    </p>
+  </div>
+</main>
+
+<!-- ====== Toast 提示 ====== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// Tab 切换逻辑
+// ============================================
+let currentTab = 'login';
+
+function switchTab(tab) {
+  currentTab = tab;
+  const isLogin = tab === 'login';
+
+  // 切换 Tab 按钮激活状态
+  document.getElementById('tabLogin').className =
+    'tab-btn relative text-sm font-semibold px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors ' +
+    (isLogin ? 'active text-brand-600' : 'text-gray-400 hover:text-gray-600');
+  document.getElementById('tabRegister').className =
+    'tab-btn relative text-sm font-semibold px-1 py-1 bg-transparent border-0 cursor-pointer transition-colors ' +
+    (isLogin ? 'text-gray-400 hover:text-gray-600' : 'active text-brand-600');
+
+  // 切换表单显示
+  document.getElementById('loginForm').style.display = isLogin ? '' : 'none';
+  document.getElementById('registerForm').style.display = isLogin ? 'none' : '';
+
+  // 切换底部提示文字
+  document.getElementById('switchHint').textContent = isLogin ? '还没有账号？' : '已有账号？';
+  document.getElementById('switchLink').textContent = isLogin ? '立即注册' : '去登录';
+  document.getElementById('switchLink').onclick = function(e) {
+    e.preventDefault();
+    switchTab(isLogin ? 'register' : 'login');
+  };
+}
+
+// ============================================
+// Toast 提示
+// ============================================
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  // 触发 reflow 确保动画重新运行
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+// ============================================
+// 按钮加载状态
+// ============================================
+function setLoading(btnId, loading) {
+  var btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  if (loading) {
+    btn.innerHTML = '<span class="spinner"></span> 处理中...';
+  } else {
+    btn.innerHTML = btnId === 'loginBtn' ? '登录' : '注册';
+  }
+}
+
+// ============================================
+// 登录逻辑
+// ============================================
+async function handleLogin(e) {
+  e.preventDefault();
+
+  // 检查 Supabase 是否可用
+  if (!supabase) {
+    showToast('⚠️ Supabase 未配置，请在代码顶部设置 SUPABASE_URL 和 SUPABASE_ANON_KEY', 'error');
+    return;
+  }
+
+  var email = document.getElementById('loginEmail').value.trim();
+  var password = document.getElementById('loginPassword').value;
+  var remember = document.getElementById('loginForm').querySelector('[type=checkbox]').checked;
+
+  setLoading('loginBtn', true);
+
+  try {
+    // 调用 Supabase 登录接口
+    var result = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (result.error) {
+      // 根据错误类型给出中文提示
+      var msg = result.error.message;
+      if (msg.includes('Invalid login')) msg = '邮箱或密码错误';
+      else if (msg.includes('Email not confirmed')) msg = '请先验证邮箱';
+      else if (msg.includes('Rate limit')) msg = '操作过于频繁，请稍后再试';
+      showToast('❌ ' + msg, 'error');
+      setLoading('loginBtn', false);
+      return;
+    }
+
+    // 登录成功
+    showToast('✅ 登录成功！', 'success');
+    setTimeout(function() {
+      window.location.href = 'index.html';
+    }, 800);
+
+  } catch (err) {
+    showToast('❌ 网络异常，请检查连接', 'error');
+    setLoading('loginBtn', false);
+  }
+}
+
+// ============================================
+// 注册逻辑
+// ============================================
+async function handleRegister(e) {
+  e.preventDefault();
+
+  if (!supabase) {
+    showToast('⚠️ Supabase 未配置，请在代码顶部设置 SUPABASE_URL 和 SUPABASE_ANON_KEY', 'error');
+    return;
+  }
+
+  var email = document.getElementById('regEmail').value.trim();
+  var nickname = document.getElementById('regNickname').value.trim();
+  var password = document.getElementById('regPassword').value;
+  var phone = document.getElementById('regPhone').value.trim();
+
+  if (!nickname || nickname.length < 2) {
+    showToast('⚠️ 昵称至少 2 个字符', 'error');
+    return;
+  }
+
+  setLoading('registerBtn', true);
+
+  try {
+    // 调用 Supabase 注册接口
+    var result = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          nickname: nickname,
+          phone: phone || null,
+        },
+      },
+    });
+
+    if (result.error) {
+      var msg = result.error.message;
+      if (msg.includes('already registered')) msg = '该邮箱已注册';
+      else if (msg.includes('weak')) msg = '密码强度不够，至少 6 位';
+      else if (msg.includes('Rate limit')) msg = '操作过于频繁，请稍后再试';
+      showToast('❌ ' + msg, 'error');
+      setLoading('registerBtn', false);
+      return;
+    }
+
+    // 注册成功
+    showToast('✅ 注册成功！请查收验证邮件', 'success');
+    setLoading('registerBtn', false);
+
+    // 延迟跳转到首页
+    setTimeout(function() {
+      window.location.href = 'index.html';
+    }, 2000);
+
+  } catch (err) {
+    showToast('❌ 网络异常，请检查连接', 'error');
+    setLoading('registerBtn', false);
+  }
+}
+
+// ============================================
+// 回车键提交
+// ============================================
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && currentTab === 'login') {
+    document.getElementById('loginForm').requestSubmit();
+  }
+  if (e.key === 'Enter' && currentTab === 'register') {
+    document.getElementById('registerForm').requestSubmit();
+  }
+});
+</script>
+
+</body>
+</html>
