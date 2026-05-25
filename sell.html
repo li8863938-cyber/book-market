@@ -1,337 +1,460 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>发布书籍 · 泰皋阁</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发布图书 · 泰皋阁</title>
 
-<!-- 备注：以下 CDN 在国内可能被墙，如需离线使用请替换为本地文件 -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'] },
-      colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3' }
+          }
+        }
+      }
     }
-  }
-}
-</script>
+  </script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-body { -webkit-font-smoothing: antialiased; }
-.toast {
-  position: fixed; bottom: 28px; left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #1e293b; color: #fff;
-  padding: 10px 24px; border-radius: 10px;
-  font-size: 14px; opacity: 0;
-  transition: all .35s cubic-bezier(.4,0,.2,1);
-  z-index: 200; pointer-events: none;
-  box-shadow: 0 4px 16px rgba(0,0,0,.18);
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast.error { background: #dc2626; }
-.toast.success { background: #059669; }
-.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
-@keyframes spin { to { transform: rotate(360deg); } }
-</style>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #f5f7fa;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 自定义动画 */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .fade-in { animation: fadeUp .35s ease both; }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2.5px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 12px 28px; border-radius: 12px;
+      font-size: 14px; font-weight: 500;
+      opacity: 0; transition: all .35s cubic-bezier(.4,0,.2,1);
+      z-index: 200; pointer-events: none;
+      box-shadow: 0 6px 24px rgba(0,0,0,.18);
+      max-width: 90vw;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: #065f46; color: #fff; }
+    .toast.error   { background: #991b1b; color: #fff; }
+    .toast.info    { background: #1e293b; color: #fff; }
+
+    /* 美化表单元素 */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    /* 下拉箭头美化 */
+    select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: ''; position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid #94a3b8;
+      pointer-events: none;
+    }
+  </style>
 </head>
-<body class="bg-[#f5f7fa] font-sans text-gray-900 min-h-screen">
+<body>
 
-<!-- ====== ======
- 配置区：替换为你的 Supabase 项目信息
- 获取：Settings → API → Project URL / anon public key
- ====== ====== -->
-<script>
-const SUPABASE_URL = 'https://zqhzigukoikdwcbhzkysk.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbG…khdQ';
-
-let supabase = null;
-try {
-  if (typeof createClient === 'function') {
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-} catch(e) { supabase = null; }
-
-// ====== 登录检查：未登录跳转 auth.html ======
-(async function() {
-  if (!supabase) {
-    showToast('⚠️ Supabase 未配置', 'error');
-    return;
-  }
-  const { data: { session }, error } = await supabase.auth.getSession();
-  if (error || !session) {
-    window.location.href = 'auth.html';
-    return;
-  }
-  // 显示用户邮箱
-  document.getElementById('userInfo').textContent = session.user.email;
-})();
-
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (type ? ' ' + type : '');
-  void t.offsetWidth;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.classList.remove('show'); }, 3000);
-}
-</script>
-
-<!-- ====== 导航栏 ====== -->
-<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
-<div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-  <a href="index.html" class="flex items-center gap-1.5 no-underline">
-    <span class="text-xl">🏛️</span>
-    <span class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋阁</span>
-  </a>
-  <div class="flex items-center gap-3">
-    <span id="userInfo" class="text-xs text-gray-400">加载中...</span>
-    <a href="index.html" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">← 返回</a>
-  </div>
-</div>
-</header>
-
-<!-- ====== 发布表单 ====== -->
-<main class="max-w-lg mx-auto px-4 py-10">
-<div class="text-center mb-8">
-  <h1 class="text-2xl font-bold text-gray-900">📤 发布二手书</h1>
-  <p class="text-sm text-gray-400 mt-1">填写书籍信息，上架到泰皋阁</p>
-</div>
-
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-  <form id="sellForm" class="space-y-4">
-
-    <!-- 书名 * -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">书名 <span class="text-red-400">*</span></label>
-      <input type="text" id="title" required
-             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                    focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-             placeholder="高等数学（第七版）上册">
+  <!-- ===== 导航栏 ===== -->
+  <header class="sticky top-0 z-50 bg-white/88 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-1.5 no-underline">
+        <span class="text-lg">🏛️</span>
+        <span class="text-[19px] font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋阁</span>
+        <span class="text-[10px] font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-1.5 py-0.5 rounded" style="-webkit-text-fill-color: #fff;">发布</span>
+      </a>
+      <a href="index.html" class="text-sm text-slate-400 hover:text-slate-500 no-underline transition-colors">← 返回书摊</a>
     </div>
+  </header>
 
-    <!-- 作者 * -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">作者 <span class="text-red-400">*</span></label>
-      <input type="text" id="author" required
-             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                    focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-             placeholder="同济大学数学系">
-    </div>
+  <!-- ===== 主内容 ===== -->
+  <main class="flex-1 flex items-start justify-center px-4 py-8 md:py-12">
+    <div class="w-full max-w-2xl fade-in">
 
-    <!-- 出版社 -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">出版社</label>
-      <input type="text" id="publisher"
-             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                    focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-             placeholder="高等教育出版社">
-    </div>
-
-    <!-- ISBN + 扫码入口（预留） -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">ISBN</label>
-      <div class="flex gap-2">
-        <input type="text" id="isbn"
-               class="flex-1 px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                      focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-               placeholder="978-7-xxx-xxxxx-x">
-        <!--
-          ISBN 扫码功能预留位：
-          后续可集成 Quagga2 或 html5-qrcode，
-          扫码后自动填充此输入框并调用 Open Library API 补全书名/作者。
-        -->
-        <button type="button" onclick="showToast('📷 扫码功能开发中')"
-                class="px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all">📷</button>
+      <!-- 页面标题 -->
+      <div class="text-center mb-6">
+        <div class="text-3xl mb-1">📖</div>
+        <h1 class="text-xl font-bold text-slate-800">发布二手书</h1>
+        <p class="text-sm text-slate-400 mt-1">填好信息，让书找到新主人</p>
       </div>
-    </div>
 
-    <!-- 封面图片 URL -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">封面图片 URL</label>
-      <input type="url" id="coverUrl"
-             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                    focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-             placeholder="https://example.com/cover.jpg">
-    </div>
+      <!-- 表单卡片 -->
+      <div class="bg-white rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,.04),0_1px_3px_rgba(0,0,0,.06)] border border-slate-200 p-6 md:p-8">
 
-    <!-- 原价 + 售价 -->
-    <div class="grid grid-cols-2 gap-3">
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">原价（元）</label>
-        <input type="number" id="originalPrice" min="0" step="0.5"
-               class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                      focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-               placeholder="59.00">
+        <form id="sellForm" onsubmit="return false;" class="space-y-5">
+
+          <!-- 书名（必填） -->
+          <div>
+            <label for="title" class="block text-xs font-medium text-slate-500 mb-1.5">书名 <span class="text-red-500">*</span></label>
+            <input type="text" id="title" name="title" required
+                   placeholder="例：高等数学（第七版）上册"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+          </div>
+
+          <!-- 作者（必填） -->
+          <div>
+            <label for="author" class="block text-xs font-medium text-slate-500 mb-1.5">作者 <span class="text-red-500">*</span></label>
+            <input type="text" id="author" name="author" required
+                   placeholder="例：同济大学数学系"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+          </div>
+
+          <!-- 出版社 -->
+          <div>
+            <label for="publisher" class="block text-xs font-medium text-slate-500 mb-1.5">出版社 <span class="text-slate-300 font-normal">(选填)</span></label>
+            <input type="text" id="publisher" name="publisher"
+                   placeholder="例：高等教育出版社"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+          </div>
+
+          <!-- ISBN + 扫码占位 -->
+          <div>
+            <label for="isbn" class="block text-xs font-medium text-slate-500 mb-1.5">ISBN <span class="text-slate-300 font-normal">(选填)</span></label>
+            <div class="flex gap-2">
+              <input type="text" id="isbn" name="isbn"
+                     placeholder="例：9787040396638"
+                     class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+              <!-- ISBN扫码自动填充预留位置：扫码后调用 fillIsbn(value) 填充上方 input 并触发查书接口 -->
+              <button type="button" id="scanBtn"
+                      class="px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+                      title="扫码查书">
+                📷
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-300 mt-1">扫码功能即将上线</p>
+          </div>
+
+          <!-- 封面图片 URL -->
+          <div>
+            <label for="cover_url" class="block text-xs font-medium text-slate-500 mb-1.5">封面图片链接 <span class="text-slate-300 font-normal">(选填)</span></label>
+            <input type="url" id="cover_url" name="cover_url"
+                   placeholder="https://img2.example.com/cover.jpg"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+            <!-- 封面预览 -->
+            <div id="coverPreview" class="mt-2 hidden">
+              <img id="coverPreviewImg" src="" alt="封面预览"
+                   class="w-24 h-32 object-cover rounded-lg border border-slate-200 shadow-sm"
+                   onerror="this.parentElement.classList.add('hidden')">
+            </div>
+          </div>
+
+          <!-- 价格行：原价 + 售价 -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="original_price" class="block text-xs font-medium text-slate-500 mb-1.5">原价 <span class="text-slate-300 font-normal">¥ (选填)</span></label>
+              <input type="number" id="original_price" name="original_price" min="0" step="0.01"
+                     placeholder="0.00"
+                     class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+            </div>
+            <div>
+              <label for="price" class="block text-xs font-medium text-slate-500 mb-1.5">售价 <span class="text-red-500">*</span> ¥</label>
+              <input type="number" id="price" name="price" required min="0.01" step="0.01"
+                     placeholder="0.00"
+                     class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+            </div>
+          </div>
+
+          <!-- 品相 -->
+          <div>
+            <label for="condition" class="block text-xs font-medium text-slate-500 mb-1.5">品相 <span class="text-red-500">*</span></label>
+            <div class="select-wrap">
+              <select id="condition" name="condition" required
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white text-slate-800 cursor-pointer">
+                <option value="" disabled selected>请选择品相</option>
+                <option value="全新">全新</option>
+                <option value="九成新">九成新</option>
+                <option value="八成新">八成新</option>
+                <option value="有笔记">有笔记</option>
+                <option value="有破损">有破损</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 交易地点 -->
+          <div>
+            <label for="location" class="block text-xs font-medium text-slate-500 mb-1.5">交易地点 <span class="text-red-500">*</span></label>
+            <div class="select-wrap">
+              <select id="location" name="location" required
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white text-slate-800 cursor-pointer">
+                <option value="" disabled selected>请选择交易地点</option>
+                <option value="图书馆">图书馆</option>
+                <option value="教学楼A栋">教学楼A栋</option>
+                <option value="食堂门口">食堂门口</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 联系方式 -->
+          <div>
+            <label for="contact" class="block text-xs font-medium text-slate-500 mb-1.5">联系方式 <span class="text-slate-300 font-normal">(选填，不填则用注册手机号)</span></label>
+            <input type="text" id="contact" name="contact"
+                   placeholder="微信号 / QQ / 手机号"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+          </div>
+
+          <!-- 描述 -->
+          <div>
+            <label for="description" class="block text-xs font-medium text-slate-500 mb-1.5">描述 <span class="text-slate-300 font-normal">(选填)</span></label>
+            <textarea id="description" name="description" rows="4"
+                      placeholder="说说这本书的情况，比如有无笔记、破损、缺页等…"
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300 resize-y"></textarea>
+            <p class="text-[11px] text-slate-300 mt-1 text-right"><span id="descCount">0</span>/500</p>
+          </div>
+
+          <!-- 提交按钮 -->
+          <button type="submit" id="submitBtn"
+                  class="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg hover:shadow-indigo-500/25 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2">
+            发布图书
+          </button>
+
+        </form>
       </div>
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">售价（元）<span class="text-red-400">*</span></label>
-        <input type="number" id="price" required min="0" step="0.5"
-               class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                      focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-               placeholder="25.00">
-      </div>
+
+      <!-- 底部提示 -->
+      <p class="text-center text-xs text-slate-300 mt-5">
+        发布即表示同意 <a href="#" class="text-indigo-500 no-underline hover:text-indigo-600" onclick="event.preventDefault();showToast('📌 用户协议页面开发中','info')">《用户协议》</a>
+      </p>
     </div>
+  </main>
 
-    <!-- 品相 -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">品相 <span class="text-red-400">*</span></label>
-      <select id="condition" required
-              class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                     focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
-        <option value="">请选择</option>
-        <option value="全新">全新</option>
-        <option value="九成新">九成新</option>
-        <option value="八成新">八成新</option>
-        <option value="有笔记">有笔记</option>
-        <option value="有破损">有破损</option>
-      </select>
-    </div>
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast"></div>
 
-    <!-- 交易地点 -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">交易地点</label>
-      <select id="location"
-              class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                     focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
-        <option value="图书馆">图书馆</option>
-        <option value="教学楼A栋">教学楼A栋</option>
-        <option value="食堂门口">食堂门口</option>
-        <option value="其他" selected>其他</option>
-      </select>
-    </div>
+  <!-- ===== Supabase SDK ===== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- 联系方式 -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">联系方式</label>
-      <input type="text" id="contact"
-             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                    focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
-             placeholder="微信 / QQ / 手机号">
-    </div>
+  <script>
+    /* =============================================================
+     * 配置 Supabase 客户端
+     * ============================================================= */
+    const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <!-- 描述 -->
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">描述</label>
-      <textarea id="description" rows="4"
-                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm
-                       focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all resize-y"
-                placeholder="书的版本、使用情况、赠品等"></textarea>
-    </div>
+    /* =============================================================
+     * DOM 引用
+     * ============================================================= */
+    const $ = (id) => document.getElementById(id);
+    const form      = $('sellForm');
+    const submitBtn = $('submitBtn');
+    const toastEl  = $('toast');
+    const coverUrl = $('cover_url');
+    const coverPreview = $('coverPreview');
+    const coverPreviewImg = $('coverPreviewImg');
+    const descTextarea = $('description');
+    const descCount = $('descCount');
 
-    <!-- 提交按钮 -->
-    <button type="submit" id="submitBtn"
-            class="w-full py-3 rounded-xl text-sm font-semibold text-white
-                   bg-gradient-to-r from-blue-600 to-indigo-600
-                   hover:from-blue-700 hover:to-indigo-700
-                   shadow-sm hover:shadow-md hover:shadow-blue-500/20
-                   transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                   flex items-center justify-center gap-2 mt-2">
-      发布
-    </button>
-  </form>
-</div>
-</main>
+    let _toastTimer = null;
 
-<div class="toast" id="toast"></div>
-
-<script>
-// ====== 提交表单 ======
-document.getElementById('sellForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  var btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> 发布中...';
-
-  // 收集表单数据
-  var bookData = {
-    title: document.getElementById('title').value.trim(),
-    author: document.getElementById('author').value.trim(),
-    publisher: document.getElementById('publisher').value.trim(),
-    isbn: document.getElementById('isbn').value.trim(),
-    cover_url: document.getElementById('coverUrl').value.trim(),
-    original_price: document.getElementById('originalPrice').value ? parseFloat(document.getElementById('originalPrice').value) : null,
-    price: parseFloat(document.getElementById('price').value),
-    condition: document.getElementById('condition').value,
-    location: document.getElementById('location').value,
-    contact: document.getElementById('contact').value.trim(),
-    description: document.getElementById('description').value.trim(),
-    status: '在售',
-  };
-
-  // 验证必填
-  if (!bookData.title || !bookData.author || !bookData.price || !bookData.condition) {
-    showToast('⚠️ 请填写必填项', 'error');
-    btn.disabled = false;
-    btn.innerHTML = '发布';
-    return;
-  }
-
-  if (!supabase) {
-    showToast('⚠️ Supabase 未连接，请检查配置', 'error');
-    btn.disabled = false;
-    btn.innerHTML = '发布';
-    return;
-  }
-
-  try {
-    // ====== 获取当前用户 ======
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !session) {
-      showToast('⚠️ 登录已过期，请重新登录', 'error');
-      btn.disabled = false;
-      btn.innerHTML = '发布';
-      setTimeout(function() { window.location.href = 'auth.html'; }, 1500);
-      return;
+    /* =============================================================
+     * 工具函数
+     * ============================================================= */
+    function showToast(msg, type) {
+      type = type || 'info';
+      toastEl.textContent = msg;
+      toastEl.className = 'toast ' + type;
+      // 触发 reflow
+      void toastEl.offsetWidth;
+      toastEl.classList.add('show');
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
     }
 
-    // ====== 插入 Supabase books 表 ======
-    const { data, error } = await supabase
-      .from('books')
-      .insert({
+    function setLoading(loading) {
+      submitBtn.disabled = loading;
+      submitBtn.innerHTML = loading
+        ? '<span class="spinner"></span> 发布中…'
+        : '发布图书';
+    }
+
+    /* =============================================================
+     * 封面 URL 输入 → 实时预览
+     * ============================================================= */
+    coverUrl.addEventListener('input', function () {
+      const val = this.value.trim();
+      if (val && (val.startsWith('http://') || val.startsWith('https://'))) {
+        coverPreviewImg.src = val;
+        coverPreview.classList.remove('hidden');
+      } else {
+        coverPreview.classList.add('hidden');
+      }
+    });
+
+    /* =============================================================
+     * 描述字数统计
+     * ============================================================= */
+    descTextarea.addEventListener('input', function () {
+      const len = this.value.length;
+      descCount.textContent = len;
+      if (len > 500) {
+        this.value = this.value.substring(0, 500);
+        descCount.textContent = 500;
+      }
+    });
+
+    /* =============================================================
+     * 扫码按钮预留逻辑
+     * ============================================================= */
+    $('scanBtn').addEventListener('click', function () {
+      showToast('📷 扫码功能即将上线，敬请期待', 'info');
+    });
+
+    /**
+     * ISBN 扫码自动填充函数（预留）
+     * 扫码库（如 html5-qrcode）识别到 ISBN 后调用此函数
+     * @param {string} isbn - 扫码得到的 ISBN 号
+     */
+    function fillIsbn(isbn) {
+      $('isbn').value = isbn;
+      // TODO: 根据 ISBN 自动查询书名、作者等信息并填充表单
+      showToast('✅ 已识别 ISBN：' + isbn, 'success');
+    }
+
+    /* =============================================================
+     * 登录检查 — Supabase Session
+     * ============================================================= */
+    async function checkAuth() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (!session) {
+          // 未登录，跳转到 auth.html，带 redirect 参数登录后自动返回
+          showToast('⏳ 请先登录', 'info');
+          setTimeout(() => { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
+          return false;
+        }
+        return session;
+      } catch (err) {
+        console.error('Supabase auth check failed:', err);
+        showToast('⚠️ 认证服务连接失败，请稍后再试', 'error');
+        // 尝试 localStorage 兜底（兼容旧版）
+        // const localUser = localStorage.getItem(/* LOCAL_AUTH_KEY + '_user' */);
+        // if (localUser) return true;
+        return false;
+      }
+    }
+
+    /* =============================================================
+     * 表单提交
+     * ============================================================= */
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      // 再次确认 session 是否有效
+      const session = await checkAuth();
+      if (!session) return;
+
+      // 收集表单数据
+      const title         = $('title').value.trim();
+      const author        = $('author').value.trim();
+      const publisher     = $('publisher').value.trim() || null;
+      const isbn          = $('isbn').value.trim() || null;
+      const cover_url     = coverUrl.value.trim() || null;
+      const original_price = $('original_price').value ? parseFloat($('original_price').value) : null;
+      const price         = parseFloat($('price').value);
+      const condition     = $('condition').value;
+      const location      = $('location').value;
+      const contact       = $('contact').value.trim() || null;
+      const description   = descTextarea.value.trim() || null;
+
+      // 基本校验
+      if (!title)  { showToast('请输入书名', 'error'); $('title').focus(); return; }
+      if (!author) { showToast('请输入作者', 'error'); $('author').focus(); return; }
+      if (!price || price <= 0) { showToast('请输入有效售价', 'error'); $('price').focus(); return; }
+      if (!condition) { showToast('请选择品相', 'error'); return; }
+      if (!location)  { showToast('请选择交易地点', 'error'); return; }
+
+      // 金额保留两位小数
+      const finalPrice = Math.round(price * 100) / 100;
+      const finalOriginal = original_price ? Math.round(original_price * 100) / 100 : null;
+
+      // 准备数据
+      const bookData = {
+        title,
+        author,
+        publisher,
+        isbn,
+        cover_url,
+        original_price: finalOriginal,
+        price: finalPrice,
+        condition,
+        location,
+        contact,
+        description,
         user_id: session.user.id,
-        title: bookData.title,
-        author: bookData.author,
-        publisher: bookData.publisher,
-        isbn: bookData.isbn,
-        cover_url: bookData.cover_url,
-        original_price: bookData.original_price,
-        price: bookData.price,
-        condition: bookData.condition,
-        location: bookData.location,
-        contact: bookData.contact,
-        description: bookData.description,
         status: '在售',
         created_at: new Date().toISOString(),
-      });
+      };
 
-    if (error) {
-      showToast('❌ 发布失败：' + error.message, 'error');
-      btn.disabled = false;
-      btn.innerHTML = '发布';
-      return;
-    }
+      // 开始提交
+      setLoading(true);
 
-    // 发布成功
-    showToast('✅ 发布成功！', 'success');
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1200);
+      try {
+        const { data, error } = await supabase
+          .from('books')
+          .insert(bookData)
+          .select();
 
-  } catch (err) {
-    showToast('❌ 网络异常，请检查连接', 'error');
-    btn.disabled = false;
-    btn.innerHTML = '发布';
-  }
-});
-</script>
+        if (error) throw error;
 
+        showToast('✅ 发布成功！', 'success');
+        // 成功后跳转到首页
+        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+      } catch (err) {
+        console.error('发布失败:', err);
+        showToast('❌ 发布失败：' + (err.message || '未知错误'), 'error');
+        setLoading(false);
+      }
+    });
+
+    /* =============================================================
+     * 页面初始化
+     * ============================================================= */
+    (async function init() {
+      const session = await checkAuth();
+      if (session) {
+        // 可以在这里预填充用户信息等
+        console.log('已登录用户:', session.user.email);
+      }
+    })();
+  </script>
 </body>
 </html>

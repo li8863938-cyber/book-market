@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -109,41 +109,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
   <div class="card">
 
     <!-- 登录 -->
-    <form id="loginForm" class="card-form active">
+    <form id="loginForm" class="card-form active" onsubmit="return false;">
       <div class="form-group">
         <label>邮箱</label>
-        <input type="email" id="loginEmail" required placeholder="you@school.edu.cn">
+        <input type="email" id="loginEmail" required placeholder="you@school.edu.cn" autocomplete="email">
       </div>
       <div class="form-group">
         <label>密码</label>
-        <input type="password" id="loginPassword" required minlength="6" placeholder="••••••">
+        <input type="password" id="loginPassword" required minlength="6" placeholder="••••••" autocomplete="current-password">
       </div>
       <div class="form-row">
-        <label><input type="checkbox"> 记住我</label>
-        <button type="button" class="forgot" onclick="showToast('📌 忘记密码功能开发中')">忘记密码？</button>
+        <label><input type="checkbox" id="rememberMe"> 记住我</label>
+        <button type="button" class="forgot" id="forgotBtn">忘记密码？</button>
       </div>
-      <button type="button" id="loginBtn" class="btn" onclick="handleLogin()">登录</button>
+      <button type="submit" id="loginBtn" class="btn">登录</button>
     </form>
 
     <!-- 注册 -->
-    <form id="registerForm" class="card-form">
+    <form id="registerForm" class="card-form" onsubmit="return false;">
       <div class="form-group">
         <label>邮箱 *</label>
-        <input type="email" id="regEmail" required placeholder="you@school.edu.cn">
+        <input type="email" id="regEmail" required placeholder="you@school.edu.cn" autocomplete="email">
       </div>
       <div class="form-group">
         <label>昵称 *</label>
-        <input type="text" id="regNickname" required minlength="2" maxlength="20" placeholder="你的昵称">
+        <input type="text" id="regNickname" required minlength="2" maxlength="20" placeholder="你的昵称" autocomplete="username">
       </div>
       <div class="form-group">
         <label>密码 *</label>
-        <input type="password" id="regPassword" required minlength="6" placeholder="至少 6 位">
+        <input type="password" id="regPassword" required minlength="6" placeholder="至少 6 位" autocomplete="new-password">
       </div>
       <div class="form-group">
         <label>手机号 <span style="color:#cbd5e1;font-weight:400">(选填)</span></label>
-        <input type="tel" id="regPhone" placeholder="138xxxx8888">
+        <input type="tel" id="regPhone" placeholder="138xxxx8888" autocomplete="tel">
       </div>
-      <button type="button" id="registerBtn" class="btn" onclick="handleRegister()">注册</button>
+      <button type="submit" id="registerBtn" class="btn">注册</button>
       <p class="policy">点击注册即表示同意《用户协议》和《隐私政策》</p>
     </form>
 
@@ -158,58 +158,216 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
 
 <div class="toast" id="toast"></div>
 
-const LOCAL_AUTH_KEY = '***';
-let currentTab = 'login';
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* =============================================================
+ * Supabase 配置
+ * ============================================================= */
+const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+let currentTab = 'login';
+let _toastTimer = null;
+
+/* =============================================================
+ * UI 工具函数
+ * ============================================================= */
 function switchTab(tab) {
-  currentTab = tab; var isLogin = tab === 'login';
+  currentTab = tab;
+  var isLogin = tab === 'login';
   document.getElementById('tabLogin').className = 'tab-btn' + (isLogin ? ' active' : '');
   document.getElementById('tabRegister').className = 'tab-btn' + (isLogin ? '' : ' active');
   document.getElementById('loginForm').className = 'card-form' + (isLogin ? ' active' : '');
   document.getElementById('registerForm').className = 'card-form' + (isLogin ? '' : ' active');
   document.getElementById('switchHint').textContent = isLogin ? '还没有账号？' : '已有账号？';
   document.getElementById('switchLink').textContent = isLogin ? '立即注册' : '去登录';
-  document.getElementById('switchLink').onclick = function(e) { e.preventDefault(); switchTab(isLogin ? 'register' : 'login'); };
+  document.getElementById('switchLink').onclick = function(e) {
+    e.preventDefault();
+    switchTab(isLogin ? 'register' : 'login');
+  };
 }
 
-function showToast(msg) { var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show')},2500) }
-function setLoading(id,loading) { var btn=document.getElementById(id);btn.disabled=loading;btn.innerHTML=loading?'<span class="spinner"></span> 处理中...':(id==='loginBtn'?'登录':'注册') }
-
-// 登录 （纯本地存储）
-function handleLogin() {
-  var email=document.getElementById('loginEmail').value.trim();
-  var pw=document.getElementById('loginPassword').value;
-  setLoading('loginBtn',true);
-  var users=JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
-  if(!users[email]){showToast('❌ 该邮箱未注册');setLoading('loginBtn',false);return}
-  if(users[email].password!==pw){showToast('❌ 密码错误');setLoading('loginBtn',false);return}
-  localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:users[email].nickname}));
-  showToast('✅ 登录成功！');
-  setTimeout(function(){window.location.href='index.html'},800);
+function showToast(msg, isError) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast';
+  t.style.background = isError ? '#991b1b' : '#1e293b';
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-// 注册 （纯本地存储）
-function handleRegister() {
-  var email=document.getElementById('regEmail').value.trim();
-  var nick=document.getElementById('regNickname').value.trim();
-  var pw=document.getElementById('regPassword').value;
-  var phone=document.getElementById('regPhone').value.trim();
-  if(!nick||nick.length<2){showToast('⚠️ 昵称至少2个字符');return}
-  setLoading('registerBtn',true);
-  var users=JSON.parse(localStorage.getItem(LOCAL_AUTH_KEY+'_users')||'{}');
-  if(users[email]){showToast('❌ 该邮箱已注册');setLoading('registerBtn',false);return}
-  users[email]={email:email,nickname:nick,password:pw,phone:phone};
-  localStorage.setItem(LOCAL_AUTH_KEY+'_users',JSON.stringify(users));
-  localStorage.setItem(LOCAL_AUTH_KEY+'_user',JSON.stringify({email:email,nickname:nick}));
-  showToast('✅ 注册成功！');
-  setLoading('registerBtn',false);
-  setTimeout(function(){window.location.href='index.html'},1000);
+function setLoading(id, loading) {
+  var btn = document.getElementById(id);
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? '<span class="spinner"></span> 处理中...'
+    : (id === 'loginBtn' ? '登录' : '注册');
 }
 
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&currentTab==='login')handleLogin();
-  if(e.key==='Enter'&&currentTab==='register')handleRegister();
+/* 获取重定向地址：支持 ?redirect=xxx 参数 */
+function getRedirectUrl() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('redirect') || 'index.html';
+}
+
+/* =============================================================
+ * 登录 - Supabase Auth
+ * ============================================================= */
+async function handleLogin() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var pw = document.getElementById('loginPassword').value;
+
+  if (!email) { showToast('请输入邮箱', true); document.getElementById('loginEmail').focus(); return; }
+  if (!pw || pw.length < 6) { showToast('请输入密码（至少6位）', true); document.getElementById('loginPassword').focus(); return; }
+
+  setLoading('loginBtn', true);
+
+  try {
+    var { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: pw,
+    });
+
+    if (error) throw error;
+
+    showToast('✅ 登录成功！');
+    setTimeout(function() { window.location.href = getRedirectUrl(); }, 800);
+  } catch (err) {
+    console.error('登录失败:', err);
+    if (err.message && err.message.includes('Invalid login credentials')) {
+      showToast('❌ 邮箱或密码错误', true);
+    } else if (err.message && err.message.includes('Email not confirmed')) {
+      showToast('⚠️ 邮箱尚未验证，请查收验证邮件', true);
+    } else {
+      showToast('❌ ' + (err.message || '登录失败，请稍后重试'), true);
+    }
+    setLoading('loginBtn', false);
+  }
+}
+
+/* =============================================================
+ * 注册 - Supabase Auth
+ * ============================================================= */
+async function handleRegister() {
+  var email = document.getElementById('regEmail').value.trim();
+  var nick = document.getElementById('regNickname').value.trim();
+  var pw = document.getElementById('regPassword').value;
+  var phone = document.getElementById('regPhone').value.trim();
+
+  if (!email) { showToast('请输入邮箱', true); document.getElementById('regEmail').focus(); return; }
+  if (!nick || nick.length < 2) { showToast('昵称至少2个字符', true); document.getElementById('regNickname').focus(); return; }
+  if (!pw || pw.length < 6) { showToast('密码至少6位', true); document.getElementById('regPassword').focus(); return; }
+
+  setLoading('registerBtn', true);
+
+  try {
+    var { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: pw,
+      options: {
+        data: {
+          nickname: nick,
+          phone: phone || null,
+        }
+      }
+    });
+
+    if (error) throw error;
+
+    // 检查邮箱是否已被占用
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      showToast('❌ 该邮箱已被注册', true);
+      setLoading('registerBtn', false);
+      return;
+    }
+
+    // 尝试自动登录（如果 Supabase 未开启邮箱验证则直接登录）
+    var { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: pw,
+    });
+
+    if (loginError) {
+      // 开启了邮箱验证，提示用户
+      showToast('✅ 注册成功！请查收验证邮件后登录');
+      setLoading('registerBtn', false);
+      switchTab('login');
+      document.getElementById('loginEmail').value = email;
+      return;
+    }
+
+    showToast('✅ 注册成功！');
+    setTimeout(function() { window.location.href = getRedirectUrl(); }, 800);
+  } catch (err) {
+    console.error('注册失败:', err);
+    if (err.message && err.message.includes('already registered')) {
+      showToast('❌ 该邮箱已注册', true);
+    } else if (err.message && err.message.includes('weak_password')) {
+      showToast('⚠️ 密码强度不足，建议包含字母和数字', true);
+    } else {
+      showToast('❌ ' + (err.message || '注册失败，请稍后重试'), true);
+    }
+    setLoading('registerBtn', false);
+  }
+}
+
+/* =============================================================
+ * 忘记密码 - 发送重置邮件
+ * ============================================================= */
+document.getElementById('forgotBtn').addEventListener('click', async function() {
+  var email = document.getElementById('loginEmail').value.trim();
+  if (!email) {
+    showToast('请先在邮箱输入框中填写你的邮箱', true);
+    document.getElementById('loginEmail').focus();
+    return;
+  }
+
+  this.disabled = true;
+  this.textContent = '发送中...';
+
+  try {
+    var { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/book-market/auth.html',
+    });
+    if (error) throw error;
+    showToast('📧 密码重置链接已发送到你的邮箱');
+  } catch (err) {
+    console.error('重置密码失败:', err);
+    showToast('❌ ' + (err.message || '发送失败'), true);
+  }
+
+  this.disabled = false;
+  this.textContent = '忘记密码？';
 });
+
+/* =============================================================
+ * 表单 submit 事件绑定
+ * ============================================================= */
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  handleLogin();
+});
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  handleRegister();
+});
+
+/* =============================================================
+ * 已登录则直接跳转
+ * ============================================================= */
+(async function() {
+  try {
+    var { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      window.location.href = getRedirectUrl();
+    }
+  } catch (e) {
+    // 静默处理
+  }
+})();
 </script>
 </body>
 </html>
