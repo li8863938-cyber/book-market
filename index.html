@@ -231,48 +231,48 @@
   }
 
   /* Contact modal */
-  .contact-modal { max-width: 360px; text-align: center; }
+  .contact-modal { max-width: 400px; text-align: center; }
   .contact-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: var(--radius);
-    padding: 32px 20px 24px;
+    padding: 28px 20px 20px;
     color: white;
     margin-bottom: 16px;
   }
   .contact-card .avatar {
-    width: 64px; height: 64px;
+    width: 56px; height: 56px;
     background: rgba(255,255,255,.2);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 32px;
-    margin: 0 auto 12px;
-    backdrop-filter: blur(4px);
+    font-size: 28px;
+    margin: 0 auto 10px;
   }
-  .contact-card .label { font-size: 12px; opacity: .7; margin-bottom: 2px; }
+  .contact-card .label { font-size: 12px; opacity: .7; margin-bottom: 3px; }
   .contact-card .value {
-    font-size: 20px; font-weight: 700;
+    font-size: 18px; font-weight: 700;
     letter-spacing: .5px;
     background: rgba(255,255,255,.15);
     display: inline-block;
-    padding: 6px 20px;
+    padding: 5px 18px;
     border-radius: 8px;
   }
+  .contact-qr-section { margin: 12px 0; }
+  .contact-qr-section .qr-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
   .contact-qr-wrap {
     background: white;
     border-radius: var(--radius-sm);
-    padding: 16px;
+    padding: 12px;
     display: inline-block;
     box-shadow: var(--shadow);
-    margin: 8px 0;
   }
-  .contact-qr-wrap canvas, .contact-qr-wrap img { display: block !important; margin: 0 auto; }
-  .contact-tip { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+  .contact-qr-wrap canvas, .contact-qr-wrap img { display: block !important; margin: 0 auto; max-width: 180px; max-height: 180px; }
+  .contact-qr-uploaded img { border-radius: 4px; max-width: 180px; max-height: 180px; }
   .contact-btns { display: flex; gap: 8px; margin-top: 12px; }
-  .contact-btns .btn { flex: 1; }
+  .contact-btns .btn { flex: 1; padding: 10px; }
   .btn-copy { background: var(--primary); color: white; }
   .btn-copy:hover { background: var(--primary-dark); }
-  .btn-close-sm { background: #f1f5f9; color: var(--text-secondary); }
-  .btn-close-sm:hover { background: var(--border); }
+  .btn-close-sm { background: #f1f5f9; color: var(--text-secondary); border: 1px solid var(--border); }
+  .btn-close-sm:hover { background: #e2e8f0; }
 
   @media (max-width: 600px) {
     .hero h1 { font-size: 22px; }
@@ -387,6 +387,15 @@
         <input type="text" id="bookContact" required placeholder="微信 / QQ / 手机号">
       </div>
       <div class="form-group">
+        <label>上传二维码（选填）</label>
+        <input type="file" id="bookQrUpload" accept="image/*" onchange="previewQr(event)">
+        <div id="qrPreview" style="display:none;margin-top:8px;position:relative">
+          <img id="qrPreviewImg" style="max-width:120px;border-radius:8px;border:1px solid var(--border)">
+          <button type="button" onclick="clearQrUpload()" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--danger);color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">&times;</button>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px">📸 上传你的微信/QQ二维码图片，买家扫码直接加你</p>
+      </div>
+      <div class="form-group">
         <label>分类 *</label>
         <select id="bookCategory">
           <option value="理工">📐 理工类</option>
@@ -428,15 +437,14 @@
         <div class="label">卖家联系方式</div>
         <div class="value" id="contactInfoDisplay">—</div>
       </div>
-      <div style="text-align:center">
-        <p style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">📸 扫二维码加好友</p>
-        <div class="contact-qr-wrap" id="qrcodeContainer"></div>
+      <div class="contact-qr-section">
+        <div class="qr-label" id="qrLabel">📸 扫二维码加好友</div>
+        <div id="qrcodeContainer" style="display:flex;justify-content:center"></div>
       </div>
       <div class="contact-btns">
-        <button class="btn btn-copy" onclick="copyContact()">📋 复制联系方式</button>
+        <button class="btn btn-copy" onclick="copyContact()">📋 复制</button>
         <button class="btn btn-close-sm" onclick="closeModal('contactModal')">关闭</button>
       </div>
-      <p class="contact-tip">💡 截图二维码或复制号码，到微信/QQ搜索添加</p>
     </div>
   </div>
 </div>
@@ -570,8 +578,11 @@ function submitBook(e) {
 
   if (!title || !author || !price || !contact) { showToast('⚠️ 请填写必填项'); return; }
 
+  const qrUpload = document.getElementById('bookQrUpload');
+  const qrData = qrUpload.files && qrUpload.files[0] ? document.getElementById('qrPreviewImg').src : '';
+
   const book = {
-    id: Date.now(), title, author, isbn, price, condition, desc, contact, category,
+    id: Date.now(), title, author, isbn, price, condition, desc, contact, category, qrData,
     emoji: EMOJI[category] || '📚', time: Date.now()
   };
   const books = getBooks();
@@ -602,7 +613,7 @@ function showDetail(id) {
     ${b.isbn ? `<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">🔖 ISBN: ${esc(b.isbn)}</p>` : ''}
     ${b.desc ? `<div class="detail-desc">📝 ${esc(b.desc)}</div>` : ''}
     <div class="detail-actions">
-      <button class="btn btn-contact" onclick="contactSeller('${esc(b.contact)}')">📱 联系卖家</button>
+      <button class="btn btn-contact" onclick="contactSeller('${esc(b.contact)}', '${b.qrData || ''}')">📱 联系卖家</button>
       <button class="btn btn-delete" onclick="deleteBook(${b.id})">🗑️ 下架</button>
     </div>
     <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:16px">⚠️ 当面交易 · 注意安全 · 价格自行协商</p>
@@ -610,28 +621,55 @@ function showDetail(id) {
   document.getElementById('detailModal').classList.add('open');
 }
 
-function contactSeller(contact) {
+function previewQr(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    document.getElementById('qrPreviewImg').src = ev.target.result;
+    document.getElementById('qrPreview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearQrUpload() {
+  document.getElementById('bookQrUpload').value = '';
+  document.getElementById('qrPreview').style.display = 'none';
+}
+
+function contactSeller(contact, qrData) {
   closeModal('detailModal');
   document.getElementById('contactInfoDisplay').textContent = contact;
 
-  // Generate QR code
   const container = document.getElementById('qrcodeContainer');
   container.innerHTML = '';
-  try {
-    if (typeof QRCode !== 'undefined') {
-      new QRCode(container, {
-        text: contact,
-        width: 180,
-        height: 180,
-        colorDark: '#1e293b',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      });
-    } else {
-      container.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:48px;flex-direction:column;gap:4px;color:var(--text-muted);">📱<span style="font-size:12px">二维码加载中...</span></div>';
+
+  // If seller uploaded their own QR code image, show that
+  if (qrData) {
+    container.innerHTML = '<div class="contact-qr-wrap contact-qr-uploaded"><img src="' + qrData + '" alt="卖家二维码"></div>';
+    document.getElementById('qrLabel').textContent = '📸 卖家上传的二维码';
+  } else {
+    // Generate QR code from contact info
+    document.getElementById('qrLabel').textContent = '📸 扫二维码加好友';
+    const wrap = document.createElement('div');
+    wrap.className = 'contact-qr-wrap';
+    container.appendChild(wrap);
+    try {
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(wrap, {
+          text: contact,
+          width: 180,
+          height: 180,
+          colorDark: '#1e293b',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } else {
+        wrap.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:48px;flex-direction:column;gap:4px;color:var(--text-muted)">📱<span style="font-size:12px">' + esc(contact) + '</span></div>';
+      }
+    } catch(e) {
+      wrap.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px;flex-direction:column;gap:4px;color:var(--text-muted)">📱<span style="font-size:12px">' + esc(contact) + '</span></div>';
     }
-  } catch(e) {
-    container.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px;flex-direction:column;gap:4px;color:var(--text-muted);">📱<span style="font-size:12px">扫描上方号码</span></div>';
   }
 
   document.getElementById('contactModal').classList.add('open');
