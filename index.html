@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>泰皋阁 - 校园二手书平台</title>
 <style>
-:root{--p:#4f46e5;--pl:#eef2ff;--pd:#3730a3;--bg:#f8fafc;--c:#fff;--t:#1e293b;--t2:#64748b;--t3:#94a3b8;--b:#e2e8f0;--s:#10b981;--d:#ef4444;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.08);--sh-lg:0 8px 30px rgba(0,0,0,.12)}
+:root{--p:#6366f1;--pl:#eef2ff;--pd:#4f46e5;--bg:#f5f7fa;--c:#fff;--t:#0f172a;--t2:#475569;--t3:#94a3b8;--b:#e2e8f0;--s:#10b981;--d:#ef4444;--r:16px;--rs:10px;--sh:0 1px 2px rgba(0,0,0,.04),0 1px 4px rgba(0,0,0,.06);--sh-lg:0 4px 20px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.04);--ts:all .25s cubic-bezier(.4,0,.2,1)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t);line-height:1.6;min-height:100vh}
 .container{max-width:1100px;margin:0 auto;padding:0 16px}
@@ -15,9 +15,9 @@ header .container{display:flex;align-items:center;justify-content:space-between;
 .logo{font-size:20px;font-weight:700;color:var(--p);text-decoration:none;display:flex;align-items:center;gap:6px;cursor:pointer}
 .logo .badge{background:var(--p);color:#fff;font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500}
 nav{display:flex;gap:4px}
-nav button{background:0 0;border:0;padding:7px 13px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--t2);transition:all .2s;font-weight:500}
+nav button{background:0 0;border:0;padding:6px 13px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--t2);transition:var(--ts);font-weight:500}
 nav button:hover{background:var(--pl);color:var(--p)}
-nav .sell-btn{background:var(--p);color:#fff;border-color:var(--p);font-weight:600}
+nav .sell-btn{background:var(--p);color:#fff;padding:6px 14px;font-weight:600}
 nav .sell-btn:hover{background:var(--pd)}
 nav button.active{background:var(--pl);color:var(--p)}
 
@@ -26,9 +26,10 @@ nav button.active{background:var(--pl);color:var(--p)}
 .hero h1 .hl{color:var(--p)}
 .hero p{color:var(--t2);font-size:14px;max-width:420px;margin:0 auto 14px}
 .search-bar{display:flex;gap:6px;max-width:440px;margin:0 auto}
-.search-bar input{flex:1;padding:9px 12px;border:1px solid var(--b);border-radius:var(--rs);font-size:14px;outline:0;transition:.2s}
-.search-bar input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
-.search-bar button{padding:9px 14px;border:0;border-radius:var(--rs);font-size:14px;cursor:pointer;background:var(--p);color:#fff;font-weight:500}
+.search-bar input{flex:1;padding:10px 16px;border:1px solid var(--b);border-radius:10px;font-size:14px;outline:0;transition:var(--ts);background:#fff}
+.search-bar input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.search-bar button{padding:10px 18px;border:0;border-radius:10px;font-size:14px;cursor:pointer;background:var(--p);color:#fff;font-weight:600;transition:var(--ts)}
+.search-bar button:hover{background:var(--pd)}
 .stats{display:flex;justify-content:center;gap:24px;padding:12px 0 2px;font-size:13px;color:var(--t3)}
 .stats strong{color:var(--t);font-size:15px}
 .filters{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:12px 0 0}
@@ -42,10 +43,11 @@ nav button.active{background:var(--pl);color:var(--p)}
 .sort-bar a{color:var(--p);cursor:pointer}
 
 .book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:8px 0 36px}
-.book-card{background:var(--c);border-radius:var(--r);box-shadow:var(--sh);cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);border:1px solid var(--b);overflow:hidden;position:relative}
+.book-card{background:var(--c);border-radius:var(--r);box-shadow:var(--sh);cursor:pointer;transition:var(--ts);border:1px solid var(--b);overflow:hidden;position:relative}
 .book-card:hover{box-shadow:var(--sh-lg);transform:translateY(-4px);border-color:var(--p)}
 .book-card .img-wrap{width:100%;height:170px;overflow:hidden;background:linear-gradient(135deg,var(--pl),#e0e7ff);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--p);position:relative}
-.book-card .img-wrap img{width:100%;height:100%;object-fit:cover}
+.book-card .img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.book-card:hover .img-wrap img{transform:scale(1.04)}
 .book-card .body{padding:10px 12px 12px}
 .book-card .title{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .book-card .author{font-size:12px;color:var(--t2);margin-bottom:4px}
@@ -82,8 +84,10 @@ nav button.active{background:var(--pl);color:var(--p)}
 .form-img-upload .img-preview{width:84px;height:84px;border-radius:var(--rs);overflow:hidden;position:relative;border:1px solid var(--b)}
 .form-img-upload .img-preview img{width:100%;height:100%;object-fit:cover}
 .form-img-upload .img-preview .del{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;border:0;background:var(--d);color:#fff;font-size:10px;cursor:pointer}
-.btn{padding:10px 20px;border:0;border-radius:var(--rs);font-size:14px;font-weight:500;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:4px}
-.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--pd)}.btn-block{width:100%;padding:12px}.btn-lg{padding:14px}
+.btn{padding:11px 22px;border:0;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--ts);display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.btn-p{background:var(--p);color:#fff}
+.btn-p:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 2px 8px rgba(99,102,241,.25)}
+.btn-block{width:100%;padding:12px}.btn-lg{padding:14px}
 .btn-s{background:var(--s);color:#fff}.btn-s:hover{background:#059669}
 .btn-d{background:#f1f5f9;color:var(--t2);border:1px solid var(--b)}.btn-d:hover{background:#fee2e2;color:var(--d);border-color:var(--d)}
 
