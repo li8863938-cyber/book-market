@@ -3,760 +3,590 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="校园二手书市 — 同校同学之间买卖二手教材，省钱又环保">
 <title>校园二手书市</title>
 <script src="qrcode.min.js"></script>
 <style>
-  :root {
-    --primary: #4f46e5;
-    --primary-light: #eef2ff;
-    --primary-dark: #3730a3;
-    --accent: #f59e0b;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
-    --border: #e2e8f0;
-    --success: #10b981;
-    --danger: #ef4444;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,.1);
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+:root{--primary:#4f46e5;--primary-light:#eef2ff;--primary-dark:#3730a3;--bg:#f8fafc;--card:#fff;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;--border:#e2e8f0;--success:#10b981;--danger:#ef4444;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.08);--sh-lg:0 8px 30px rgba(0,0,0,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.container{max-width:1100px;margin:0 auto;padding:0 16px}
 
-  /* Header */
-  header {
-    background: rgba(255,255,255,.85);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    backdrop-filter: blur(12px);
-  }
-  header .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .logo { font-size: 20px; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-  .logo .badge { background: var(--primary); color: white; font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
-  nav { display: flex; gap: 6px; }
-  nav button {
-    background: none; border: 1px solid var(--border); padding: 7px 14px; border-radius: var(--radius-sm);
-    font-size: 13px; cursor: pointer; color: var(--text); transition: all .2s;
-  }
-  nav button:hover { border-color: var(--primary); color: var(--primary); }
-  nav .sell-btn { background: var(--primary); color: white; border-color: var(--primary); font-weight: 500; }
-  nav .sell-btn:hover { background: var(--primary-dark); }
+/* Header */
+header{background:rgba(255,255,255,.85);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+header .container{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-size:20px;font-weight:700;color:var(--primary);text-decoration:none;display:flex;align-items:center;gap:6px;cursor:pointer}
+.logo .badge{background:var(--primary);color:#fff;font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500}
+nav{display:flex;gap:6px}
+nav button{background:0 0;border:1px solid var(--border);padding:7px 14px;border-radius:var(--rs);font-size:13px;cursor:pointer;color:var(--text);transition:.2s}
+nav button:hover{border-color:var(--primary);color:var(--primary)}
+nav .sell-btn{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:500}
+nav .sell-btn:hover{background:var(--primary-dark)}
 
-  /* Hero */
-  .hero {
-    text-align: center;
-    padding: 48px 16px 32px;
-    background: linear-gradient(135deg, var(--primary-light) 0%, #f0f9ff 50%, #fff 100%);
-  }
-  .hero h1 { font-size: 28px; margin-bottom: 6px; letter-spacing: -0.5px; }
-  .hero h1 .highlight { color: var(--primary); }
-  .hero p { color: var(--text-secondary); font-size: 15px; max-width: 440px; margin: 0 auto 20px; }
+/* Hero */
+.hero{text-align:center;padding:40px 16px 28px;background:linear-gradient(135deg,var(--primary-light) 0%,#f0f9ff 50%,#fff 100%)}
+.hero h1{font-size:26px;margin-bottom:6px}
+.hero h1 .hl{color:var(--primary)}
+.hero p{color:var(--text2);font-size:14px;max-width:420px;margin:0 auto 16px}
 
-  .search-bar {
-    display: flex; gap: 8px; max-width: 480px; margin: 0 auto;
-  }
-  .search-bar input {
-    flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm);
-    font-size: 14px; outline: none; transition: border .2s;
-  }
-  .search-bar input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.1); }
-  .search-bar button {
-    padding: 10px 18px; border: none; border-radius: var(--radius-sm); font-size: 14px;
-    cursor: pointer; background: var(--primary); color: white; font-weight: 500;
-  }
-  .search-bar button:hover { background: var(--primary-dark); }
+.search-bar{display:flex;gap:8px;max-width:440px;margin:0 auto}
+.search-bar input{flex:1;padding:9px 14px;border:1px solid var(--border);border-radius:var(--rs);font-size:14px;outline:0;transition:.2s}
+.search-bar input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.search-bar button{padding:9px 16px;border:0;border-radius:var(--rs);font-size:14px;cursor:pointer;background:var(--primary);color:#fff;font-weight:500}
+.search-bar button:hover{background:var(--primary-dark)}
 
-  /* Stats bar */
-  .stats {
-    display: flex; justify-content: center; gap: 32px; padding: 16px 0 8px; font-size: 13px; color: var(--text-muted);
-  }
-  .stats strong { color: var(--text); font-size: 16px; }
+.stats{display:flex;justify-content:center;gap:28px;padding:14px 0 4px;font-size:13px;color:var(--text3)}
+.stats strong{color:var(--text);font-size:15px}
 
-  /* Filters */
-  .filters {
-    display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 16px 0 0;
-  }
-  .filters .tag {
-    padding: 5px 12px; border-radius: 20px; font-size: 13px; border: 1px solid var(--border);
-    background: var(--card); cursor: pointer; transition: all .2s; user-select: none;
-  }
-  .filters .tag:hover { border-color: var(--primary); color: var(--primary); }
-  .filters .tag.active { background: var(--primary); color: white; border-color: var(--primary); }
+.filters{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:14px 0 0}
+.filters .tag{padding:5px 12px;border-radius:20px;font-size:13px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:.2s;user-select:none}
+.filters .tag:hover{border-color:var(--primary);color:var(--primary)}
+.filters .tag.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-  /* Stats row */
-  .result-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 0 4px; font-size: 13px; color: var(--text-muted);
-  }
-  .result-bar button {
-    background: none; border: none; font-size: 13px; color: var(--primary); cursor: pointer;
-  }
-  .result-bar button:hover { text-decoration: underline; }
+.result-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 0 4px;font-size:13px;color:var(--text3)}
+.result-bar a{color:var(--primary);cursor:pointer;font-size:13px}
+.result-bar a:hover{text-decoration:underline}
 
-  /* Book grid */
-  .book-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; padding: 12px 0 40px;
-  }
-  .book-card {
-    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
-    padding: 16px; cursor: pointer; transition: all .25s; border: 1px solid transparent;
-    position: relative;
-  }
-  .book-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: var(--primary-light); }
-  .book-card .cover {
-    width: 100%; height: 160px; background: linear-gradient(135deg, var(--primary-light), #e0e7ff);
-    border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
-    font-size: 40px; margin-bottom: 10px; color: var(--primary);
-  }
-  .book-card .title { font-size: 15px; font-weight: 600; margin-bottom: 3px; line-height: 1.4; }
-  .book-card .author { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
-  .book-card .meta { display: flex; justify-content: space-between; align-items: center; }
-  .book-card .price { font-size: 18px; font-weight: 700; color: var(--danger); }
-  .book-card .condition {
-    font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500;
-  }
-  .cond-new { background: #d1fae5; color: #065f46; }
-  .cond-good { background: #dbeafe; color: #1e40af; }
-  .cond-fair { background: #fef3c7; color: #92400e; }
-  .cond-poor { background: #fce4ec; color: #b91c1c; }
-  .book-card .time-tag {
-    font-size: 11px; color: var(--text-muted); margin-top: 8px;
-  }
+/* Book grid */
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding:8px 0 36px}
+.book-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);cursor:pointer;transition:.25s;border:1px solid var(--border);overflow:hidden}
+.book-card:hover{box-shadow:var(--sh-lg);transform:translateY(-3px);border-color:var(--primary-light)}
+.book-card .img-wrap{width:100%;height:180px;overflow:hidden;background:linear-gradient(135deg,var(--primary-light),#e0e7ff);display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--primary);position:relative}
+.book-card .img-wrap img{width:100%;height:100%;object-fit:cover}
+.book-card .body{padding:12px 14px 14px}
+.book-card .title{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.book-card .author{font-size:12px;color:var(--text2);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.book-card .meta{display:flex;justify-content:space-between;align-items:center}
+.book-card .price{font-size:17px;font-weight:700;color:var(--danger)}
+.book-card .cond{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500}
+.cond-new{background:#d1fae5;color:#065f46}
+.cond-good{background:#dbeafe;color:#1e40af}
+.cond-fair{background:#fef3c7;color:#92400e}
+.cond-poor{background:#fce4ec;color:#b91c1c}
+.book-card .time-t{font-size:11px;color:var(--text3);margin-top:6px}
 
-  /* Modal */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(15,23,42,.5);
-    z-index: 100; backdrop-filter: blur(2px); padding: 20px; overflow-y: auto;
-  }
-  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
-  .modal {
-    background: var(--card); border-radius: var(--radius); max-width: 540px;
-    width: 100%; margin: 40px auto; padding: 28px; box-shadow: var(--shadow-lg);
-    animation: modalIn .2s ease;
-  }
-  @keyframes modalIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-  .modal h2 { font-size: 19px; margin-bottom: 20px; }
-  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .modal-header h2 { margin-bottom: 0; }
-  .modal .close {
-    background: none; border: none; width: 32px; height: 32px; font-size: 20px;
-    cursor: pointer; color: var(--text-muted); border-radius: 50%; display: flex;
-    align-items: center; justify-content: center; transition: all .2s;
-  }
-  .modal .close:hover { background: var(--border); color: var(--text); }
+/* Modal base */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:100;backdrop-filter:blur(2px);padding:16px;overflow-y:auto}
+.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.modal{background:var(--card);border-radius:var(--r);width:100%;box-shadow:var(--sh-lg);animation:mIn .2s ease;overflow:hidden}
+@keyframes mIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 0}
+.modal-header h2{font-size:18px}
+.modal .close{background:0 0;border:0;width:30px;height:30px;font-size:18px;cursor:pointer;color:var(--text3);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.2s}
+.modal .close:hover{background:var(--border);color:var(--text)}
 
-  /* Form */
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
-    font-size: 14px; outline: none; font-family: inherit; transition: border .2s;
-    background: var(--bg);
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.1); background: white; }
-  .form-group textarea { resize: vertical; min-height: 72px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Add form modal */
+.form-modal{max-width:520px}
+.form-body{padding:16px 20px 20px}
+.form-group{margin-bottom:13px}
+.form-group label{display:block;font-size:13px;font-weight:500;margin-bottom:4px;color:var(--text)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rs);font-size:14px;outline:0;font-family:inherit;transition:.2s;background:var(--bg)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.1);background:#fff}
+.form-group textarea{resize:vertical;min-height:68px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-img-upload{display:flex;gap:10px;flex-wrap:wrap}
+.form-img-upload .upload-box{width:90px;height:90px;border:2px dashed var(--border);border-radius:var(--rs);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:12px;transition:.2s;background:var(--bg);position:relative}
+.form-img-upload .upload-box:hover{border-color:var(--primary);color:var(--primary)}
+.form-img-upload .upload-box .icon{font-size:24px}
+.form-img-upload .upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.form-img-upload .img-preview{width:90px;height:90px;border-radius:var(--rs);overflow:hidden;position:relative;border:1px solid var(--border)}
+.form-img-upload .img-preview img{width:100%;height:100%;object-fit:cover}
+.form-img-upload .img-preview .del{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;border:0;background:var(--danger);color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-  .btn {
-    padding: 10px 22px; border: none; border-radius: var(--radius-sm); font-size: 14px;
-    font-weight: 500; cursor: pointer; transition: all .2s;
-  }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-primary:hover { background: var(--primary-dark); }
-  .btn-block { width: 100%; padding: 12px; }
+.btn{padding:10px 20px;border:0;border-radius:var(--rs);font-size:14px;font-weight:500;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-block{width:100%;padding:12px}
+.btn-lg{padding:14px}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#059669}
 
-  /* Detail */
-  .detail-cover {
-    width: 100%; height: 200px;
-    background: linear-gradient(135deg, var(--primary-light), #e0e7ff);
-    border-radius: var(--radius-sm); display: flex; align-items: center;
-    justify-content: center; font-size: 60px; margin-bottom: 16px; color: var(--primary);
-  }
-  .detail-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .detail-meta .item { padding: 10px 12px; background: var(--bg); border-radius: var(--radius-sm); }
-  .detail-meta .item .label { font-size: 11px; color: var(--text-muted); }
-  .detail-meta .item .value { font-size: 15px; font-weight: 600; margin-top: 2px; }
-  .detail-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; padding: 12px; background: var(--bg); border-radius: var(--radius-sm); }
-  .detail-actions { display: flex; gap: 8px; }
-  .detail-actions .btn { flex: 1; }
-  .btn-contact { background: var(--success); color: white; }
-  .btn-contact:hover { background: #059669; }
-  .btn-delete { background: #f1f5f9; color: var(--text-secondary); border: 1px solid var(--border); }
-  .btn-delete:hover { background: #fee2e2; color: var(--danger); border-color: var(--danger); }
+/* DETAIL MODAL — 闲鱼 style */
+.detail-modal{max-width:700px}
+.detail-top{position:relative;width:100%;max-height:360px;overflow:hidden;background:linear-gradient(135deg,var(--primary-light),#e0e7ff)}
+.detail-top img{width:100%;max-height:360px;object-fit:contain;display:block;background:#fff}
+.detail-top .no-img{display:flex;align-items:center;justify-content:center;padding:60px 20px;font-size:64px;color:var(--primary)}
+.detail-body{padding:0 20px}
+.detail-price{padding:16px 0;border-bottom:1px solid var(--border)}
+.detail-price .price{font-size:28px;font-weight:700;color:var(--danger)}
+.detail-price .original{font-size:13px;color:var(--text3);text-decoration:line-through;margin-left:8px}
+.detail-price .tags{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+.detail-price .tags span{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;display:inline-block}
+.detail-title{padding:14px 0}
+.detail-title h2{font-size:17px;font-weight:600;line-height:1.5}
+.detail-title .author{font-size:13px;color:var(--text2);margin-top:4px}
+.detail-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-radius:var(--rs);overflow:hidden;margin-bottom:14px}
+.detail-info .item{background:var(--bg);padding:10px;text-align:center}
+.detail-info .item .lb{font-size:11px;color:var(--text3)}
+.detail-info .item .vl{font-size:14px;font-weight:600;margin-top:1px}
+.detail-sec{padding:14px 0;border-top:1px solid var(--border)}
+.detail-sec .sec-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.detail-sec .sec-body{font-size:14px;color:var(--text);line-height:1.7;white-space:pre-wrap}
+.detail-isbn{font-size:12px;color:var(--text3);padding:4px 0 10px}
+.detail-seller{padding:14px 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.detail-seller .left{display:flex;align-items:center;gap:10px}
+.detail-seller .avatar{width:40px;height:40px;background:var(--primary-light);color:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.detail-seller .sname{font-weight:600;font-size:14px}
+.detail-seller .stime{font-size:12px;color:var(--text3)}
+.detail-seller .btn-contact{border:1px solid var(--primary);color:var(--primary);background:0 0;padding:7px 18px;border-radius:20px;font-size:13px;cursor:pointer;font-weight:500;transition:.2s}
+.detail-seller .btn-contact:hover{background:var(--primary);color:#fff}
+.detail-bottom{padding:14px 20px 18px;display:flex;gap:8px}
+.detail-bottom .btn{flex:1}
 
-  /* Empty state */
-  .empty-state {
-    text-align: center; padding: 60px 16px; color: var(--text-secondary); grid-column: 1 / -1;
-  }
-  .empty-state .icon { font-size: 48px; margin-bottom: 8px; }
-  .empty-state p { font-size: 14px; }
-  .empty-state .sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+/* Contact modal */
+.contact-modal{max-width:380px}
+.contact-body{padding:16px 20px 20px}
+.contact-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.contact-avatar{width:42px;height:42px;background:var(--primary-light);color:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.contact-header .info{text-align:left;flex:1}
+.contact-header .info .nm{font-weight:600;font-size:14px}
+.contact-header .info .sb{font-size:11px;color:var(--text3)}
+.contact-field{background:#f8fafc;border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.contact-field .lft{text-align:left}
+.contact-field .lft .lb{font-size:11px;color:var(--text3)}
+.contact-field .lft .vl{font-size:17px;font-weight:700;color:var(--text)}
+.contact-field .cpy{background:var(--primary);color:#fff;border:0;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;flex-shrink:0}
+.contact-field .cpy:hover{background:var(--primary-dark)}
+.contact-field .cpy.done{background:var(--success)}
+.contact-qr-box{background:#f8fafc;border:1px solid var(--border);border-radius:var(--rs);padding:14px;text-align:center}
+.contact-qr-box .ql{font-size:12px;color:var(--text3);margin-bottom:8px}
+.contact-qr-box .qw{display:inline-block;background:#fff;padding:8px;border-radius:8px;box-shadow:var(--sh)}
+.contact-qr-box .qw canvas,.contact-qr-box .qw img{display:block!important;margin:0 auto;max-width:150px;max-height:150px}
+.contact-qr-box .qt{font-size:11px;color:var(--text3);margin-top:6px}
 
-  /* Toast */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: #1e293b; color: white; padding: 12px 24px; border-radius: var(--radius-sm);
-    font-size: 14px; opacity: 0; transition: all .3s; z-index: 200;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* Empty */
+.empty-state{text-align:center;padding:60px 16px;color:var(--text2);grid-column:1/-1}
+.empty-state .icon{font-size:48px;margin-bottom:8px}
+.empty-state p{font-size:14px}
+.empty-state .sub{font-size:13px;color:var(--text3);margin-top:4px}
 
-  /* About */
-  .about-section { max-width: 600px; margin: 0 auto; text-align: center; }
-  .about-section p { color: var(--text-secondary); font-size: 14px; line-height: 1.8; }
-  .about-section .features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; text-align: left; }
-  .about-section .features .item { background: var(--bg); padding: 14px; border-radius: var(--radius-sm); }
-  .about-section .features .item .icon { font-size: 24px; margin-bottom: 4px; }
-  .about-section .features .item .name { font-weight: 600; font-size: 14px; }
-  .about-section .features .item .desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:11px 22px;border-radius:var(--rs);font-size:14px;opacity:0;transition:.3s;z-index:200;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* Footer */
-  footer {
-    text-align: center; padding: 20px; color: var(--text-muted);
-    font-size: 13px; border-top: 1px solid var(--border);
-  }
+/* About */
+.about-section{max-width:600px;margin:0 auto;text-align:center}
+.about-section p{color:var(--text2);font-size:14px;line-height:1.8}
+.about-section .features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;text-align:left}
+.about-section .features .item{background:var(--bg);padding:14px;border-radius:var(--rs)}
+.about-section .features .item .icon{font-size:24px;margin-bottom:4px}
+.about-section .features .item .nm{font-weight:600;font-size:14px}
+.about-section .features .item .desc{font-size:12px;color:var(--text3);margin-top:2px}
 
-  /* Contact modal */
-  .contact-modal { max-width: 380px; }
-  .contact-header {
-    display: flex; align-items: center; gap: 14px;
-    padding: 8px 0 16px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
-  }
-  .contact-avatar {
-    width: 44px; height: 44px;
-    background: var(--primary-light); color: var(--primary);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; flex-shrink: 0;
-  }
-  .contact-header .info { text-align: left; flex: 1; }
-  .contact-header .info .name { font-weight: 600; font-size: 15px; }
-  .contact-header .info .sub { font-size: 12px; color: var(--text-muted); }
-  .contact-field {
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .contact-field .left { text-align: left; }
-  .contact-field .left .label { font-size: 12px; color: var(--text-muted); }
-  .contact-field .left .value { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: .3px; }
-  .contact-field .copy-btn {
-    background: var(--primary); color: white; border: none;
-    padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer;
-    flex-shrink: 0;
-  }
-  .contact-field .copy-btn:hover { background: var(--primary-dark); }
-  .contact-field .copy-btn.copied { background: var(--success); }
-  .contact-qr-box {
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    text-align: center;
-    margin-bottom: 12px;
-  }
-  .contact-qr-box .qr-label { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
-  .contact-qr-box .qr-wrap {
-    display: inline-block;
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-  }
-  .contact-qr-box .qr-wrap canvas,
-  .contact-qr-box .qr-wrap img { display: block !important; margin: 0 auto; max-width: 160px; max-height: 160px; }
-  .contact-qr-box .qr-tip { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+footer{text-align:center;padding:20px;color:var(--text3);font-size:13px;border-top:1px solid var(--border)}
 
-  @media (max-width: 600px) {
-    .hero h1 { font-size: 22px; }
-    .book-grid { grid-template-columns: 1fr; }
-    .form-row { grid-template-columns: 1fr; }
-    .detail-meta { grid-template-columns: 1fr; }
-    .about-section .features { grid-template-columns: 1fr; }
-    .modal { padding: 20px; margin: 20px auto; }
-    .stats { gap: 16px; }
-  }
+@media(max-width:600px){
+  .hero h1{font-size:21px}
+  .book-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .detail-info{grid-template-columns:1fr 1fr}
+  .detail-bottom{flex-direction:column}
+  .detail-bottom .btn{padding:12px}
+  .stats{gap:14px;font-size:12px}
+  .detail-top{max-height:260px}
+  .detail-top img{max-height:260px}
+  .detail-body{padding:0 14px}
+  .detail-bottom{padding:12px 14px 14px}
+  .contact-body{padding:12px 14px 14px}
+  .form-body{padding:12px 14px 14px}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="container">
-    <div class="logo" onclick="showPage('market')">📚 书市<span class="badge">校园</span></div>
-    <nav>
-      <button onclick="showPage('market')">📖 书摊</button>
-      <button onclick="showPage('about')">ℹ️ 关于</button>
-      <button class="sell-btn" onclick="openAddBook()">➕ 卖书</button>
-    </nav>
-  </div>
+<div class="container">
+<div class="logo" onclick="showPage('market')">📚 书市<span class="badge">校园</span></div>
+<nav>
+<button onclick="showPage('market')">📖 书摊</button>
+<button onclick="showPage('about')">ℹ️ 关于</button>
+<button class="sell-btn" onclick="openAddBook()">➕ 卖书</button>
+</nav>
+</div>
 </header>
 
 <section class="hero" id="heroSection">
-  <div class="container">
-    <h1><span class="highlight">二手教材</span>，便宜又靠谱</h1>
-    <p>和同校同学直接交易，当面看货，省下一半书费</p>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="搜书名、作者..." oninput="render()">
-      <button onclick="render()">🔍 搜索</button>
-    </div>
-    <div class="stats" id="statsBar">
-      <span>📚 <strong id="totalBooks">0</strong> 本书</span>
-      <span>💰 均价 <strong id="avgPrice">¥0</strong></span>
-      <span>🏫 同校交易</span>
-    </div>
-    <div class="filters" id="filters"></div>
-  </div>
+<div class="container">
+<h1><span class="hl">二手教材</span>，便宜又靠谱</h1>
+<p>和同校同学直接交易，当面看货，省下一半书费</p>
+<div class="search-bar">
+<input type="text" id="searchInput" placeholder="搜书名、作者..." oninput="render()">
+<button onclick="render()">🔍 搜索</button>
+</div>
+<div class="stats">
+<span>📚 <strong id="totalBooks">0</strong> 本书</span>
+<span>💰 均价 <strong id="avgPrice">¥0</strong></span>
+<span>🏫 同校交易</span>
+</div>
+<div class="filters" id="filters"></div>
+</div>
 </section>
 
 <main class="container">
-  <div class="result-bar" id="resultBar">
-    <span id="resultCount"></span>
-    <button onclick="resetAll()">↺ 重置</button>
-  </div>
-  <div class="book-grid" id="bookGrid"></div>
+<div class="result-bar">
+<span id="resultCount"></span>
+<a onclick="resetAll()">↺ 重置</a>
+</div>
+<div class="book-grid" id="bookGrid"></div>
 </main>
 
 <div id="aboutPage" style="display:none">
-  <main class="container" style="padding:40px 16px">
-    <div class="about-section">
-      <h2>📚 校园二手书市</h2>
-      <p>帮同校同学买卖二手教材的平台。<br>省钱、环保，让每一本书都能被下一个需要的人用上。</p>
-      <div class="features">
-        <div class="item"><div class="icon">💰</div><div class="name">便宜</div><div class="desc">二手价格通常是原价的 2-5 折</div></div>
-        <div class="item"><div class="icon">🤝</div><div class="name">当面交易</div><div class="desc">校内面交，看到实物再付款</div></div>
-        <div class="item"><div class="icon">📱</div><div class="name">直接联系</div><div class="desc">看到联系方式直接跟卖家聊</div></div>
-        <div class="item"><div class="icon">🌱</div><div class="name">环保</div><div class="desc">让教材循环使用，减少浪费</div></div>
-      </div>
-      <p style="font-size:13px;color:var(--text-muted);margin-top:24px">
-        📢 由你和你同学一起维护 · 书况真实 · 价格透明
-      </p>
-    </div>
-  </main>
+<main class="container" style="padding:40px 16px">
+<div class="about-section">
+<h2>📚 校园二手书市</h2>
+<p>帮同校同学买卖二手教材的平台。<br>省钱、环保，让每一本书都能被下一个需要的人用上。</p>
+<div class="features">
+<div class="item"><div class="icon">💰</div><div class="nm">便宜</div><div class="desc">二手价格通常是原价的 2-5 折</div></div>
+<div class="item"><div class="icon">🤝</div><div class="nm">当面交易</div><div class="desc">校内面交，看到实物再付款</div></div>
+<div class="item"><div class="icon">📱</div><div class="nm">直接联系</div><div class="desc">看到联系方式直接跟卖家聊</div></div>
+<div class="item"><div class="icon">🌱</div><div class="nm">环保</div><div class="desc">让教材循环使用，减少浪费</div></div>
+</div>
+</div>
+</main>
 </div>
 
-<!-- Add Modal -->
+<!-- Add Book Modal -->
 <div class="modal-overlay" id="addModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>📤 发布二手书</h2>
-      <button class="close" onclick="closeModal('addModal')">&times;</button>
-    </div>
-    <form onsubmit="submitBook(event)">
-      <div class="form-group">
-        <label>书名 *</label>
-        <input type="text" id="bookTitle" required placeholder="例如：高等数学（第七版）上册">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>作者 *</label>
-          <input type="text" id="bookAuthor" required placeholder="作者全名">
-        </div>
-        <div class="form-group">
-          <label>ISBN（选填）</label>
-          <input type="text" id="bookIsbn" placeholder="978-7-xxx-xxxxx-x">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>价格（元）*</label>
-          <input type="number" id="bookPrice" required min="0" step="0.5" placeholder="比如 25">
-        </div>
-        <div class="form-group">
-          <label>书况 *</label>
-          <select id="bookCondition">
-            <option value="全新">全新 — 未使用过</option>
-            <option value="近新" selected>近新 — 几乎没笔记</option>
-            <option value="良好">良好 — 少量划线</option>
-            <option value="一般">一般 — 有笔记/磨损</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>描述（选填）</label>
-        <textarea id="bookDesc" placeholder="写清楚版本、使用情况、有没有赠品（习题集、光盘等）"></textarea>
-      </div>
-      <div class="form-group">
-        <label>联系方式 *</label>
-        <input type="text" id="bookContact" required placeholder="微信 / QQ / 手机号">
-      </div>
-      <div class="form-group">
-        <label>上传二维码（选填）</label>
-        <input type="file" id="bookQrUpload" accept="image/*" onchange="previewQr(event)">
-        <div id="qrPreview" style="display:none;margin-top:8px;position:relative">
-          <img id="qrPreviewImg" style="max-width:120px;border-radius:8px;border:1px solid var(--border)">
-          <button type="button" onclick="clearQrUpload()" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--danger);color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">&times;</button>
-        </div>
-        <p style="font-size:12px;color:var(--text-muted);margin-top:4px">📸 上传你的微信/QQ二维码图片，买家扫码直接加你</p>
-      </div>
-      <div class="form-group">
-        <label>分类 *</label>
-        <select id="bookCategory">
-          <option value="理工">📐 理工类</option>
-          <option value="文科">📖 文科类</option>
-          <option value="外语">🌍 外语类</option>
-          <option value="计算机">💻 计算机类</option>
-          <option value="医学">🏥 医学类</option>
-          <option value="考试">📝 考试/考证</option>
-          <option value="小说">🎭 小说/文学</option>
-          <option value="其他">📦 其他</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block" style="margin-top:4px">📤 发布</button>
-    </form>
-  </div>
+<div class="modal form-modal">
+<div class="modal-header">
+<h2>📤 发布二手书</h2>
+<button class="close" onclick="closeModal('addModal')">&times;</button>
+</div>
+<form onsubmit="submitBook(event)" class="form-body">
+<div class="form-group">
+<label>上传书籍照片</label>
+<div class="form-img-upload">
+<label class="upload-box">
+<span class="icon">📷</span>
+<span>上传照片</span>
+<input type="file" accept="image/*" id="bookPhotoInput" onchange="previewBookPhoto(event)">
+</label>
+<div id="photoPreviews"></div>
+</div>
+<p style="font-size:12px;color:var(--text3);margin-top:4px">建议上传实物照片，买家更放心</p>
+</div>
+<div class="form-group">
+<label>书名 *</label>
+<input type="text" id="bookTitle" required placeholder="例如：高等数学（第七版）上册">
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>作者 *</label>
+<input type="text" id="bookAuthor" required placeholder="作者全名">
+</div>
+<div class="form-group">
+<label>ISBN（选填）</label>
+<input type="text" id="bookIsbn" placeholder="978-7-xxx-xxxxx-x">
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>价格（元）*</label>
+<input type="number" id="bookPrice" required min="0" step="0.5" placeholder="比如 25">
+</div>
+<div class="form-group">
+<label>书况 *</label>
+<select id="bookCondition">
+<option value="全新">全新 — 未使用过</option>
+<option value="近新" selected>近新 — 几乎没笔记</option>
+<option value="良好">良好 — 少量划线</option>
+<option value="一般">一般 — 有笔记/磨损</option>
+</select>
+</div>
+</div>
+<div class="form-group">
+<label>描述</label>
+<textarea id="bookDesc" placeholder="写清楚版本、使用情况、有没有赠品（习题集、光盘等）"></textarea>
+</div>
+<div class="form-group">
+<label>联系方式 *</label>
+<input type="text" id="bookContact" required placeholder="微信 / QQ / 手机号">
+</div>
+<div class="form-group">
+<label>上传微信/QQ二维码（选填）</label>
+<input type="file" accept="image/*" onchange="previewQr(event)">
+<div id="qrPreview" style="display:none;margin-top:8px;position:relative">
+<img id="qrPreviewImg" style="max-width:100px;border-radius:6px;border:1px solid var(--border)">
+<button type="button" onclick="clearQrUpload()" style="position:absolute;top:-5px;left:95px;width:18px;height:18px;border-radius:50%;border:0;background:var(--danger);color:#fff;font-size:10px;cursor:pointer">&times;</button>
+</div>
+</div>
+<div class="form-group">
+<label>分类 *</label>
+<select id="bookCategory">
+<option value="理工">📐 理工类</option>
+<option value="文科">📖 文科类</option>
+<option value="外语">🌍 外语类</option>
+<option value="计算机">💻 计算机类</option>
+<option value="医学">🏥 医学类</option>
+<option value="考试">📝 考试/考证</option>
+<option value="小说">🎭 小说/文学</option>
+<option value="其他">📦 其他</option>
+</select>
+</div>
+<button type="submit" class="btn btn-primary btn-block btn-lg">📤 发布</button>
+</form>
+</div>
 </div>
 
 <!-- Detail Modal -->
 <div class="modal-overlay" id="detailModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>📖 书籍详情</h2>
-      <button class="close" onclick="closeModal('detailModal')">&times;</button>
-    </div>
-    <div id="detailContent"></div>
-  </div>
+<div class="modal detail-modal">
+<div class="modal-header" style="padding:14px 20px 0">
+<h2>📖 商品详情</h2>
+<button class="close" onclick="closeModal('detailModal')">&times;</button>
+</div>
+<div id="detailContent"></div>
+</div>
 </div>
 
 <!-- Contact Modal -->
 <div class="modal-overlay" id="contactModal">
-  <div class="modal contact-modal">
-    <div class="modal-header">
-      <h2>📱 联系卖家</h2>
-      <button class="close" onclick="closeModal('contactModal')">&times;</button>
-    </div>
-    <div id="contactContent">
-      <div class="contact-header">
-        <div class="contact-avatar">👤</div>
-        <div class="info">
-          <div class="name">校园卖家</div>
-          <div class="sub">回复可能不及时，建议直接加好友</div>
-        </div>
-      </div>
-      <div class="contact-field">
-        <div class="left">
-          <div class="label">👋 联系我</div>
-          <div class="value" id="contactInfoDisplay">—</div>
-        </div>
-        <button class="copy-btn" id="copyContactBtn" onclick="copyContact()">复制</button>
-      </div>
-      <div class="contact-qr-box">
-        <div class="qr-label" id="qrLabel">📸 扫二维码加好友</div>
-        <div class="qr-wrap" id="qrcodeContainer"></div>
-        <div class="qr-tip">长按或截图保存二维码</div>
-      </div>
-    </div>
-  </div>
+<div class="modal contact-modal">
+<div class="modal-header" style="padding:14px 18px 0">
+<h2>📱 联系卖家</h2>
+<button class="close" onclick="closeModal('contactModal')">&times;</button>
+</div>
+<div class="contact-body">
+<div class="contact-header">
+<div class="contact-avatar">👤</div>
+<div class="info">
+<div class="nm">校园卖家</div>
+<div class="sb">回复可能不及时，建议直接加好友</div>
+</div>
+</div>
+<div class="contact-field">
+<div class="lft">
+<div class="lb">👋 联系我</div>
+<div class="vl" id="contactInfoDisplay">—</div>
+</div>
+<button class="cpy" id="copyContactBtn" onclick="copyContact()">复制</button>
+</div>
+<div class="contact-qr-box">
+<div class="ql" id="qrLabel">📸 扫二维码加好友</div>
+<div class="qw" id="qrcodeContainer"></div>
+<div class="qt">长按或截图保存二维码</div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<footer>
-  <div class="container">📚 校园二手书市 · 当面验货 · 注意安全</div>
-</footer>
+<footer>📚 校园二手书市 · 当面验货 · 注意安全</footer>
 
 <script>
-const STORAGE_KEY = 'campus…rket';
-const CATEGORIES = ['全部','理工','文科','外语','计算机','医学','考试','小说','其他'];
-const EMOJI = { '理工':'📐','文科':'📖','外语':'🌍','计算机':'💻','医学':'🏥','考试':'📝','小说':'🎭','其他':'📦' };
-const COND_CLASS = { '全新':'cond-new','近新':'cond-good','良好':'cond-fair','一般':'cond-poor' };
+const STORAGE_KEY='***';
+const CATEGORIES=['全部','理工','文科','外语','计算机','医学','考试','小说','其他'];
+const EMOJI={'理工':'📐','文科':'📖','外语':'🌍','计算机':'💻','医学':'🏥','考试':'📝','小说':'🎭','其他':'📦'};
+const COND={'全新':'cond-new','近新':'cond-good','良好':'cond-fair','一般':'cond-poor'};
+const COND_NAMES={'全新':'全新','近新':'近新','良好':'良好','一般':'一般'};
 
-// ====== Data ======
-function getBooks() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
-function saveBooks(b) { localStorage.setItem(STORAGE_KEY, JSON.stringify(b)); }
+function getBooks(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch{return[]}}
+function saveBooks(b){localStorage.setItem(STORAGE_KEY,JSON.stringify(b))}
 
 // Seed
-function seed() {
-  if (getBooks().length > 0) return;
-  saveBooks([
-    {id:1, title:'高等数学（第七版）上册', author:'同济大学数学系', isbn:'978-7-04-039663-8', price:20, condition:'近新', category:'理工', desc:'第七版正版，只用了一个月，几乎全新，赠送配套习题解答。', contact:'微信: math_helper', time:Date.now()-864e5*2, emoji:'📐'},
-    {id:2, title:'大学英语精读（第三版）', author:'董亚芬', isbn:'978-7-532-72024-3', price:15, condition:'良好', category:'外语', desc:'有荧光笔标注重点，不影响阅读。送四级词汇小册子。', contact:'QQ: 23456789', time:Date.now()-864e5*4, emoji:'🌍'},
-    {id:3, title:'C程序设计（第五版）', author:'谭浩强', isbn:'978-7-302-42137-5', price:18, condition:'一般', category:'计算机', desc:'上课记了很多笔记，对新手很有参考价值。送习题答案电子版。', contact:'微信: c_programmer', time:Date.now()-864e5, emoji:'💻'},
-    {id:4, title:'马克思主义基本原理概论', author:'本书编写组', isbn:'978-7-040-51539-8', price:8, condition:'全新', category:'文科', desc:'全新未拆封，买了两本。', contact:'微信: marx2024', time:Date.now()-864e5*3, emoji:'📖'},
-    {id:5, title:'人体解剖学彩色图谱（第3版）', author:'张朝佑', isbn:'978-7-535-74638-5', price:35, condition:'近新', category:'医学', desc:'几乎没有翻过，送配套习题册。', contact:'QQ: 87654321', time:Date.now()-864e5*6, emoji:'🏥'},
-    {id:6, title:'大学英语四级真题2024', author:'华研外语', isbn:'978-7-562-84658-3', price:12, condition:'良好', category:'考试', desc:'做完两套卷子，后面八套全新未动。送听力音频。', contact:'微信: pass_cet4', time:Date.now()-864e5*5, emoji:'📝'},
-    {id:7, title:'线性代数（第六版）', author:'同济大学数学系', isbn:'978-7-04-042195-8', price:15, condition:'近新', category:'理工', desc:'第六版，上了半学期课，书很新。', contact:'微信: lin_algebra', time:Date.now()-864e5*7, emoji:'📐'},
-    {id:8, title:'Python从入门到实践（第2版）', author:'Eric Matthes', isbn:'978-7-115-54608-1', price:25, condition:'良好', category:'计算机', desc:'中文版，前面几章有划线笔记，后面全新。', contact:'QQ: python_learner', time:Date.now()-864e5*8, emoji:'💻'},
-  ]);
-}
+function seed(){
+if(getBooks().length>0)return;
+saveBooks([
+{id:1,title:'高等数学（第七版）上册',author:'同济大学数学系',isbn:'978-7-04-039663-8',price:20,condition:'近新',category:'理工',desc:'第七版正版，只用了一个月，几乎全新，赠送配套习题解答。',contact:'微信: math_helper',time:Date.now()-864e5*2,emoji:'📐',photos:[]},
+{id:2,title:'大学英语精读（第三版）',author:'董亚芬',isbn:'978-7-532-72024-3',price:15,condition:'良好',category:'外语',desc:'有荧光笔标注重点，不影响阅读。送四级词汇小册子。',contact:'QQ: 23456789',time:Date.now()-864e5*4,emoji:'🌍',photos:[]},
+{id:3,title:'C程序设计（第五版）',author:'谭浩强',isbn:'978-7-302-42137-5',price:18,condition:'一般',category:'计算机',desc:'上课记了很多笔记，对新手很有参考价值。送习题答案电子版。',contact:'微信: c_programmer',time:Date.now()-864e5,emoji:'💻',photos:[]},
+{id:4,title:'马克思主义基本原理概论',author:'本书编写组',isbn:'978-7-040-51539-8',price:8,condition:'全新',category:'文科',desc:'全新未拆封，买了两本。',contact:'微信: marx2024',time:Date.now()-864e5*3,emoji:'📖',photos:[]},
+{id:5,title:'人体解剖学彩色图谱（第3版）',author:'张朝佑',isbn:'978-7-535-74638-5',price:35,condition:'近新',category:'医学',desc:'几乎没有翻过，送配套习题册。',contact:'QQ: 87654321',time:Date.now()-864e5*6,emoji:'🏥',photos:[]},
+{id:6,title:'大学英语四级真题2024',author:'华研外语',isbn:'978-7-562-84658-3',price:12,condition:'良好',category:'考试',desc:'做完两套卷子，后面八套全新未动。送听力音频。',contact:'微信: pass_cet4',time:Date.now()-864e5*5,emoji:'📝',photos:[]},
+{id:7,title:'线性代数（第六版）',author:'同济大学数学系',isbn:'978-7-04-042195-8',price:15,condition:'近新',category:'理工',desc:'第六版，上了半学期课，书很新。',contact:'微信: lin_algebra',time:Date.now()-864e5*7,emoji:'📐',photos:[]},
+{id:8,title:'Python从入门到实践（第2版）',author:'Eric Matthes',isbn:'978-7-115-54608-1',price:25,condition:'良好',category:'计算机',desc:'中文版，前面几章有划线笔记，后面全新。',contact:'QQ: python_learner',time:Date.now()-864e5*8,emoji:'💻',photos:[]},
+])}
 seed();
 
-// ====== Pages ======
-let currentPage = 'market';
-
-function showPage(page) {
-  currentPage = page;
-  const market = document.getElementById('bookGrid').closest('main');
-  const about = document.getElementById('aboutPage');
-  const hero = document.getElementById('heroSection');
-  if (page === 'market') {
-    market.style.display = 'block';
-    about.style.display = 'none';
-    hero.style.display = 'block';
-  } else {
-    market.style.display = 'none';
-    about.style.display = 'block';
-    hero.style.display = 'none';
-  }
+// Pages
+function showPage(p){
+document.getElementById('bookGrid').closest('main').style.display=p==='market'?'block':'none';
+document.getElementById('aboutPage').style.display=p==='about'?'block':'none';
+document.getElementById('heroSection').style.display=p==='market'?'block':'none';
 }
 
-// ====== Render ======
-function render() {
-  const grid = document.getElementById('bookGrid');
-  const filtersEl = document.getElementById('filters');
-  const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
-  const activeCat = filtersEl.dataset.active || '全部';
-
-  // Filters
-  filtersEl.innerHTML = CATEGORIES.map(c =>
-    `<span class="tag ${c === activeCat ? 'active' : ''}" onclick="setFilter('${c}')">${c}</span>`
-  ).join('');
-
-  let books = getBooks();
-  if (activeCat !== '全部') books = books.filter(b => b.category === activeCat);
-  if (query) books = books.filter(b => b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query));
-  books.sort((a, b) => b.time - a.time);
-
-  // Stats
-  const all = getBooks();
-  const avg = all.length > 0 ? (all.reduce((s, b) => s + b.price, 0) / all.length).toFixed(1) : '0';
-  document.getElementById('totalBooks').textContent = all.length;
-  document.getElementById('avgPrice').textContent = '¥' + avg;
-  document.getElementById('resultCount').textContent = books.length > 0 ? `找到 ${books.length} 本书` : '';
-
-  // Grid
-  if (books.length === 0) {
-    grid.innerHTML = `<div class="empty-state">
-      <div class="icon">📭</div>
-      <p>${query ? '没有找到匹配的书，换个关键词试试？' : '还没有人发布书籍'}</p>
-      <p class="sub">${!query && activeCat === '全部' ? '点右上角「卖书」来当第一个卖家吧 🎉' : ''}</p>
-    </div>`;
-    return;
-  }
-
-  grid.innerHTML = books.map(b => {
-    const cc = COND_CLASS[b.condition] || 'cond-good';
-    const ago = timeAgo(b.time);
-    return `<div class="book-card" onclick="showDetail(${b.id})">
-      <div class="cover">${b.emoji || '📚'}</div>
-      <div class="title">${esc(b.title)}</div>
-      <div class="author">${esc(b.author)}</div>
-      <div class="meta">
-        <span class="price">¥${b.price}</span>
-        <span class="condition ${cc}">${b.condition}</span>
-      </div>
-      <div class="time-tag">${ago}</div>
-    </div>`;
-  }).join('');
+// Render
+function render(){
+const grid=document.getElementById('bookGrid');
+const filtersEl=document.getElementById('filters');
+const query=(document.getElementById('searchInput').value||'').toLowerCase().trim();
+const activeCat=filtersEl.dataset.active||'全部';
+filtersEl.innerHTML=CATEGORIES.map(c=>'<span class="tag'+(c===activeCat?' active':'')+'" onclick="setFilter(\''+c+'\')">'+c+'</span>').join('');
+let books=getBooks();
+if(activeCat!=='全部')books=books.filter(b=>b.category===activeCat);
+if(query)books=books.filter(b=>b.title.toLowerCase().includes(query)||b.author.toLowerCase().includes(query));
+books.sort((a,b)=>b.time-a.time);
+const all=getBooks();
+const avg=all.length>0?(all.reduce((s,b)=>s+b.price,0)/all.length).toFixed(1):'0';
+document.getElementById('totalBooks').textContent=all.length;
+document.getElementById('avgPrice').textContent='¥'+avg;
+document.getElementById('resultCount').textContent=books.length>0?'找到 '+books.length+' 本书':'';
+if(books.length===0){
+grid.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>'+(query?'没有找到匹配的书，换个关键词试试？':'还没有人发布书籍')+'</p><p class="sub">'+(!query&&activeCat==='全部'?'点右上角「卖书」来当第一个卖家 🎉':'')+'</p></div>';
+return;
+}
+grid.innerHTML=books.map(b=>{
+const cc=COND[b.condition]||'cond-good';
+const img=b.photos&&b.photos[0]?'<img src="'+esc(b.photos[0])+'" alt="">':(b.emoji||'📚');
+return '<div class="book-card" onclick="showDetail('+b.id+')"><div class="img-wrap">'+img+'</div><div class="body"><div class="title">'+esc(b.title)+'</div><div class="author">'+esc(b.author)+'</div><div class="meta"><span class="price">¥'+b.price+'</span><span class="cond '+cc+'">'+b.condition+'</span></div><div class="time-t">'+timeAgo(b.time)+'</div></div></div>'
+}).join('');
 }
 
-function setFilter(c) {
-  document.getElementById('filters').dataset.active = c;
-  render();
+function setFilter(c){document.getElementById('filters').dataset.active=c;render()}
+function resetAll(){document.getElementById('searchInput').value='';document.getElementById('filters').dataset.active='全部';render()}
+
+// Add book modal
+function openAddBook(){document.getElementById('addModal').classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+let bookPhotos=[];
+function previewBookPhoto(e){
+const file=e.target.files[0];
+if(!file)return;
+const reader=new FileReader();
+reader.onload=function(ev){
+bookPhotos.push(ev.target.result);
+renderPhotoPreviews();
+};
+reader.readAsDataURL(file);
+e.target.value='';
+}
+function removePhoto(i){bookPhotos.splice(i,1);renderPhotoPreviews()}
+function renderPhotoPreviews(){
+const container=document.getElementById('photoPreviews');
+container.innerHTML=bookPhotos.map((p,i)=>'<div class="img-preview"><img src="'+p+'"><button class="del" onclick="removePhoto('+i+')">&times;</button></div>').join('');
 }
 
-function resetAll() {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('filters').dataset.active = '全部';
-  render();
+function previewQr(e){
+const file=e.target.files[0];
+if(!file)return;
+const reader=new FileReader();
+reader.onload=function(ev){
+document.getElementById('qrPreviewImg').src=ev.target.result;
+document.getElementById('qrPreview').style.display='block';
+};
+reader.readAsDataURL(file);
+}
+function clearQrUpload(){document.getElementById('bookQrUpload').value='';document.getElementById('qrPreview').style.display='none'}
+
+function submitBook(e){
+e.preventDefault();
+const title=document.getElementById('bookTitle').value.trim();
+const author=document.getElementById('bookAuthor').value.trim();
+const price=parseFloat(document.getElementById('bookPrice').value);
+const condition=document.getElementById('bookCondition').value;
+const contact=document.getElementById('bookContact').value.trim();
+const category=document.getElementById('bookCategory').value;
+const desc=document.getElementById('bookDesc').value.trim();
+const isbn=document.getElementById('bookIsbn').value.trim();
+const qrInput=document.getElementById('bookQrUpload');
+const qrData=qrInput.files&&qrInput.files[0]?document.getElementById('qrPreviewImg').src:'';
+if(!title||!author||!price||!contact){showToast('⚠️ 请填写必填项');return;}
+const book={id:Date.now(),title,author,isbn,price,condition,desc,contact,category,emoji:EMOJI[category]||'📚',time:Date.now(),photos:[...bookPhotos],qrData};
+const books=getBooks();
+books.unshift(book);
+saveBooks(books);
+closeModal('addModal');
+e.target.reset();
+bookPhotos=[];
+document.getElementById('photoPreviews').innerHTML='';
+showPage('market');
+render();
+showToast('✅ 发布成功！');
 }
 
-// ====== Add Book ======
-function openAddBook() { document.getElementById('addModal').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// Detail — 闲鱼 style
+function showDetail(id){
+const b=getBooks().find(x=>x.id===id);
+if(!b)return;
+const cc=COND[b.condition]||'cond-good';
+const photoHtml=b.photos&&b.photos.length>0?'<img src="'+esc(b.photos[0])+'">':'<div class="no-img">'+(b.emoji||'📚')+'</div>';
+const descHtml=b.desc?'<div class="detail-sec"><div class="sec-title">📝 商品描述</div><div class="sec-body">'+esc(b.desc)+'</div></div>':'';
+const isbnHtml=b.isbn?'<div class="detail-isbn">🔖 ISBN：'+esc(b.isbn)+'</div>':'';
 
-function submitBook(e) {
-  e.preventDefault();
-  const title = document.getElementById('bookTitle').value.trim();
-  const author = document.getElementById('bookAuthor').value.trim();
-  const price = parseFloat(document.getElementById('bookPrice').value);
-  const condition = document.getElementById('bookCondition').value;
-  const contact = document.getElementById('bookContact').value.trim();
-  const category = document.getElementById('bookCategory').value;
-  const desc = document.getElementById('bookDesc').value.trim();
-  const isbn = document.getElementById('bookIsbn').value.trim();
-
-  if (!title || !author || !price || !contact) { showToast('⚠️ 请填写必填项'); return; }
-
-  const qrUpload = document.getElementById('bookQrUpload');
-  const qrData = qrUpload.files && qrUpload.files[0] ? document.getElementById('qrPreviewImg').src : '';
-
-  const book = {
-    id: Date.now(), title, author, isbn, price, condition, desc, contact, category, qrData,
-    emoji: EMOJI[category] || '📚', time: Date.now()
-  };
-  const books = getBooks();
-  books.unshift(book);
-  saveBooks(books);
-  closeModal('addModal');
-  e.target.reset();
-  showPage('market');
-  render();
-  showToast('✅ 发布成功！');
+document.getElementById('detailContent').innerHTML=
+'<div class="detail-top">'+photoHtml+'</div>'+
+'<div class="detail-body">'+
+'<div class="detail-price">'+
+'<span class="price">¥'+b.price+'</span>'+
+'<div class="tags"><span class="'+cc+'" style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500">'+b.condition+'</span><span style="background:var(--primary-light);color:var(--primary)">'+b.category+'</span></div>'+
+'</div>'+
+'<div class="detail-title"><h2>'+esc(b.title)+'</h2><div class="author">'+esc(b.author)+'</div></div>'+
+'<div class="detail-info">'+
+'<div class="item"><div class="lb">价格</div><div class="vl" style="color:var(--danger)">¥'+b.price+'</div></div>'+
+'<div class="item"><div class="lb">书况</div><div class="vl"><span class="'+cc+'" style="padding:1px 6px;border-radius:4px;font-size:12px">'+b.condition+'</span></div></div>'+
+'<div class="item"><div class="lb">分类</div><div class="vl">'+b.category+'</div></div>'+
+'</div>'+
+isbnHtml+
+descHtml+
+'<div class="detail-seller">'+
+'<div class="left"><div class="avatar">👤</div><div><div class="sname">校园卖家</div><div class="stime">'+timeAgo(b.time)+'发布</div></div></div>'+
+'<button class="btn-contact" onclick="contactSeller(\''+esc(b.contact)+'\',\''+(b.qrData||'')+'\')">📱 联系卖家</button>'+
+'</div>'+
+'</div>'+
+'<div class="detail-bottom">'+
+'<button class="btn btn-success btn-lg" onclick="contactSeller(\''+esc(b.contact)+'\',\''+(b.qrData||'')+'\')">📱 联系卖家</button>'+
+'<button class="btn" style="background:#f1f5f9;color:var(--text2);border:1px solid var(--border)" onclick="deleteBook('+b.id+')">🗑️ 下架</button>'+
+'</div>';
+document.getElementById('detailModal').classList.add('open');
 }
 
-// ====== Detail ======
-function showDetail(id) {
-  const b = getBooks().find(x => x.id === id);
-  if (!b) return;
-  const cc = COND_CLASS[b.condition] || 'cond-good';
-  document.getElementById('detailContent').innerHTML = `
-    <div class="detail-cover">${b.emoji || '📚'}</div>
-    <h2 style="margin-bottom:4px;font-size:18px">${esc(b.title)}</h2>
-    <p style="color:var(--text-secondary);margin-bottom:16px;font-size:14px">${esc(b.author)}</p>
-    <div class="detail-meta">
-      <div class="item"><div class="label">💰 价格</div><div class="value" style="color:var(--danger);font-size:20px">¥${b.price}</div></div>
-      <div class="item"><div class="label">📊 书况</div><div class="value"><span class="condition ${cc}" style="font-size:13px">${b.condition}</span></div></div>
-      <div class="item"><div class="label">🏷️ 分类</div><div class="value">${b.category}</div></div>
-      <div class="item"><div class="label">⏰ 发布时间</div><div class="value">${timeAgo(b.time)}</div></div>
-    </div>
-    ${b.isbn ? `<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">🔖 ISBN: ${esc(b.isbn)}</p>` : ''}
-    ${b.desc ? `<div class="detail-desc">📝 ${esc(b.desc)}</div>` : ''}
-    <div class="detail-actions">
-      <button class="btn btn-contact" onclick="contactSeller('${esc(b.contact)}', '${b.qrData || ''}')">📱 联系卖家</button>
-      <button class="btn btn-delete" onclick="deleteBook(${b.id})">🗑️ 下架</button>
-    </div>
-    <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:16px">⚠️ 当面交易 · 注意安全 · 价格自行协商</p>
-  `;
-  document.getElementById('detailModal').classList.add('open');
+function deleteBook(id){
+if(!confirm('确定下架这本书吗？'))return;
+saveBooks(getBooks().filter(b=>b.id!==id));
+closeModal('detailModal');
+render();
+showToast('🗑️ 已下架');
 }
 
-function previewQr(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    document.getElementById('qrPreviewImg').src = ev.target.result;
-    document.getElementById('qrPreview').style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+// Contact
+function contactSeller(contact,qrData){
+closeModal('detailModal');
+document.getElementById('contactInfoDisplay').textContent=contact;
+const btn=document.getElementById('copyContactBtn');
+btn.textContent='复制';btn.className='cpy';
+const container=document.getElementById('qrcodeContainer');
+container.innerHTML='';
+if(qrData){
+document.getElementById('qrLabel').textContent='📸 卖家上传的二维码';
+container.innerHTML='<img src="'+qrData+'" alt="二维码" style="max-width:150px;max-height:150px;border-radius:4px">';
+}else{
+document.getElementById('qrLabel').textContent='📸 扫二维码加好友';
+try{
+if(typeof QRCode!=='undefined'){
+new QRCode(container,{text:contact,width:150,height:150,colorDark:'#1e293b',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+}else{container.innerHTML='<div style="width:150px;height:150px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center">📱</div>'}
+}catch(e){container.innerHTML='<div style="width:150px;height:150px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center">📱</div>'}
+}
+document.getElementById('contactModal').classList.add('open');
 }
 
-function clearQrUpload() {
-  document.getElementById('bookQrUpload').value = '';
-  document.getElementById('qrPreview').style.display = 'none';
+function copyContact(){
+const text=document.getElementById('contactInfoDisplay').textContent;
+if(!text)return;
+const btn=document.getElementById('copyContactBtn');
+const doCopy=function(t,b){
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(t).then(()=>{b.textContent='已复制 ✓';b.className='cpy done';setTimeout(()=>{b.textContent='复制';b.className='cpy'},1800)}).catch(()=>{fcopy(t,b)});
+}else{fcopy(t,b)}
+};
+doCopy(text,btn);
+}
+function fcopy(t,b){
+const ta=document.createElement('textarea');
+ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+document.body.appendChild(ta);ta.select();
+try{document.execCommand('copy');b.textContent='已复制 ✓';b.className='cpy done';setTimeout(()=>{b.textContent='复制';b.className='cpy'},1800)}catch(e){showToast('⚠️ 复制失败')}
+document.body.removeChild(ta);
 }
 
-function contactSeller(contact, qrData) {
-  closeModal('detailModal');
-  document.getElementById('contactInfoDisplay').textContent = contact;
-  document.getElementById('copyContactBtn').textContent = '复制';
-  document.getElementById('copyContactBtn').className = 'copy-btn';
+// Util
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function timeAgo(ts){const d=Date.now()-ts;if(d<6e4)return'刚刚';if(d<36e5)return Math.floor(d/6e4)+'分钟前';if(d<864e5)return Math.floor(d/36e5)+'小时前';return Math.floor(d/864e5)+'天前'}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2500)}
 
-  const container = document.getElementById('qrcodeContainer');
-  container.innerHTML = '';
-
-  if (qrData) {
-    document.getElementById('qrLabel').textContent = '📸 卖家上传的二维码';
-    container.innerHTML = '<img src="' + qrData + '" alt="卖家二维码" style="max-width:160px;max-height:160px;border-radius:4px">';
-  } else {
-    document.getElementById('qrLabel').textContent = '📸 扫二维码加好友';
-    try {
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(container, {
-          text: contact,
-          width: 160,
-          height: 160,
-          colorDark: '#1e293b',
-          colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.H
-        });
-      } else {
-        container.innerHTML = '<div style="width:160px;height:160px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--text-muted)">📱</div>';
-      }
-    } catch(e) {
-      container.innerHTML = '<div style="width:160px;height:160px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--text-muted)">📱</div>';
-    }
-  }
-
-  document.getElementById('contactModal').classList.add('open');
-}
-
-function copyContact() {
-  const text = document.getElementById('contactInfoDisplay').textContent;
-  if (!text) return;
-  const btn = document.getElementById('copyContactBtn');
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = '已复制 ✓';
-      btn.className = 'copy-btn copied';
-      setTimeout(() => { btn.textContent = '复制'; btn.className = 'copy-btn'; }, 2000);
-    }).catch(() => { fallbackCopy(text, btn); });
-  } else {
-    fallbackCopy(text, btn);
-  }
-}
-
-function fallbackCopy(text, btn) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try {
-    document.execCommand('copy');
-    btn.textContent = '已复制 ✓';
-    btn.className = 'copy-btn copied';
-    setTimeout(() => { btn.textContent = '复制'; btn.className = 'copy-btn'; }, 2000);
-  } catch(e) {
-    showToast('⚠️ 复制失败，请手动复制');
-  }
-  document.body.removeChild(ta);
-}
-
-function deleteBook(id) {
-  if (!confirm('确定下架这本书吗？')) return;
-  saveBooks(getBooks().filter(b => b.id !== id));
-  closeModal('detailModal');
-  render();
-  showToast('🗑️ 已下架');
-}
-
-// ====== Util ======
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-function timeAgo(ts) {
-  const d = Date.now() - ts;
-  if (d < 6e4) return '刚刚';
-  if (d < 36e5) return Math.floor(d / 6e4) + '分钟前';
-  if (d < 864e5) return Math.floor(d / 36e5) + '小时前';
-  return Math.floor(d / 864e5) + '天前';
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ====== Init ======
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
-});
+document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')})});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(el=>el.classList.remove('open'))});
 render();
 </script>
 </body>
