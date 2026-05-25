@@ -231,48 +231,60 @@
   }
 
   /* Contact modal */
-  .contact-modal { max-width: 400px; text-align: center; }
-  .contact-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: var(--radius);
-    padding: 28px 20px 20px;
-    color: white;
+  .contact-modal { max-width: 380px; }
+  .contact-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 8px 0 16px;
+    border-bottom: 1px solid var(--border);
     margin-bottom: 16px;
   }
-  .contact-card .avatar {
-    width: 56px; height: 56px;
-    background: rgba(255,255,255,.2);
+  .contact-avatar {
+    width: 44px; height: 44px;
+    background: var(--primary-light); color: var(--primary);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-    margin: 0 auto 10px;
+    font-size: 20px; flex-shrink: 0;
   }
-  .contact-card .label { font-size: 12px; opacity: .7; margin-bottom: 3px; }
-  .contact-card .value {
-    font-size: 18px; font-weight: 700;
-    letter-spacing: .5px;
-    background: rgba(255,255,255,.15);
-    display: inline-block;
-    padding: 5px 18px;
-    border-radius: 8px;
-  }
-  .contact-qr-section { margin: 12px 0; }
-  .contact-qr-section .qr-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-  .contact-qr-wrap {
-    background: white;
+  .contact-header .info { text-align: left; flex: 1; }
+  .contact-header .info .name { font-weight: 600; font-size: 15px; }
+  .contact-header .info .sub { font-size: 12px; color: var(--text-muted); }
+  .contact-field {
+    background: #f8fafc;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 12px;
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .contact-field .left { text-align: left; }
+  .contact-field .left .label { font-size: 12px; color: var(--text-muted); }
+  .contact-field .left .value { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: .3px; }
+  .contact-field .copy-btn {
+    background: var(--primary); color: white; border: none;
+    padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer;
+    flex-shrink: 0;
+  }
+  .contact-field .copy-btn:hover { background: var(--primary-dark); }
+  .contact-field .copy-btn.copied { background: var(--success); }
+  .contact-qr-box {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .contact-qr-box .qr-label { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .contact-qr-box .qr-wrap {
     display: inline-block;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
     box-shadow: var(--shadow);
   }
-  .contact-qr-wrap canvas, .contact-qr-wrap img { display: block !important; margin: 0 auto; max-width: 180px; max-height: 180px; }
-  .contact-qr-uploaded img { border-radius: 4px; max-width: 180px; max-height: 180px; }
-  .contact-btns { display: flex; gap: 8px; margin-top: 12px; }
-  .contact-btns .btn { flex: 1; padding: 10px; }
-  .btn-copy { background: var(--primary); color: white; }
-  .btn-copy:hover { background: var(--primary-dark); }
-  .btn-close-sm { background: #f1f5f9; color: var(--text-secondary); border: 1px solid var(--border); }
-  .btn-close-sm:hover { background: #e2e8f0; }
+  .contact-qr-box .qr-wrap canvas,
+  .contact-qr-box .qr-wrap img { display: block !important; margin: 0 auto; max-width: 160px; max-height: 160px; }
+  .contact-qr-box .qr-tip { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
 
   @media (max-width: 600px) {
     .hero h1 { font-size: 22px; }
@@ -432,18 +444,24 @@
       <button class="close" onclick="closeModal('contactModal')">&times;</button>
     </div>
     <div id="contactContent">
-      <div class="contact-card">
-        <div class="avatar">👤</div>
-        <div class="label">卖家联系方式</div>
-        <div class="value" id="contactInfoDisplay">—</div>
+      <div class="contact-header">
+        <div class="contact-avatar">👤</div>
+        <div class="info">
+          <div class="name">校园卖家</div>
+          <div class="sub">回复可能不及时，建议直接加好友</div>
+        </div>
       </div>
-      <div class="contact-qr-section">
+      <div class="contact-field">
+        <div class="left">
+          <div class="label">👋 联系我</div>
+          <div class="value" id="contactInfoDisplay">—</div>
+        </div>
+        <button class="copy-btn" id="copyContactBtn" onclick="copyContact()">复制</button>
+      </div>
+      <div class="contact-qr-box">
         <div class="qr-label" id="qrLabel">📸 扫二维码加好友</div>
-        <div id="qrcodeContainer" style="display:flex;justify-content:center"></div>
-      </div>
-      <div class="contact-btns">
-        <button class="btn btn-copy" onclick="copyContact()">📋 复制</button>
-        <button class="btn btn-close-sm" onclick="closeModal('contactModal')">关闭</button>
+        <div class="qr-wrap" id="qrcodeContainer"></div>
+        <div class="qr-tip">长按或截图保存二维码</div>
       </div>
     </div>
   </div>
@@ -640,35 +658,32 @@ function clearQrUpload() {
 function contactSeller(contact, qrData) {
   closeModal('detailModal');
   document.getElementById('contactInfoDisplay').textContent = contact;
+  document.getElementById('copyContactBtn').textContent = '复制';
+  document.getElementById('copyContactBtn').className = 'copy-btn';
 
   const container = document.getElementById('qrcodeContainer');
   container.innerHTML = '';
 
-  // If seller uploaded their own QR code image, show that
   if (qrData) {
-    container.innerHTML = '<div class="contact-qr-wrap contact-qr-uploaded"><img src="' + qrData + '" alt="卖家二维码"></div>';
     document.getElementById('qrLabel').textContent = '📸 卖家上传的二维码';
+    container.innerHTML = '<img src="' + qrData + '" alt="卖家二维码" style="max-width:160px;max-height:160px;border-radius:4px">';
   } else {
-    // Generate QR code from contact info
     document.getElementById('qrLabel').textContent = '📸 扫二维码加好友';
-    const wrap = document.createElement('div');
-    wrap.className = 'contact-qr-wrap';
-    container.appendChild(wrap);
     try {
       if (typeof QRCode !== 'undefined') {
-        new QRCode(wrap, {
+        new QRCode(container, {
           text: contact,
-          width: 180,
-          height: 180,
+          width: 160,
+          height: 160,
           colorDark: '#1e293b',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.H
         });
       } else {
-        wrap.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:48px;flex-direction:column;gap:4px;color:var(--text-muted)">📱<span style="font-size:12px">' + esc(contact) + '</span></div>';
+        container.innerHTML = '<div style="width:160px;height:160px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--text-muted)">📱</div>';
       }
     } catch(e) {
-      wrap.innerHTML = '<div style="width:180px;height:180px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px;flex-direction:column;gap:4px;color:var(--text-muted)">📱<span style="font-size:12px">' + esc(contact) + '</span></div>';
+      container.innerHTML = '<div style="width:160px;height:160px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--text-muted)">📱</div>';
     }
   }
 
@@ -678,18 +693,19 @@ function contactSeller(contact, qrData) {
 function copyContact() {
   const text = document.getElementById('contactInfoDisplay').textContent;
   if (!text) return;
+  const btn = document.getElementById('copyContactBtn');
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast('✅ 已复制到剪贴板');
-    }).catch(() => {
-      fallbackCopy(text);
-    });
+      btn.textContent = '已复制 ✓';
+      btn.className = 'copy-btn copied';
+      setTimeout(() => { btn.textContent = '复制'; btn.className = 'copy-btn'; }, 2000);
+    }).catch(() => { fallbackCopy(text, btn); });
   } else {
-    fallbackCopy(text);
+    fallbackCopy(text, btn);
   }
 }
 
-function fallbackCopy(text) {
+function fallbackCopy(text, btn) {
   const ta = document.createElement('textarea');
   ta.value = text;
   ta.style.position = 'fixed';
@@ -698,7 +714,9 @@ function fallbackCopy(text) {
   ta.select();
   try {
     document.execCommand('copy');
-    showToast('✅ 已复制到剪贴板');
+    btn.textContent = '已复制 ✓';
+    btn.className = 'copy-btn copied';
+    setTimeout(() => { btn.textContent = '复制'; btn.className = 'copy-btn'; }, 2000);
   } catch(e) {
     showToast('⚠️ 复制失败，请手动复制');
   }
