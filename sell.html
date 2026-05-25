@@ -19,7 +19,6 @@
       }
     }
   </script>
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,8 +34,6 @@
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
     }
-
-    /* 自定义动画 */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -54,8 +51,6 @@
       display: inline-block;
       vertical-align: middle;
     }
-
-    /* Toast */
     .toast {
       position: fixed; bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(100px);
@@ -70,13 +65,9 @@
     .toast.success { background: #065f46; color: #fff; }
     .toast.error   { background: #991b1b; color: #fff; }
     .toast.info    { background: #1e293b; color: #fff; }
-
-    /* 美化表单元素 */
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type="number"] { -moz-appearance: textfield; }
-
-    /* 下拉箭头美化 */
     select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
     .select-wrap { position: relative; }
     .select-wrap::after {
@@ -108,19 +99,17 @@
   <main class="flex-1 flex items-start justify-center px-4 py-8 md:py-12">
     <div class="w-full max-w-2xl fade-in">
 
-      <!-- 页面标题 -->
       <div class="text-center mb-6">
         <div class="text-3xl mb-1">📖</div>
         <h1 class="text-xl font-bold text-slate-800">发布二手书</h1>
         <p class="text-sm text-slate-400 mt-1">填好信息，让书找到新主人</p>
       </div>
 
-      <!-- 表单卡片 -->
       <div class="bg-white rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,.04),0_1px_3px_rgba(0,0,0,.06)] border border-slate-200 p-6 md:p-8">
 
         <form id="sellForm" onsubmit="return false;" class="space-y-5">
 
-          <!-- 书名（必填） -->
+          <!-- 书名 -->
           <div>
             <label for="title" class="block text-xs font-medium text-slate-500 mb-1.5">书名 <span class="text-red-500">*</span></label>
             <input type="text" id="title" name="title" required
@@ -128,7 +117,7 @@
                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
           </div>
 
-          <!-- 作者（必填） -->
+          <!-- 作者 -->
           <div>
             <label for="author" class="block text-xs font-medium text-slate-500 mb-1.5">作者 <span class="text-red-500">*</span></label>
             <input type="text" id="author" name="author" required
@@ -144,30 +133,26 @@
                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
           </div>
 
-          <!-- ISBN + 扫码占位 -->
+          <!-- ISBN -->
           <div>
             <label for="isbn" class="block text-xs font-medium text-slate-500 mb-1.5">ISBN <span class="text-slate-300 font-normal">(选填)</span></label>
             <div class="flex gap-2">
               <input type="text" id="isbn" name="isbn"
                      placeholder="例：9787040396638"
                      class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-              <!-- ISBN扫码自动填充预留位置：扫码后调用 fillIsbn(value) 填充上方 input 并触发查书接口 -->
               <button type="button" id="scanBtn"
                       class="px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
-                      title="扫码查书">
-                📷
-              </button>
+                      title="扫码查书">📷</button>
             </div>
             <p class="text-[11px] text-slate-300 mt-1">扫码功能即将上线</p>
           </div>
 
-          <!-- 封面图片 URL -->
+          <!-- 封面 URL -->
           <div>
             <label for="cover_url" class="block text-xs font-medium text-slate-500 mb-1.5">封面图片链接 <span class="text-slate-300 font-normal">(选填)</span></label>
             <input type="url" id="cover_url" name="cover_url"
                    placeholder="https://img2.example.com/cover.jpg"
                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-            <!-- 封面预览 -->
             <div id="coverPreview" class="mt-2 hidden">
               <img id="coverPreviewImg" src="" alt="封面预览"
                    class="w-24 h-32 object-cover rounded-lg border border-slate-200 shadow-sm"
@@ -175,7 +160,7 @@
             </div>
           </div>
 
-          <!-- 价格行：原价 + 售价 -->
+          <!-- 价格 -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label for="original_price" class="block text-xs font-medium text-slate-500 mb-1.5">原价 <span class="text-slate-300 font-normal">¥ (选填)</span></label>
@@ -224,7 +209,7 @@
 
           <!-- 联系方式 -->
           <div>
-            <label for="contact" class="block text-xs font-medium text-slate-500 mb-1.5">联系方式 <span class="text-slate-300 font-normal">(选填，不填则用注册手机号)</span></label>
+            <label for="contact" class="block text-xs font-medium text-slate-500 mb-1.5">联系方式 <span class="text-slate-300 font-normal">(选填)</span></label>
             <input type="text" id="contact" name="contact"
                    placeholder="微信号 / QQ / 手机号"
                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
@@ -248,7 +233,6 @@
         </form>
       </div>
 
-      <!-- 底部提示 -->
       <p class="text-center text-xs text-slate-300 mt-5">
         发布即表示同意 <a href="#" class="text-indigo-500 no-underline hover:text-indigo-600" onclick="event.preventDefault();showToast('📌 用户协议页面开发中','info')">《用户协议》</a>
       </p>
@@ -258,31 +242,40 @@
   <!-- ===== Toast ===== -->
   <div class="toast" id="toast"></div>
 
-  <!-- ===== Supabase SDK ===== -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
     /* =============================================================
-     * 配置 Supabase 客户端
+     * Supabase REST API 配置（无需外部 SDK CDN）
      * ============================================================= */
-    const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
+
+    function supabaseHeaders(token) {
+      return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
+    }
+
+    /* 从 localStorage 读取 Supabase session */
+    function getStoredSession() {
+      for (var key in localStorage) {
+        if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
+          try { var d = JSON.parse(localStorage.getItem(key)); if (d && d.access_token) return d; } catch(e) {}
+        }
+      }
+      return null;
+    }
 
     /* =============================================================
      * DOM 引用
      * ============================================================= */
-    const $ = (id) => document.getElementById(id);
-    const form      = $('sellForm');
-    const submitBtn = $('submitBtn');
-    const toastEl  = $('toast');
-    const coverUrl = $('cover_url');
-    const coverPreview = $('coverPreview');
-    const coverPreviewImg = $('coverPreviewImg');
-    const descTextarea = $('description');
-    const descCount = $('descCount');
-
-    let _toastTimer = null;
+    var $ = function(id) { return document.getElementById(id); };
+    var form = $('sellForm');
+    var submitBtn = $('submitBtn');
+    var toastEl = $('toast');
+    var coverUrl = $('cover_url');
+    var coverPreview = $('coverPreview');
+    var coverPreviewImg = $('coverPreviewImg');
+    var descTextarea = $('description');
+    var descCount = $('descCount');
+    var _toastTimer = null;
 
     /* =============================================================
      * 工具函数
@@ -291,26 +284,23 @@
       type = type || 'info';
       toastEl.textContent = msg;
       toastEl.className = 'toast ' + type;
-      // 触发 reflow
       void toastEl.offsetWidth;
       toastEl.classList.add('show');
       clearTimeout(_toastTimer);
-      _toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
+      _toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 3000);
     }
 
     function setLoading(loading) {
       submitBtn.disabled = loading;
-      submitBtn.innerHTML = loading
-        ? '<span class="spinner"></span> 发布中…'
-        : '发布图书';
+      submitBtn.innerHTML = loading ? '<span class="spinner"></span> 发布中…' : '发布图书';
     }
 
     /* =============================================================
-     * 封面 URL 输入 → 实时预览
+     * 封面 URL 实时预览
      * ============================================================= */
-    coverUrl.addEventListener('input', function () {
-      const val = this.value.trim();
-      if (val && (val.startsWith('http://') || val.startsWith('https://'))) {
+    coverUrl.addEventListener('input', function() {
+      var val = this.value.trim();
+      if (val && (val.indexOf('http://') === 0 || val.indexOf('https://') === 0)) {
         coverPreviewImg.src = val;
         coverPreview.classList.remove('hidden');
       } else {
@@ -321,123 +311,96 @@
     /* =============================================================
      * 描述字数统计
      * ============================================================= */
-    descTextarea.addEventListener('input', function () {
-      const len = this.value.length;
+    descTextarea.addEventListener('input', function() {
+      var len = this.value.length;
       descCount.textContent = len;
-      if (len > 500) {
-        this.value = this.value.substring(0, 500);
-        descCount.textContent = 500;
-      }
+      if (len > 500) { this.value = this.value.substring(0, 500); descCount.textContent = 500; }
     });
 
     /* =============================================================
-     * 扫码按钮预留逻辑
+     * 扫码按钮预留
      * ============================================================= */
-    $('scanBtn').addEventListener('click', function () {
+    $('scanBtn').addEventListener('click', function() {
       showToast('📷 扫码功能即将上线，敬请期待', 'info');
     });
 
-    /**
-     * ISBN 扫码自动填充函数（预留）
-     * 扫码库（如 html5-qrcode）识别到 ISBN 后调用此函数
-     * @param {string} isbn - 扫码得到的 ISBN 号
-     */
-    function fillIsbn(isbn) {
-      $('isbn').value = isbn;
-      // TODO: 根据 ISBN 自动查询书名、作者等信息并填充表单
-      showToast('✅ 已识别 ISBN：' + isbn, 'success');
-    }
-
     /* =============================================================
-     * 登录检查 — Supabase Session
+     * 检查登录状态
      * ============================================================= */
-    async function checkAuth() {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        if (!session) {
-          // 未登录，跳转到 auth.html，带 redirect 参数登录后自动返回
-          showToast('⏳ 请先登录', 'info');
-          setTimeout(() => { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
-          return false;
-        }
-        return session;
-      } catch (err) {
-        console.error('Supabase auth check failed:', err);
-        showToast('⚠️ 认证服务连接失败，请稍后再试', 'error');
-        // 尝试 localStorage 兜底（兼容旧版）
-        // const localUser = localStorage.getItem(/* LOCAL_AUTH_KEY + '_user' */);
-        // if (localUser) return true;
-        return false;
+    function checkAuth() {
+      var session = getStoredSession();
+      if (!session) {
+        showToast('⏳ 请先登录', 'info');
+        setTimeout(function() { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
+        return null;
       }
+      return session;
     }
 
     /* =============================================================
-     * 表单提交
+     * 表单提交（REST API）
      * ============================================================= */
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      // 再次确认 session 是否有效
-      const session = await checkAuth();
-      if (!session) return;
+      var session = getStoredSession();
+      if (!session) { checkAuth(); return; }
 
-      // 收集表单数据
-      const title         = $('title').value.trim();
-      const author        = $('author').value.trim();
-      const publisher     = $('publisher').value.trim() || null;
-      const isbn          = $('isbn').value.trim() || null;
-      const cover_url     = coverUrl.value.trim() || null;
-      const original_price = $('original_price').value ? parseFloat($('original_price').value) : null;
-      const price         = parseFloat($('price').value);
-      const condition     = $('condition').value;
-      const location      = $('location').value;
-      const contact       = $('contact').value.trim() || null;
-      const description   = descTextarea.value.trim() || null;
+      var title = $('title').value.trim();
+      var author = $('author').value.trim();
+      var publisher = $('publisher').value.trim() || null;
+      var isbn = $('isbn').value.trim() || null;
+      var cover_url = coverUrl.value.trim() || null;
+      var original_price = $('original_price').value ? parseFloat($('original_price').value) : null;
+      var price = parseFloat($('price').value);
+      var condition = $('condition').value;
+      var location = $('location').value;
+      var contact = $('contact').value.trim() || null;
+      var description = descTextarea.value.trim() || null;
 
-      // 基本校验
       if (!title)  { showToast('请输入书名', 'error'); $('title').focus(); return; }
       if (!author) { showToast('请输入作者', 'error'); $('author').focus(); return; }
       if (!price || price <= 0) { showToast('请输入有效售价', 'error'); $('price').focus(); return; }
       if (!condition) { showToast('请选择品相', 'error'); return; }
       if (!location)  { showToast('请选择交易地点', 'error'); return; }
 
-      // 金额保留两位小数
-      const finalPrice = Math.round(price * 100) / 100;
-      const finalOriginal = original_price ? Math.round(original_price * 100) / 100 : null;
+      var finalPrice = Math.round(price * 100) / 100;
+      var finalOriginal = original_price ? Math.round(original_price * 100) / 100 : null;
 
-      // 准备数据
-      const bookData = {
-        title,
-        author,
-        publisher,
-        isbn,
-        cover_url,
+      var bookData = {
+        title: title,
+        author: author,
+        publisher: publisher,
+        isbn: isbn,
+        cover_url: cover_url,
         original_price: finalOriginal,
         price: finalPrice,
-        condition,
-        location,
-        contact,
-        description,
+        condition: condition,
+        location: location,
+        contact: contact,
+        description: description,
         user_id: session.user.id,
         status: '在售',
         created_at: new Date().toISOString(),
       };
 
-      // 开始提交
       setLoading(true);
 
       try {
-        const { data, error } = await supabase
-          .from('books')
-          .insert(bookData)
-          .select();
+        /* REST API：POST /rest/v1/books */
+        var res = await fetch(SUPABASE_URL + '/rest/v1/books', {
+          method: 'POST',
+          headers: supabaseHeaders(session.access_token),
+          body: JSON.stringify(bookData),
+        });
 
-        if (error) throw error;
+        if (!res.ok) {
+          var errBody = await res.text();
+          throw new Error(errBody || 'HTTP ' + res.status);
+        }
 
         showToast('✅ 发布成功！', 'success');
-        // 成功后跳转到首页
-        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+        setTimeout(function() { window.location.href = 'index.html'; }, 1200);
       } catch (err) {
         console.error('发布失败:', err);
         showToast('❌ 发布失败：' + (err.message || '未知错误'), 'error');
@@ -446,13 +409,13 @@
     });
 
     /* =============================================================
-     * 页面初始化
+     * 页面初始化：检查登录
      * ============================================================= */
-    (async function init() {
-      const session = await checkAuth();
-      if (session) {
-        // 可以在这里预填充用户信息等
-        console.log('已登录用户:', session.user.email);
+    (function() {
+      var session = getStoredSession();
+      if (!session) {
+        showToast('⏳ 请先登录', 'info');
+        setTimeout(function() { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
       }
     })();
   </script>

@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>书籍详情 · 泰皋阁</title>
 
-<!-- Tailwind CSS + Inter 字体 -->
+<!-- Tailwind CSS + Inter 字体（无 Supabase CDN） -->
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <script>
@@ -101,19 +100,13 @@ body { -webkit-font-smoothing: antialiased; }
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-lg font-bold text-gray-900">📩 发送购买请求</h2>
       <button onclick="closeOrderModal()"
-              class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 text-sm transition-all cursor-pointer">
-        ✕
-      </button>
+              class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 text-sm transition-all cursor-pointer">✕</button>
     </div>
     <p class="text-sm text-gray-500 mb-4" id="orderBookTitle">《书名》</p>
-
-    <!-- 买家留言 -->
     <label for="orderMessage" class="block text-xs font-medium text-gray-500 mb-1.5">留言给卖家 <span class="text-gray-300 font-normal">(选填)</span></label>
     <textarea id="orderMessage" rows="3"
               placeholder="例：你好，我在泰皋阁看到这本书，请问什么时间方便交易？"
               class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white transition-all resize-y"></textarea>
-
-    <!-- 确认按钮 -->
     <button onclick="submitOrder()" id="orderBtn"
             class="w-full mt-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer">
       确认发送
@@ -126,18 +119,50 @@ body { -webkit-font-smoothing: antialiased; }
 
 <script>
 /* =============================================================
- * Supabase 配置
+ * Supabase REST API 配置（无需外部 SDK CDN）
  * ============================================================= */
-const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
+
+function supabaseHeaders(token) {
+  return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
+}
+
+/* 从 localStorage 读取 session */
+function getStoredSession() {
+  for (var key in localStorage) {
+    if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
+      try { var d = JSON.parse(localStorage.getItem(key)); if (d && d.access_token) return d; } catch(e) {}
+    }
+  }
+  return null;
+}
+
+/* 通用 GET */
+async function apiGet(path, token) {
+  var res = await fetch(SUPABASE_URL + path, { headers: supabaseHeaders(token) });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json();
+}
+
+/* 通用 POST */
+async function apiPost(path, body, token) {
+  var res = await fetch(SUPABASE_URL + path, {
+    method: 'POST',
+    headers: supabaseHeaders(token),
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json();
+}
 
 /* =============================================================
  * 状态变量
  * ============================================================= */
-let currentUser = null;   // 当前登录用户
-let currentBook = null;   // 当前查看的书籍
-let bookId = null;        // URL 中的书籍 ID
+var currentUser = null;
+var currentBook = null;
+var bookId = null;
+var currentToken = null;
 
 /* =============================================================
  * 工具函数
@@ -185,44 +210,41 @@ function formatDate(iso) {
  * 加载书籍详情
  * ============================================================= */
 async function loadBook() {
-  if (!supabase || !bookId) return;
+  if (!bookId) return;
 
   try {
-    // ====== 获取当前用户（不强制登录） ======
-    var { data: { session } } = await supabase.auth.getSession();
+    // 读取 session（不强制登录）
+    var session = getStoredSession();
     if (session) {
-      currentUser = session.user;
+      // 验证 session 并获取用户信息
+      try {
+        var userData = await apiGet('/auth/v1/user', session.access_token);
+        if (userData && userData.id) {
+          currentUser = userData;
+          currentToken = session.access_token;
+        }
+      } catch(e) {}
     }
 
-    // ====== 查询书籍详情 ======
-    var { data: book, error } = await supabase
-      .from('books')
-      .select('*')
-      .eq('id', bookId)
-      .single();
+    // REST API 查询书籍详情
+    var books = await apiGet('/rest/v1/books?id=eq.' + bookId + '&select=*');
 
-    if (error) {
-      // 书籍不存在（404）或查询失败
-      if (error.code === 'PGRST116' || error.details === 'Results contain 0 rows') {
-        showNotFound();
-      } else {
-        throw error;
-      }
-      return;
-    }
-
-    if (!book) {
+    if (!books || books.length === 0) {
       showNotFound();
       return;
     }
 
-    currentBook = book;
-    renderBook(book);
+    currentBook = books[0];
+    renderBook(currentBook);
 
   } catch (err) {
     console.error('加载失败:', err);
-    document.getElementById('bookDetail').innerHTML =
-      '<div class="text-center py-20"><p class="text-3xl mb-2">⚠️</p><p class="text-gray-400 mb-4">加载失败，请检查网络连接</p><a href="index.html" class="text-brand-600 text-sm font-medium hover:text-brand-700 transition-colors">← 返回首页</a></div>';
+    if (err.message && err.message.indexOf('PGRST116') >= 0) {
+      showNotFound();
+    } else {
+      document.getElementById('bookDetail').innerHTML =
+        '<div class="text-center py-20"><p class="text-3xl mb-2">⚠️</p><p class="text-gray-400 mb-4">加载失败，请检查网络连接</p><a href="index.html" class="text-brand-600 text-sm font-medium hover:text-brand-700 transition-colors">← 返回首页</a></div>';
+    }
   }
 }
 
@@ -242,7 +264,6 @@ function renderBook(book) {
   var isOwner = currentUser && currentUser.id === book.user_id;
   var timeStr = formatDate(book.created_at);
 
-  // 品相对应样式
   var condStyles = {
     '全新':   'bg-green-50 text-green-700 border border-green-200',
     '九成新': 'bg-blue-50 text-blue-700 border border-blue-200',
@@ -252,19 +273,16 @@ function renderBook(book) {
   };
   var condStyle = condStyles[book.condition] || 'bg-gray-50 text-gray-600 border border-gray-200';
 
-  // 封面图
   var coverHtml = book.cover_url
     ? '<img src="' + escHtml(book.cover_url) + '" alt="封面" class="w-full h-full object-cover" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="hidden items-center justify-center h-full text-5xl text-brand-500">📚</div>'
     : '<div class="flex items-center justify-center h-full text-5xl text-brand-500">📚</div>';
 
-  // 按钮逻辑
+  /* 按钮逻辑 */
   var btnHtml = '';
   if (isSold) {
     btnHtml = '<div class="px-6 py-3 bg-gray-100 rounded-xl text-center text-sm font-semibold text-gray-400 cursor-not-allowed">' +
-      (book.status === '已售' ? '🔴 已售出' : '📌 已下架') +
-      '</div>';
+      (book.status === '已售' ? '🔴 已售出' : '📌 已下架') + '</div>';
   } else if (!currentUser) {
-    // 未登录：点击跳转 auth.html，带 redirect 参数登录后返回
     btnHtml = '<a href="auth.html?redirect=book.html%3Fid%3D' + book.id + '" class="block text-center px-6 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm hover:shadow-md transition-all no-underline">🔑 登录后申请购买</a>';
   } else if (isOwner) {
     btnHtml = '<div class="px-6 py-3 bg-brand-50 rounded-xl text-center text-sm font-semibold text-brand-600">📖 这是我的书</div>';
@@ -272,73 +290,38 @@ function renderBook(book) {
     btnHtml = '<button onclick="openOrderModal()" class="w-full px-6 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm hover:shadow-md transition-all cursor-pointer">💬 我想要这本书</button>';
   }
 
-  // 组装 HTML
   document.getElementById('bookDetail').innerHTML =
-    '<div class="bg-white rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,.04),0_1px_3px_rgba(0,0,0,.06)] border border-gray-200 overflow-hidden fade-in">' +
+    '<div class="bg-white rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,.04),0_1px_3px_rgba(0,0,0,.06)] border border-gray-200 overflow-hidden">' +
       '<div class="flex flex-col md:flex-row">' +
-        /* ===== 左侧：封面 ===== */
+        /* 左侧封面 */
         '<div class="md:w-80 md:min-h-[320px] h-72 bg-gradient-to-br from-brand-50 to-indigo-50 relative overflow-hidden">' +
           coverHtml +
-          (isSold
-            ? '<div class="absolute top-3 left-3 bg-red-500/90 text-white text-xs font-semibold px-2.5 py-1 rounded-md backdrop-blur-sm">' +
-              (book.status === '已售' ? '已售' : '已下架') + '</div>'
-            : '') +
+          (isSold ? '<div class="absolute top-3 left-3 bg-red-500/90 text-white text-xs font-semibold px-2.5 py-1 rounded-md backdrop-blur-sm">' +
+            (book.status === '已售' ? '已售' : '已下架') + '</div>' : '') +
         '</div>' +
-
-        /* ===== 右侧：信息 ===== */
+        /* 右侧信息 */
         '<div class="flex-1 p-6 sm:p-8">' +
-
-          /* 书名 & 作者 */
           '<h1 class="text-xl font-bold leading-snug text-gray-900">' + escHtml(book.title) + '</h1>' +
           '<p class="text-sm text-gray-500 mt-1">' + escHtml(book.author) + '</p>' +
-
-          /* 价格 */
           '<div class="flex items-baseline gap-3 mt-4">' +
             '<span class="text-3xl font-extrabold text-red-500">￥' + parseFloat(book.price).toFixed(2).replace(/\.?0+$/, '') + '</span>' +
-            (book.original_price
-              ? '<span class="text-sm text-gray-300 line-through">￥' + parseFloat(book.original_price).toFixed(2).replace(/\.?0+$/, '') + '</span>'
-              : '') +
+            (book.original_price ? '<span class="text-sm text-gray-300 line-through">￥' + parseFloat(book.original_price).toFixed(2).replace(/\.?0+$/, '') + '</span>' : '') +
           '</div>' +
-
-          /* 标签：品相 / 地点 / 出版社 */
           '<div class="flex flex-wrap gap-2 mt-3">' +
             '<span class="px-2.5 py-1 rounded-lg text-xs font-semibold ' + condStyle + '">' + book.condition + '</span>' +
             (book.location ? '<span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">📍 ' + book.location + '</span>' : '') +
             (book.publisher ? '<span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">🏢 ' + escHtml(book.publisher) + '</span>' : '') +
           '</div>' +
-
-          /* 关键信息网格 */
           '<div class="grid grid-cols-2 gap-3 mt-5 bg-gray-50 rounded-xl p-4">' +
             '<div><div class="text-[10px] text-gray-400 uppercase tracking-wide">售价</div><div class="text-sm font-bold text-red-500 mt-0.5">￥' + book.price + '</div></div>' +
             '<div><div class="text-[10px] text-gray-400 uppercase tracking-wide">品相</div><div class="text-sm font-bold mt-0.5">' + book.condition + '</div></div>' +
-            (book.location
-              ? '<div><div class="text-[10px] text-gray-400 uppercase tracking-wide">交易地点</div><div class="text-sm font-bold mt-0.5">' + book.location + '</div></div>'
-              : '') +
+            (book.location ? '<div><div class="text-[10px] text-gray-400 uppercase tracking-wide">交易地点</div><div class="text-sm font-bold mt-0.5">' + book.location + '</div></div>' : '') +
             '<div><div class="text-[10px] text-gray-400 uppercase tracking-wide">发布时间</div><div class="text-sm font-bold mt-0.5">' + timeStr + '</div></div>' +
           '</div>' +
-
-          /* ISBN */
           (book.isbn ? '<p class="text-xs text-gray-400 mt-3 flex items-center gap-1">📖 ISBN：' + escHtml(book.isbn) + '</p>' : '') +
-
-          /* 描述 */
-          (book.description
-            ? '<div class="mt-4 pt-4 border-t border-gray-100">' +
-                '<div class="text-xs font-semibold text-gray-500 mb-1.5">📝 描述</div>' +
-                '<p class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">' + escHtml(book.description) + '</p>' +
-              '</div>'
-            : '') +
-
-          /* 卖家联系方式 */
-          (book.contact
-            ? '<div class="mt-4 pt-4 border-t border-gray-100">' +
-                '<div class="text-xs font-semibold text-gray-500 mb-1.5">📞 卖家联系方式</div>' +
-                '<p class="text-sm font-bold text-brand-600">' + escHtml(book.contact) + '</p>' +
-              '</div>'
-            : '') +
-
-          /* 底部按钮 */
+          (book.description ? '<div class="mt-4 pt-4 border-t border-gray-100"><div class="text-xs font-semibold text-gray-500 mb-1.5">📝 描述</div><p class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">' + escHtml(book.description) + '</p></div>' : '') +
+          (book.contact ? '<div class="mt-4 pt-4 border-t border-gray-100"><div class="text-xs font-semibold text-gray-500 mb-1.5">📞 卖家联系方式</div><p class="text-sm font-bold text-brand-600">' + escHtml(book.contact) + '</p></div>' : '') +
           '<div class="mt-6">' + btnHtml + '</div>' +
-
         '</div>' +
       '</div>' +
     '</div>';
@@ -362,10 +345,10 @@ function closeOrderModal() {
 }
 
 /* =============================================================
- * 提交订单
+ * 提交订单（REST API）
  * ============================================================= */
 async function submitOrder() {
-  if (!supabase || !currentUser || !currentBook) return;
+  if (!currentUser || !currentBook || !currentToken) return;
 
   var btn = document.getElementById('orderBtn');
   btn.disabled = true;
@@ -374,25 +357,17 @@ async function submitOrder() {
   var message = document.getElementById('orderMessage').value.trim();
 
   try {
-    // ====== 插入 orders 表 ======
-    var { data, error } = await supabase
-      .from('orders')
-      .insert({
-        book_id: currentBook.id,
-        buyer_id: currentUser.id,
-        seller_id: currentBook.user_id,
-        status: '待确认',
-        message: message || null,
-        created_at: new Date().toISOString(),
-      })
-      .select();
+    await apiPost('/rest/v1/orders', {
+      book_id: currentBook.id,
+      buyer_id: currentUser.id,
+      seller_id: currentBook.user_id,
+      status: '待确认',
+      message: message || null,
+      created_at: new Date().toISOString(),
+    }, currentToken);
 
-    if (error) throw error;
-
-    // 成功
     closeOrderModal();
     showToast('✅ 已发送购买请求，等待卖家确认', 'success');
-
   } catch (err) {
     console.error('下单失败:', err);
     showToast('❌ 发送失败：' + (err.message || '未知错误'), 'error');

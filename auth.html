@@ -7,8 +7,6 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f7fa;color:#0f172a;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
-
-/* Header */
 .header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid #e2e8f0}
 .header-inner{max-width:1080px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-size:19px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none;letter-spacing:-.3px}
@@ -16,70 +14,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
 .logo-badge{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;font-size:10px;padding:2px 7px;border-radius:5px;font-weight:600;-webkit-text-fill-color:#fff}
 .back-link{font-size:13px;color:#94a3b8;text-decoration:none;transition:color .2s}
 .back-link:hover{color:#64748b}
-
-/* Main */
 .main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 16px}
 .wrap{width:100%;max-width:340px;text-align:center}
-
-/* Brand */
 .brand-icon{font-size:36px;margin-bottom:8px}
 .brand-title{font-size:20px;font-weight:700;background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .brand-sub{font-size:12px;color:#94a3b8;margin-top:4px}
-
-/* Tabs */
 .tabs{display:flex;justify-content:center;gap:32px;margin-top:24px;margin-bottom:20px}
 .tab-btn{font-size:14px;font-weight:600;cursor:pointer;border:0;background:0 0;padding:4px 0;position:relative;transition:color .2s;color:#94a3b8}
 .tab-btn.active{color:#4f46e5}
 .tab-btn.active::after{content:'';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:24px;height:2.5px;border-radius:2px;background:#4f46e5}
 .tab-btn:hover{color:#64748b}
-
-/* Card */
 .card{background:#fff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.06);border:1px solid #e2e8f0;padding:24px}
 .card-form{display:none}
 .card-form.active{display:block}
-
-/* Form */
 .form-group{margin-bottom:16px;text-align:left}
 .form-group label{display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px}
 .form-group input{width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;outline:0;transition:all .2s;background:#f8fafc;font-family:inherit}
 .form-group input:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1);background:#fff}
 .form-group input::placeholder{color:#cbd5e1}
-
-/* Checkbox & Forgot */
 .form-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:16px}
 .form-row label{display:flex;align-items:center;gap:6px;cursor:pointer;color:#94a3b8;transition:color .2s}
 .form-row label:hover{color:#64748b}
 .form-row input[type=checkbox]{width:14px;height:14px;border-radius:4px;border:1px solid #cbd5e1;accent-color:#4f46e5;cursor:pointer}
 .form-row .forgot{background:0 0;border:0;color:#4f46e5;cursor:pointer;font-size:12px;transition:color .2s}
 .form-row .forgot:hover{color:#4338ca}
-
-/* Buttons */
 .btn{width:100%;padding:11px 0;border:0;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
 .btn:hover{box-shadow:0 2px 8px rgba(79,70,229,.25)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn:disabled:hover{box-shadow:none}
-
-/* Bottom hint */
 .bottom-hint{font-size:12px;color:#94a3b8;margin-top:20px}
 .bottom-hint a{color:#4f46e5;text-decoration:none;font-weight:500;cursor:pointer;transition:color .2s}
 .bottom-hint a:hover{color:#4338ca}
-
-/* Toast */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);z-index:200;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.18)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* Anim */
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeUp .35s ease both}
-
-/* Spinner */
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
-
-/* Policy */
 .policy{font-size:11px;color:#cbd5e1;margin-top:12px;text-align:center}
-
-/* Responsive */
 @media(max-width:480px){.wrap{max-width:100%}.card{border-radius:12px;padding:20px}.header-inner{padding:0 14px}}
 </style>
 </head>
@@ -116,7 +88,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
       </div>
       <div class="form-group">
         <label>密码</label>
-        <input type="password" id="loginPassword" required minlength="6" placeholder="••••••" autocomplete="current-password">
+        <input type="password" id="loginPassword" required minlength="6" placeholder="******" autocomplete="current-password">
       </div>
       <div class="form-row">
         <label><input type="checkbox" id="rememberMe"> 记住我</label>
@@ -158,22 +130,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans S
 
 <div class="toast" id="toast"></div>
 
-<!-- Supabase JS SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =============================================================
- * Supabase 配置
+ * Supabase REST API 配置（无需外部 SDK CDN）
  * ============================================================= */
-const SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
 
-let currentTab = 'login';
-let _toastTimer = null;
+var currentTab = 'login';
+var _toastTimer = null;
 
 /* =============================================================
- * UI 工具函数
+ * 通用函数
  * ============================================================= */
+function supabaseHeaders(token) {
+  return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
+}
+
 function switchTab(tab) {
   currentTab = tab;
   var isLogin = tab === 'login';
@@ -183,10 +156,7 @@ function switchTab(tab) {
   document.getElementById('registerForm').className = 'card-form' + (isLogin ? '' : ' active');
   document.getElementById('switchHint').textContent = isLogin ? '还没有账号？' : '已有账号？';
   document.getElementById('switchLink').textContent = isLogin ? '立即注册' : '去登录';
-  document.getElementById('switchLink').onclick = function(e) {
-    e.preventDefault();
-    switchTab(isLogin ? 'register' : 'login');
-  };
+  document.getElementById('switchLink').onclick = function(e) { e.preventDefault(); switchTab(isLogin ? 'register' : 'login'); };
 }
 
 function showToast(msg, isError) {
@@ -202,54 +172,73 @@ function showToast(msg, isError) {
 function setLoading(id, loading) {
   var btn = document.getElementById(id);
   btn.disabled = loading;
-  btn.innerHTML = loading
-    ? '<span class="spinner"></span> 处理中...'
-    : (id === 'loginBtn' ? '登录' : '注册');
+  btn.innerHTML = loading ? '<span class="spinner"></span> 处理中...' : (id === 'loginBtn' ? '登录' : '注册');
 }
 
-/* 获取重定向地址：支持 ?redirect=xxx 参数 */
 function getRedirectUrl() {
-  var params = new URLSearchParams(window.location.search);
-  return params.get('redirect') || 'index.html';
+  var p = new URLSearchParams(window.location.search);
+  return p.get('redirect') || 'index.html';
+}
+
+/* 手动保�? Supabase session 到 localStorage（模拟 SDK 的格式） */
+function saveSessionToLocal(sessionData) {
+  // Supabase SDK 用 sb-{project}-auth-token 格式
+  var key = 'sb-zqhzigukoidwcbhzkysk-supabase-co-auth-token';
+  localStorage.setItem(key, JSON.stringify(sessionData));
+}
+
+/* 清除 localStorage 中的 session */
+function clearSession() {
+  for (var key in localStorage) {
+    if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
+      localStorage.removeItem(key);
+    }
+  }
 }
 
 /* =============================================================
- * 登录 - Supabase Auth
+ * 登录（REST API）
+ * POST /auth/v1/token?grant_type=password
  * ============================================================= */
 async function handleLogin() {
   var email = document.getElementById('loginEmail').value.trim();
   var pw = document.getElementById('loginPassword').value;
 
-  if (!email) { showToast('请输入邮箱', true); document.getElementById('loginEmail').focus(); return; }
+  if (!email) { showToast('�?请输入邮箱', true); document.getElementById('loginEmail').focus(); return; }
   if (!pw || pw.length < 6) { showToast('请输入密码（至少6位）', true); document.getElementById('loginPassword').focus(); return; }
 
   setLoading('loginBtn', true);
 
   try {
-    var { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: pw,
+    var res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: supabaseHeaders(),
+      body: JSON.stringify({ email: email, password: pw }),
     });
 
-    if (error) throw error;
+    var data = await res.json();
 
-    showToast('✅ 登录成功！');
+    if (!res.ok) {
+      var msg = data.msg || data.error_description || data.error || '登录失败';
+      if (msg.indexOf('Invalid login credentials') >= 0) msg = '邮箱或密码错误';
+      else if (msg.indexOf('Email not confirmed') >= 0) msg = '邮箱尚未验证，请查收验证邮件';
+      throw new Error(msg);
+    }
+
+    // 保�? session 到 localStorage（供其他页面读取）
+    saveSessionToLocal(data);
+
+    showToast('? 登录成功！');
     setTimeout(function() { window.location.href = getRedirectUrl(); }, 800);
   } catch (err) {
-    console.error('登录失败:', err);
-    if (err.message && err.message.includes('Invalid login credentials')) {
-      showToast('❌ 邮箱或密码错误', true);
-    } else if (err.message && err.message.includes('Email not confirmed')) {
-      showToast('⚠️ 邮箱尚未验证，请查收验证邮件', true);
-    } else {
-      showToast('❌ ' + (err.message || '登录失败，请稍后重试'), true);
-    }
+    showToast('❌ ' + err.message, true);
     setLoading('loginBtn', false);
   }
 }
 
 /* =============================================================
- * 注册 - Supabase Auth
+ * 注册（REST API）
+ * POST /auth/v1/signup
  * ============================================================= */
 async function handleRegister() {
   var email = document.getElementById('regEmail').value.trim();
@@ -264,79 +253,74 @@ async function handleRegister() {
   setLoading('registerBtn', true);
 
   try {
-    var { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: pw,
-      options: {
-        data: {
-          nickname: nick,
-          phone: phone || null,
-        }
-      }
+    var res = await fetch(SUPABASE_URL + '/auth/v1/signup', {
+      method: 'POST',
+      headers: supabaseHeaders(),
+      body: JSON.stringify({
+        email: email,
+        password: pw,
+        data: { nickname: nick, phone: phone || null },
+      }),
     });
 
-    if (error) throw error;
+    var data = await res.json();
 
-    // 检查邮箱是否已被占用
-    if (data.user && data.user.identities && data.user.identities.length === 0) {
-      showToast('❌ 该邮箱已被注册', true);
-      setLoading('registerBtn', false);
-      return;
+    if (!res.ok) {
+      var msg = data.msg || data.error_description || data.error || '注册失败';
+      if (msg.indexOf('already') >= 0) msg = '该邮箱已注册';
+      throw new Error(msg);
     }
 
-    // 尝试自动登录（如果 Supabase 未开启邮箱验证则直接登录）
-    var { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: pw,
+    // 注册成功，尝试自动登录
+    var loginRes = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: supabaseHeaders(),
+      body: JSON.stringify({ email: email, password: pw }),
     });
+    var loginData = await loginRes.json();
 
-    if (loginError) {
-      // 开启了邮箱验证，提示用户
+    if (loginRes.ok) {
+      saveSessionToLocal(loginData);
+      showToast('�?注册成功！');
+      setTimeout(function() { window.location.href = getRedirectUrl(); }, 800);
+    } else {
+      // 开启了邮箱验证
       showToast('✅ 注册成功！请查收验证邮件后登录');
       setLoading('registerBtn', false);
       switchTab('login');
       document.getElementById('loginEmail').value = email;
-      return;
     }
-
-    showToast('✅ 注册成功！');
-    setTimeout(function() { window.location.href = getRedirectUrl(); }, 800);
   } catch (err) {
-    console.error('注册失败:', err);
-    if (err.message && err.message.includes('already registered')) {
-      showToast('❌ 该邮箱已注册', true);
-    } else if (err.message && err.message.includes('weak_password')) {
-      showToast('⚠️ 密码强度不足，建议包含字母和数字', true);
-    } else {
-      showToast('❌ ' + (err.message || '注册失败，请稍后重试'), true);
-    }
+    showToast('❌ ' + err.message, true);
     setLoading('registerBtn', false);
   }
 }
 
 /* =============================================================
- * 忘记密码 - 发送重置邮件
+ * 忘记密码（REST API）
+ * POST /auth/v1/recover
  * ============================================================= */
 document.getElementById('forgotBtn').addEventListener('click', async function() {
   var email = document.getElementById('loginEmail').value.trim();
-  if (!email) {
-    showToast('请先在邮箱输入框中填写你的邮箱', true);
-    document.getElementById('loginEmail').focus();
-    return;
-  }
+  if (!email) { showToast('请先在邮箱输入框中填写你的邮箱', true); document.getElementById('loginEmail').focus(); return; }
 
   this.disabled = true;
   this.textContent = '发送中...';
 
   try {
-    var { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/book-market/auth.html',
+    var res = await fetch(SUPABASE_URL + '/auth/v1/recover', {
+      method: 'POST',
+      headers: supabaseHeaders(),
+      body: JSON.stringify({
+        email: email,
+        redirect_to: window.location.origin + '/book-market/auth.html',
+      }),
     });
-    if (error) throw error;
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.msg || data.error_description || '发送失败');
     showToast('📧 密码重置链接已发送到你的邮箱');
   } catch (err) {
-    console.error('重置密码失败:', err);
-    showToast('❌ ' + (err.message || '发送失败'), true);
+    showToast('❌ ' + err.message, true);
   }
 
   this.disabled = false;
@@ -344,28 +328,26 @@ document.getElementById('forgotBtn').addEventListener('click', async function() 
 });
 
 /* =============================================================
- * 表单 submit 事件绑定
+ * 表单提交绑定
  * ============================================================= */
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  handleLogin();
-});
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  handleRegister();
-});
+document.getElementById('loginForm').addEventListener('submit', function(e) { e.preventDefault(); handleLogin(); });
+document.getElementById('registerForm').addEventListener('submit', function(e) { e.preventDefault(); handleRegister(); });
 
 /* =============================================================
- * 已登录则直接跳转
+ * 已登录则直接跳转（读取 localStorage session）
  * ============================================================= */
-(async function() {
-  try {
-    var { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      window.location.href = getRedirectUrl();
+(function() {
+  for (var key in localStorage) {
+    if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
+      try {
+        var data = JSON.parse(localStorage.getItem(key));
+        if (data && data.access_token) {
+          // 已登录，直接跳转
+          window.location.href = getRedirectUrl();
+        }
+      } catch(e) {}
+      break;
     }
-  } catch (e) {
-    // 静默处理
   }
 })();
 </script>
