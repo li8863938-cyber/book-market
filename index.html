@@ -1,713 +1,290 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰皋阁 - 校园二手书平台</title>
-<style>
-:root{--p:#6366f1;--pl:#eef2ff;--pd:#4f46e5;--bg:#f5f7fa;--c:#fff;--t:#0f172a;--t2:#475569;--t3:#94a3b8;--b:#e2e8f0;--s:#10b981;--d:#ef4444;--r:16px;--rs:10px;--sh:0 1px 2px rgba(0,0,0,.04),0 1px 4px rgba(0,0,0,.06);--sh-lg:0 4px 20px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.04);--ts:all .25s cubic-bezier(.4,0,.2,1)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t);line-height:1.6;min-height:100vh;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Cg opacity='.28' stroke='%236366f1' stroke-width='1.5' fill='none'%3E%3Cpath d='M160 420 L160 220 L200 180 L240 220 L240 420'/%3E%3Cpath d='M240 420 L240 240 L680 240 L680 420'/%3E%3Cpath d='M220 200 L300 140 L380 140 L460 200'/%3E%3Crect x='430' y='340' width='40' height='80' rx='2'/%3E%3Crect x='270' y='270' width='50' height='60' rx='2'/%3E%3Crect x='350' y='270' width='50' height='60' rx='2'/%3E%3Crect x='190' y='270' width='40' height='60' rx='2'/%3E%3Cline x1='160' y1='420' x2='160' y2='220'/%3E%3Cline x1='240' y1='420' x2='240' y2='240'/%3E%3Cline x1='340' y1='420' x2='340' y2='240'/%3E%3Cline x1='460' y1='420' x2='460' y2='240'/%3E%3Cline x1='560' y1='420' x2='560' y2='240'/%3E%3Cline x1='680' y1='420' x2='680' y2='240'/%3E%3Cline x1='100' y1='420' x2='100' y2='330'/%3E%3Ccircle cx='100' cy='315' r='18'/%3E%3Cline x1='720' y1='420' x2='720' y2='350'/%3E%3Ccircle cx='720' cy='335' r='16'/%3E%3Cline x1='60' y1='420' x2='740' y2='420'/%3E%3C%2Fg%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-position:center bottom;background-size:800px auto}
-.container{max-width:1100px;margin:0 auto;padding:0 16px}
+<title>泰皋阁 · 校园二手书</title>
 
-header{background:rgba(255,255,255,.85);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
-header .container{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font-size:20px;font-weight:700;color:var(--p);text-decoration:none;display:flex;align-items:center;gap:6px;cursor:pointer}
-.logo .badge{background:var(--p);color:#fff;font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500}
-nav{display:flex;gap:4px}
-nav button{background:0 0;border:0;padding:6px 13px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--t2);transition:var(--ts);font-weight:500}
-nav button:hover{background:var(--pl);color:var(--p)}
-nav .sell-btn{background:var(--p);color:#fff;padding:6px 14px;font-weight:600}
-nav .sell-btn:hover{background:var(--pd)}
-nav button.active{background:var(--pl);color:var(--p)}
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-.hero{text-align:center;padding:36px 16px 24px;background:linear-gradient(135deg,var(--pl) 0%,#f0f9ff 50%,#fff 100%)}
-.hero h1{font-size:26px;margin-bottom:4px}
-.hero h1 .hl{color:var(--p)}
-.hero p{color:var(--t2);font-size:14px;max-width:420px;margin:0 auto 14px}
-.search-bar{display:flex;gap:6px;max-width:440px;margin:0 auto}
-.search-bar input{flex:1;padding:10px 16px;border:1px solid var(--b);border-radius:10px;font-size:14px;outline:0;transition:var(--ts);background:#fff}
-.search-bar input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
-.search-bar button{padding:10px 18px;border:0;border-radius:10px;font-size:14px;cursor:pointer;background:var(--p);color:#fff;font-weight:600;transition:var(--ts)}
-.search-bar button:hover{background:var(--pd)}
-.stats{display:flex;justify-content:center;gap:24px;padding:12px 0 2px;font-size:13px;color:var(--t3)}
-.stats strong{color:var(--t);font-size:15px}
-.filters{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:12px 0 0}
-.filters .tag{padding:5px 12px;border-radius:20px;font-size:13px;border:1px solid var(--b);background:var(--c);cursor:pointer;transition:.2s;user-select:none}
-.filters .tag:hover{border-color:var(--p);color:var(--p)}
-.filters .tag.active{background:var(--p);color:#fff;border-color:var(--p)}
-.sort-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 0 2px;font-size:13px;color:var(--t3)}
-.sort-bar .left span{margin-right:8px;cursor:pointer;color:var(--t3);padding:2px 6px;border-radius:4px}
-.sort-bar .left span:hover{color:var(--p)}
-.sort-bar .left span.active{color:var(--p);font-weight:600}
-.sort-bar a{color:var(--p);cursor:pointer}
-
-.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:8px 0 36px}
-.book-card{background:var(--c);border-radius:var(--r);box-shadow:var(--sh);cursor:pointer;transition:var(--ts);border:1px solid var(--b);overflow:hidden;position:relative}
-.book-card:hover{box-shadow:var(--sh-lg);transform:translateY(-4px);border-color:var(--p)}
-.book-card .img-wrap{width:100%;height:170px;overflow:hidden;background:linear-gradient(135deg,var(--pl),#e0e7ff);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--p);position:relative}
-.book-card .img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
-.book-card:hover .img-wrap img{transform:scale(1.04)}
-.book-card .body{padding:10px 12px 12px}
-.book-card .title{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.book-card .author{font-size:12px;color:var(--t2);margin-bottom:4px}
-.book-card .meta{display:flex;justify-content:space-between;align-items:center}
-.book-card .price{font-size:17px;font-weight:700;color:var(--d)}
-.book-card .cond{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500}
-.c0{background:#d1fae5;color:#065f46}.c1{background:#dbeafe;color:#1e40af}.c2{background:#fef3c7;color:#92400e}.c3{background:#fce4ec;color:#b91c1c}
-.book-card .time-t{font-size:11px;color:var(--t3);margin-top:4px}
-.book-card .fav-btn{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.9);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:2;transition:.2s;box-shadow:var(--sh)}
-.book-card .fav-btn:hover{transform:scale(1.15)}
-.book-card .sold-badge{position:absolute;top:8px;left:8px;background:var(--d);color:#fff;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;z-index:2}
-
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:100;backdrop-filter:blur(2px);padding:16px;overflow-y:auto}
-.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center}
-.modal{background:var(--c);border-radius:var(--r);width:100%;box-shadow:var(--sh-lg);animation:mIn .2s ease}
-@keyframes mIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 0}
-.modal-header h2{font-size:18px}
-.modal .close{background:0 0;border:0;width:30px;height:30px;font-size:18px;cursor:pointer;color:var(--t3);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.2s}
-.modal .close:hover{background:var(--b);color:var(--t)}
-
-.form-modal{max-width:520px}.form-body{padding:14px 20px 20px}
-.form-group{margin-bottom:12px}
-.form-group label{display:block;font-size:13px;font-weight:500;margin-bottom:3px;color:var(--t)}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1px solid var(--b);border-radius:var(--rs);font-size:14px;outline:0;font-family:inherit;transition:.2s;background:var(--bg)}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(79,70,229,.1);background:#fff}
-.form-group textarea{resize:vertical;min-height:64px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form-img-upload{display:flex;gap:8px;flex-wrap:wrap}
-.form-img-upload .upload-box{width:84px;height:84px;border:2px dashed var(--b);border-radius:var(--rs);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--t3);font-size:11px;transition:.2s;background:var(--bg);position:relative}
-.form-img-upload .upload-box:hover{border-color:var(--p);color:var(--p)}
-.form-img-upload .upload-box .icon{font-size:22px}
-.form-img-upload .upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.form-img-upload .img-preview{width:84px;height:84px;border-radius:var(--rs);overflow:hidden;position:relative;border:1px solid var(--b)}
-.form-img-upload .img-preview img{width:100%;height:100%;object-fit:cover}
-.form-img-upload .img-preview .del{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;border:0;background:var(--d);color:#fff;font-size:10px;cursor:pointer}
-.btn{padding:11px 22px;border:0;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--ts);display:inline-flex;align-items:center;justify-content:center;gap:4px}
-.btn-p{background:var(--p);color:#fff}
-.btn-p:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 2px 8px rgba(99,102,241,.25)}
-.btn-block{width:100%;padding:12px}.btn-lg{padding:14px}
-.btn-s{background:var(--s);color:#fff}.btn-s:hover{background:#059669}
-.btn-d{background:#f1f5f9;color:var(--t2);border:1px solid var(--b)}.btn-d:hover{background:#fee2e2;color:var(--d);border-color:var(--d)}
-
-/* Detail */
-.detail-modal{max-width:700px;max-height:92vh;display:flex;flex-direction:column}
-.detail-modal .detail-scroll{overflow-y:auto;flex:1;min-height:0}
-.detail-top{position:relative;width:100%;max-height:340px;background:linear-gradient(135deg,var(--pl),#e0e7ff)}
-.detail-top .carousel{position:relative;width:100%;text-align:center}
-.detail-top .carousel img{width:100%;max-height:340px;object-fit:contain;display:block;background:#fff}
-.detail-top .carousel .no-img{display:flex;align-items:center;justify-content:center;padding:50px 16px;font-size:56px;color:var(--p)}
-.detail-top .carousel .nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.9);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh);transition:.2s}
-.detail-top .carousel .nav-btn:hover{background:#fff}
-.detail-top .carousel .nav-prev{left:8px}.detail-top .carousel .nav-next{right:8px}
-.detail-top .carousel .dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px}
-.detail-top .carousel .dots span{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.25);transition:.2s}
-.detail-top .carousel .dots span.active{background:var(--p);width:18px;border-radius:3px}
-.detail-body{padding:0 20px}
-.detail-price{padding:14px 0;border-bottom:1px solid var(--b)}
-.detail-price .price{font-size:26px;font-weight:700;color:var(--d)}
-.detail-price .tags{margin-top:5px;display:flex;gap:6px;flex-wrap:wrap}
-.detail-price .tags span{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
-.detail-title{padding:12px 0}
-.detail-title h2{font-size:17px;font-weight:600;line-height:1.5}
-.detail-title .author{font-size:13px;color:var(--t2);margin-top:3px}
-.detail-info{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b);border-radius:var(--rs);overflow:hidden;margin-bottom:12px}
-.detail-info .item{background:var(--bg);padding:8px 10px;text-align:center}
-.detail-info .item .lb{font-size:11px;color:var(--t3)}
-.detail-info .item .vl{font-size:13px;font-weight:600;margin-top:1px}
-.detail-sec{padding:12px 0;border-top:1px solid var(--b)}
-.detail-sec .sec-title{font-size:13px;font-weight:600;color:var(--t2);margin-bottom:4px}
-.detail-sec .sec-body{font-size:14px;color:var(--t);line-height:1.7;white-space:pre-wrap}
-.detail-isbn{font-size:12px;color:var(--t3);padding:2px 0 8px}
-.detail-seller{padding:12px 0;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between}
-.detail-seller .left{display:flex;align-items:center;gap:10px}
-.detail-seller .avatar{width:36px;height:36px;background:var(--pl);color:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
-.detail-seller .sname{font-weight:600;font-size:14px}
-.detail-seller .stime{font-size:11px;color:var(--t3)}
-.detail-seller .btn-contact{border:1px solid var(--p);color:var(--p);background:0 0;padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer;font-weight:500;transition:.2s}
-.detail-seller .btn-contact:hover{background:var(--p);color:#fff}
-.detail-share{display:flex;gap:6px}
-.detail-share button{background:var(--bg);border:1px solid var(--b);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:.2s;color:var(--t2)}
-.detail-share button:hover{border-color:var(--p);color:var(--p)}
-.detail-bottom{padding:12px 20px 16px;display:flex;gap:8px}
-.detail-bottom .btn{flex:1;padding:12px}
-
-/* Contact */
-.contact-modal{max-width:380px}
-.contact-body{padding:14px 18px 18px}
-.contact-hd{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--b);margin-bottom:12px}
-.contact-av{width:38px;height:38px;background:var(--pl);color:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.contact-hd .info{text-align:left;flex:1}
-.contact-hd .info .nm{font-weight:600;font-size:14px}
-.contact-hd .info .sb{font-size:11px;color:var(--t3)}
-.contact-fd{background:#f8fafc;border:1px solid var(--b);border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.contact-fd .lft{text-align:left}
-.contact-fd .lft .lb{font-size:11px;color:var(--t3)}
-.contact-fd .lft .vl{font-size:16px;font-weight:700;color:var(--t)}
-.contact-fd .cpy{background:var(--p);color:#fff;border:0;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;flex-shrink:0}
-.contact-fd .cpy:hover{background:var(--pd)}
-.contact-fd .cpy.ok{background:var(--s)}
-.contact-qb{background:#f8fafc;border:1px solid var(--b);border-radius:var(--rs);padding:12px;text-align:center}
-.contact-qb .ql{font-size:12px;color:var(--t3);margin-bottom:6px}
-.contact-qb .qw{display:inline-block;background:#fff;padding:6px;border-radius:8px;box-shadow:var(--sh)}
-.contact-qb .qw canvas,.contact-qb .qw img{display:block!important;margin:0 auto;max-width:140px;max-height:140px}
-.contact-qb .qt{font-size:11px;color:var(--t3);margin-top:5px}
-
-.empty-state{text-align:center;padding:60px 16px;color:var(--t2);grid-column:1/-1}
-.empty-state .icon{font-size:48px;margin-bottom:6px}
-.empty-state p{font-size:14px}
-.empty-state .sub{font-size:13px;color:var(--t3);margin-top:3px}
-
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:var(--rs);font-size:14px;opacity:0;transition:.3s;z-index:200;pointer-events:none}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.loading{background:var(--p)}
-
-/* Auth modal */
-.auth-modal{max-width:380px}.auth-modal .auth-tabs{display:flex;gap:8px;margin-bottom:16px}.auth-modal .auth-tab{flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:0;transition:.2s}.auth-modal .auth-tab.active{background:var(--pl);color:var(--p)}.auth-modal .auth-tab.inactive{background:0 0;color:var(--t3)}.auth-modal .auth-tab.inactive:hover{color:var(--t2)}.auth-modal .auth-field{width:100%;padding:11px 14px;border:1px solid var(--b);border-radius:10px;font-size:14px;outline:0;transition:.2s;background:var(--bg);font-family:inherit;box-sizing:border-box}.auth-modal .auth-field:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,.1);background:#fff}.auth-modal .auth-field+.auth-field{margin-top:10px}.auth-modal .auth-btn{width:100%;padding:12px;border:0;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;transition:.2s;font-family:inherit;margin-top:16px}.auth-modal .auth-btn:hover{box-shadow:0 2px 8px rgba(79,70,229,.25)}
-
-footer{text-align:center;padding:18px;color:var(--t3);font-size:13px;border-top:1px solid var(--b)}
-
-@media(max-width:640px){
-.hero{padding:24px 14px 18px}.hero h1{font-size:20px}.hero p{font-size:13px;margin-bottom:10px}
-.search-bar input{font-size:16px;padding:10px 12px}.search-bar button{font-size:14px;padding:10px 14px}
-.stats{font-size:11px;gap:8px;flex-wrap:wrap}
-.filters{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:8px 0 2px;-webkit-overflow-scrolling:touch}
-.filters .tag{flex-shrink:0;font-size:13px;padding:6px 14px}
-.book-grid{grid-template-columns:1fr;gap:10px;padding:4px 0 20px}.book-card .img-wrap{height:190px}
-.book-card .body{padding:8px 10px 10px}.book-card .title{font-size:15px}.book-card .price{font-size:18px}
-.sort-bar{font-size:12px}
-nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
-.btn-lg{padding:13px!important;font-size:15px!important}
-.form-row{grid-template-columns:1fr}.form-body{padding:8px 12px 14px}
-.form-group input,.form-group select,.form-group textarea{font-size:16px;padding:10px 12px}
-.form-img-upload .upload-box,.form-img-upload .img-preview{width:72px;height:72px}
-.detail-modal{max-height:95vh;max-width:100%!important;margin:0;border-radius:var(--r) var(--r) 0 0}
-.detail-top{max-height:200px}.detail-top .carousel img{max-height:200px}
-.detail-price{padding:10px 0}.detail-price .price{font-size:22px}
-.detail-title h2{font-size:15px}.detail-body{padding:0 14px}
-.detail-info{grid-template-columns:1fr 1fr}.detail-info .item{padding:6px}
-.detail-bottom{padding:10px 14px 12px;flex-direction:column}
-.detail-bottom .btn{padding:12px!important;font-size:15px!important}
-.modal-header{padding:12px 14px 0}.modal-header h2{font-size:16px}
-.contact-modal{max-width:100%!important;margin:auto 6px}.contact-body{padding:8px 12px 14px}
-.contact-fd{padding:8px 10px}.contact-fd .lft .vl{font-size:15px}
-.contact-qb{padding:8px}.contact-qb .qw canvas,.contact-qb .qw img{max-width:120px;max-height:120px}
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'] },
+      colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } }
+    }
+  }
 }
+</script>
+
+<style>
+body { -webkit-font-smoothing: antialiased; }
+.book-card { transition: all .35s cubic-bezier(.4,0,.2,1); }
+.book-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04); }
+.book-card .cover-img { transition: transform .5s cubic-bezier(.4,0,.2,1); }
+.book-card:hover .cover-img { transform: scale(1.05); }
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1e293b; color: #fff;
+  padding: 10px 24px; border-radius: 10px;
+  font-size: 14px; opacity: 0;
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+  z-index: 200; pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* 骨架屏闪烁 */
+@keyframes shimmer { 0%{opacity:.6} 50%{opacity:1} 100%{opacity:.6} }
+.skeleton { animation: shimmer 1.5s ease-in-out infinite; }
 </style>
 </head>
-<body>
+<body class="bg-[#f5f7fa] font-sans text-gray-900 min-h-screen">
 
-<header>
-<div class="container">
-<div class="logo" onclick="showPage('market')">🏛️ 泰皋阁<span class="badge">二手书</span></div>
-<nav>
-<button onclick="showPage('market')" id="navMarket">📖 书摊</button>
-<button onclick="openAuth()" id="navAuth">👤 <span id="authState">登录</span></button>
-<button onclick="showPage('mine')" id="navMine">我的</button>
-<button onclick="showPage('favorites')" id="navFav">⭐ <span id="favCount">0</span></button>
-<button onclick="showPage('about')">ℹ️</button>
-<button class="sell-btn" onclick="openAddBook()">➕ 卖书</button>
-</nav>
+<script>
+const SUPABASE_URL = 'https://zqhzigukoikdwcbhzkysk.supabase.co';
+const SUPABASE_ANON_KEY = '***';
+
+let supabase = null;
+try {
+  if (typeof createClient === 'function') {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch(e) { supabase = null; }
+
+let currentUser = null;
+let allBooks = [];
+let activeCat = '全部';
+let filterCat = '';
+let searchQuery = '';
+
+const CATS = ['全部','理工','文科','外语','计算机','医学','考试','小说','其他'];
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){t.classList.remove('show')}, 2500);
+}
+
+// ====== Supabase 查询函数 ======
+async function fetchBooks() {
+  if (!supabase) return [];
+
+  var query = supabase
+    .from('books')
+    .select('*')
+    .eq('status', '在售')
+    .order('created_at', { ascending: false });
+
+  var { data, error } = await query;
+  if (error) { console.error('Supabase 查询失败:', error); return []; }
+  return data || [];
+}
+
+// ====== 搜索=按书名或作者 ======
+function filterBooks(books, query, cat) {
+  var result = books;
+  if (query) {
+    var q = query.toLowerCase();
+    result = result.filter(function(b) {
+      return (b.title && b.title.toLowerCase().includes(q)) ||
+             (b.author && b.author.toLowerCase().includes(q));
+    });
+  }
+  if (cat && cat !== '全部') {
+    result = result.filter(function(b) { return b.category === cat; });
+  }
+  return result;
+}
+</script>
+
+<!-- ====== 导航栏 ====== -->
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+  <a href="index.html" class="flex items-center gap-1.5 no-underline">
+    <span class="text-xl">🏛️</span>
+    <span class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋阁</span>
+    <span class="text-[10px] font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-1.5 py-0.5 rounded">校园</span>
+  </a>
+  <div id="navRight" class="flex items-center gap-2 text-sm"></div>
 </div>
 </header>
 
-<section class="hero" id="heroSection">
-<div class="container">
-<h1><span class="hl">泰皋阁</span> · 校园二手书平台</h1>
-<p>泰承文韵，皋聚书香，一阁藏书，书卷流转</p>
-<div class="search-bar">
-<input type="text" id="searchInput" placeholder="搜书名、作者、ISBN..." oninput="render()">
-<button onclick="render()">🔍 搜索</button>
-</div>
-<div class="stats">
-<span>📚 <strong id="totalBooks">0</strong> 本书</span>
-<span>💰 均价 <strong id="avgPrice">¥0</strong></span>
-<span>🏫 同校交易</span>
-</div>
-<div class="filters" id="filters"></div>
-<div class="sort-bar">
-<div class="left" id="sortBar">
-<span onclick="setSort('new')" class="active" id="sortNew">最新</span>
-<span onclick="setSort('cheap')" id="sortCheap">价格↓</span>
-<span onclick="setSort('expensive')" id="sortExpensive">价格↑</span>
-</div>
-<a onclick="resetAll()">↺ 重置</a>
-</div>
+<!-- ====== Hero & 搜索 ====== -->
+<section class="pt-12 pb-8 px-4 text-center">
+<div class="max-w-xl mx-auto">
+  <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">二手教材，便宜又靠谱</h1>
+  <p class="mt-2 text-gray-400 text-sm">和同校同学直接交易，当面看货，省下一半书费</p>
+  <div class="mt-5 flex gap-2 max-w-md mx-auto">
+    <input type="text" id="searchInput" placeholder="搜书名、作者..." oninput="handleSearch()"
+           class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+    <button onclick="handleSearch()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm">搜索</button>
+  </div>
+  <div class="mt-4 flex justify-center gap-6 text-xs text-gray-400">
+    <span>📚 <strong class="text-gray-700 font-semibold" id="totalBooks">0</strong> 本书</span>
+    <span>💰 均价 <strong class="text-gray-700 font-semibold" id="avgPrice">¥0</strong></span>
+    <span>🏫 同校交易</span>
+  </div>
+  <div class="mt-4 flex gap-1.5 justify-center flex-wrap" id="filters"></div>
 </div>
 </section>
 
-<main class="container">
-<div class="book-grid" id="bookGrid"></div>
+<!-- ====== 书籍列表 ====== -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+  <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" id="bookGrid"></div>
 </main>
-
-<div id="favPage" style="display:none">
-<main class="container" style="padding:24px 16px">
-<h2 style="font-size:18px;margin-bottom:12px">⭐ 我的收藏</h2>
-<div class="book-grid" id="favGrid"></div>
-</main>
-</div>
-
-<div id="aboutPage" style="display:none">
-<main class="container" style="padding:36px 16px">
-<div style="max-width:560px;margin:0 auto;text-align:center">
-<h2>🏛️ 泰皋阁</h2>
-<p style="color:var(--t2);font-size:14px;line-height:1.8;margin-top:8px">泰承文韵，皋聚书香，一阁藏书，书卷流转<br><br>帮同校同学买卖二手教材的平台。<br>省钱、环保，让每一本书都能被下一个需要的人用上。</p>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;text-align:left">
-<div style="background:var(--bg);padding:12px;border-radius:var(--rs)"><div style="font-size:22px;margin-bottom:2px">💰</div><div style="font-weight:600;font-size:14px">便宜</div><div style="font-size:12px;color:var(--t3)">二手价格通常是原价的 2-5 折</div></div>
-<div style="background:var(--bg);padding:12px;border-radius:var(--rs)"><div style="font-size:22px;margin-bottom:2px">🤝</div><div style="font-weight:600;font-size:14px">当面交易</div><div style="font-size:12px;color:var(--t3)">校内面交，看到实物再付款</div></div>
-<div style="background:var(--bg);padding:12px;border-radius:var(--rs)"><div style="font-size:22px;margin-bottom:2px">📱</div><div style="font-weight:600;font-size:14px">直接联系</div><div style="font-size:12px;color:var(--t3)">看到联系方式直接跟卖家聊</div></div>
-<div style="background:var(--bg);padding:12px;border-radius:var(--rs)"><div style="font-size:22px;margin-bottom:2px">🌱</div><div style="font-weight:600;font-size:14px">环保</div><div style="font-size:12px;color:var(--t3)">让教材循环使用，减少浪费</div></div>
-</div>
-<hr style="border:0;border-top:1px solid var(--b);margin:20px 0">
-<h3 style="font-size:15px;margin-bottom:10px">👤 我的昵称</h3>
-<p style="font-size:13px;color:var(--t2);margin-bottom:6px">当前昵称：<strong id="nickDisplay">—</strong></p>
-<div style="display:flex;gap:6px"><input type="text" id="nickInput" placeholder="输入昵称" style="flex:1;padding:8px 12px;border:1px solid var(--b);border-radius:var(--rs);font-size:14px;outline:0"><button class="btn btn-p" onclick="setNick()">保存</button></div>
-<hr style="border:0;border-top:1px solid var(--b);margin:20px 0">
-<h3 style="font-size:15px;margin-bottom:10px">💾 数据管理</h3>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn btn-p" onclick="exportData()" style="font-size:13px;padding:8px 16px">📤 导出数据</button>
-<button class="btn btn-d" onclick="document.getElementById('importInput').click()" style="font-size:13px;padding:8px 16px">📥 导入数据</button>
-<input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
-</div>
-<p style="font-size:12px;color:var(--t3);margin-top:6px">换设备时导出发给你自己，新设备导入即可同步</p>
-</div>
-</main>
-</div>
-
-<!-- Add Modal -->
-<div class="modal-overlay" id="addModal">
-<div class="modal form-modal">
-<div class="modal-header"><h2>📤 发布二手书</h2><button class="close" onclick="closeModal('addModal')">&times;</button></div>
-<form onsubmit="submitBook(event)" class="form-body">
-<div class="form-group"><label>上传书籍照片</label>
-<div class="form-img-upload">
-<label class="upload-box"><span class="icon">📷</span><span>上传</span><input type="file" accept="image/*" id="bookPhotoInput" onchange="previewBookPhoto(event)"></label>
-<div id="photoPreviews"></div></div>
-<p style="font-size:12px;color:var(--t3);margin-top:2px">建议上传实物照片，买家更放心</p></div>
-<div class="form-group"><label>ISBN（选填，自动填信息）</label>
-<div style="display:flex;gap:6px"><input type="text" id="bookIsbn" placeholder="输入ISBN自动查询" style="flex:1"><button type="button" class="btn btn-p" style="padding:8px 14px;font-size:12px" onclick="lookupIsbn()">🔍 查询</button><button type="button" class="btn btn-s" style="padding:8px 14px;font-size:12px" onclick="startScan()">📷 扫码</button></div>
-<p id="isbnStatus" style="font-size:12px;color:var(--t3);margin-top:2px"></p></div>
-<div class="form-row">
-<div class="form-group"><label>书名 *</label><input type="text" id="bookTitle" required placeholder="高等数学（第七版）上册"></div>
-<div class="form-group"><label>作者 *</label><input type="text" id="bookAuthor" required placeholder="作者全名"></div></div>
-<div class="form-row">
-<div class="form-group"><label>价格（元）*</label><input type="number" id="bookPrice" required min="0" step="0.5" placeholder="25">
-<p id="priceRef" style="font-size:11px;color:var(--t3);margin-top:2px"></p></div>
-<div class="form-group"><label>书况 *</label>
-<select id="bookCondition">
-<option value="全新">全新 — 未使用过</option><option value="近新" selected>近新 — 几乎没笔记</option>
-<option value="良好">良好 — 少量划线</option><option value="一般">一般 — 有笔记/磨损</option>
-</select></div></div>
-<div class="form-group"><label>描述</label><textarea id="bookDesc" placeholder="版本、使用情况、赠品等"></textarea></div>
-<div class="form-group"><label>联系方式 *</label><input type="text" id="bookContact" required placeholder="微信 / QQ / 手机号"></div>
-<div class="form-group"><label>上传微信/QQ二维码（选填）</label>
-<input type="file" accept="image/*" id="bookQrUpload" onchange="previewQr(event)">
-<div id="qrPreview" style="display:none;margin-top:6px;position:relative">
-<img id="qrPreviewImg" style="max-width:90px;border-radius:6px;border:1px solid var(--b)">
-<button type="button" onclick="clearQrUpload()" style="position:absolute;top:-4px;left:86px;width:16px;height:16px;border-radius:50%;border:0;background:var(--d);color:#fff;font-size:8px;cursor:pointer">&times;</button></div></div>
-<div class="form-group"><label>分类 *</label>
-<select id="bookCategory">
-<option value="理工">📐 理工</option><option value="文科">📖 文科</option><option value="外语">🌍 外语</option>
-<option value="计算机">💻 计算机</option><option value="医学">🏥 医学</option><option value="考试">📝 考试</option>
-<option value="小说">🎭 小说</option><option value="其他">📦 其他</option></select></div>
-<button type="submit" class="btn btn-p btn-block btn-lg">📤 发布</button>
-</form></div></div>
-
-<!-- Detail Modal -->
-<div class="modal-overlay" id="detailModal">
-<div class="modal detail-modal">
-<div class="modal-header"><h2>📖 商品详情</h2><button class="close" onclick="closeModal('detailModal')">&times;</button></div>
-<div class="detail-scroll"><div id="detailContent"></div></div>
-<div class="detail-bottom" id="detailBottom"></div></div></div>
-
-<!-- Contact Modal -->
-<div class="modal-overlay" id="contactModal">
-<div class="modal contact-modal">
-<div class="modal-header"><h2>📱 联系卖家</h2><button class="close" onclick="closeModal('contactModal')">&times;</button></div>
-<div class="contact-body">
-<div class="contact-hd"><div class="contact-av">👤</div><div class="info"><div class="nm">校园卖家</div><div class="sb">建议直接加好友</div></div></div>
-<div class="contact-fd"><div class="lft"><div class="lb">👋 联系我</div><div class="vl" id="contactInfoDisplay">—</div></div><button class="cpy" id="copyContactBtn" onclick="copyContact()">复制</button></div>
-<div class="contact-qb"><div class="ql" id="qrLabel">📸 扫二维码加好友</div><div class="qw" id="qrcodeContainer"></div><div class="qt">截图保存二维码</div></div></div></div></div>
-
-<!-- Scanner Modal -->
-<div class="modal-overlay" id="scanModal">
-<div class="modal" style="max-width:420px">
-<div class="modal-header"><h2>📷 扫描ISBN条码</h2><button class="close" onclick="stopScan()">&times;</button></div>
-<div style="padding:0 20px 20px">
-<div id="scanViewport" style="width:100%;border-radius:var(--rs);overflow:hidden"></div>
-<p style="text-align:center;font-size:12px;color:var(--t3);margin-top:8px">将书本背后的ISBN条码对准框内</p>
-</div>
-</div>
-</div>
-
-<!-- Auth Modal -->
-<div class="modal-overlay" id="authModal">
-<div class="modal auth-modal">
-<div class="modal-header"><h2 id="authTitle">注册</h2><button class="close" onclick="closeModal('authModal')">&times;</button></div>
-<div style="padding:0 24px 24px">
-<div class="auth-tabs"><button class="auth-tab active" id="authTabRegister" onclick="switchAuthTab('register')">注册</button><button class="auth-tab inactive" id="authTabLogin" onclick="switchAuthTab('login')">登录</button></div>
-<div id="authRegisterForm">
-<input class="auth-field" type="email" id="authRegEmail" placeholder="邮箱">
-<input class="auth-field" type="text" id="authRegNick" placeholder="昵称">
-<input class="auth-field" type="password" id="authRegPw" placeholder="密码">
-<button class="auth-btn" onclick="doRegister()">注册</button></div>
-<div id="authLoginForm" style="display:none">
-<input class="auth-field" type="email" id="authLoginEmail" placeholder="邮箱">
-<input class="auth-field" type="password" id="authLoginPw" placeholder="密码">
-<button class="auth-btn" onclick="doLogin()">登录</button></div>
-</div></div></div>
 
 <div class="toast" id="toast"></div>
-<footer>🏛️ 泰皋阁 · 校园二手书 · 当面验货 · 注意安全 <img src="https://hits.sh/li8863938-cyber.github.io/book-market.svg?label=访客&color=4f46e5" style="height:18px;vertical-align:middle;margin-left:4px" alt="访问统计"></footer>
 
 <script>
-const KEY='***';
-const CATS=['全部','理工','文科','外语','计算机','医学','考试','小说','其他'];
-const EMO={'理工':'📐','文科':'📖','外语':'🌍','计算机':'💻','医学':'🏥','考试':'📝','小说':'🎭','其他':'📦'};
-const CC={'全新':'c0','近新':'c1','良好':'c2','一般':'c3'};
-let sortMode='new',currentPage='market',activeCat='全部',carouselIdx=0,bookPhotos=[];
-let favs=[];try{favs=JSON.parse(localStorage.getItem('favs_'+KEY))||[]}catch(e){}
-
-function getBooks(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return[]}}
-function saveBooks(b){localStorage.setItem(KEY,JSON.stringify(b))}
-function saveFavs(){localStorage.setItem('favs_'+KEY,JSON.stringify(favs));document.getElementById('favCount').textContent=favs.length}
-
-// Seed
-(function(){
-if(getBooks().length>0)return;
-saveBooks([
-{id:1,title:'高等数学（第七版）上册',author:'同济大学数学系',isbn:'978-7-04-039663-8',price:20,condition:'近新',category:'理工',desc:'第七版正版，只用了一个月，几乎全新，赠送配套习题解答。',contact:'微信: math_helper',time:Date.now()-864e5*2,emoji:'📐',photos:[],qrData:'',seller:'校园卖家',status:'active'},
-{id:2,title:'大学英语精读（第三版）',author:'董亚芬',isbn:'978-7-532-72024-3',price:15,condition:'良好',category:'外语',desc:'有荧光笔标注重点。送四级词汇小册子。',contact:'QQ: 23456789',time:Date.now()-864e5*4,emoji:'🌍',photos:[],qrData:'',seller:'校园卖家',status:'active'},
-{id:3,title:'C程序设计（第五版）',author:'谭浩强',isbn:'978-7-302-42137-5',price:18,condition:'一般',category:'计算机',desc:'上课记了很多笔记，送习题答案。',contact:'微信: c_programmer',time:Date.now()-864e5,emoji:'💻',photos:[],qrData:'',seller:'校园卖家',status:'active'},
-{id:4,title:'马克思主义基本原理概论',author:'本书编写组',isbn:'978-7-040-51539-8',price:8,condition:'全新',category:'文科',desc:'全新未拆封。',contact:'微信: marx2024',time:Date.now()-864e5*3,emoji:'📖',photos:[],qrData:'',seller:'校园卖家',status:'active'},
-{id:5,title:'人体解剖学彩色图谱（第3版）',author:'张朝佑',isbn:'978-7-535-74638-5',price:35,condition:'近新',category:'医学',desc:'几乎没翻过，送习题册。',contact:'QQ: 87654321',time:Date.now()-864e5*6,emoji:'🏥',photos:[],qrData:'',seller:'校园卖家',status:'sold'},
-{id:6,title:'大学英语四级真题2024',author:'华研外语',isbn:'978-7-562-84658-3',price:12,condition:'良好',category:'考试',desc:'做完两套卷子，后面八套全新。',contact:'微信: pass_cet4',time:Date.now()-864e5*5,emoji:'📝',photos:[],qrData:'',seller:'校园卖家',status:'active'},
-{id:7,title:'线性代数（第六版）',author:'同济大学数学系',isbn:'978-7-04-042195-8',price:15,condition:'近新',category:'理工',desc:'第六版，上了半学期。',contact:'微信: lin_algebra',time:Date.now()-864e5*7,emoji:'📐',photos:[],qrData:'',seller:'校园卖家',status:'active'},
-{id:8,title:'Python从入门到实践（第2版）',author:'Eric Matthes',isbn:'978-7-115-54608-1',price:25,condition:'良好',category:'计算机',desc:'中文版，前面有划线后面全新。',contact:'QQ: python_learner',time:Date.now()-864e5*8,emoji:'💻',photos:[],qrData:'',seller:'校园卖家',status:'active'},
-])})()
-
-// Pages
-function showPage(p){
-currentPage=p;
-document.getElementById('heroSection').style.display=p==='market'?'block':'none';
-document.querySelector('main.container').style.display=p==='market'?'block':'none';
-document.getElementById('favPage').style.display=p==='favorites'?'block':'none';
-document.getElementById('aboutPage').style.display=p==='about'?'block':'none';
-if(p==='about')document.getElementById('nickDisplay').textContent=getNick();
-document.getElementById('navMarket').className=p==='market'?'active':'';
-document.getElementById('navFav').className=p==='favorites'?'active':'';
-if(p==='favorites')renderFavs();
+// ====== 渲染导航栏 ======
+function renderNav(user) {
+  var el = document.getElementById('navRight');
+  if (user) {
+    el.innerHTML =
+      '<span class="text-xs text-gray-400 hidden sm:inline">' + escHtml(user.email) + '</span>' +
+      '<a href="sell.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all">发布</a>' +
+      '<button onclick="handleLogout()" class="px-2 py-1.5 rounded-lg text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">退出</button>';
+  } else {
+    el.innerHTML =
+      '<a href="auth.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">登录</a>' +
+      '<a href="auth.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all">注册</a>';
+  }
 }
 
-// Sort
-function setSort(m){sortMode=m;document.querySelectorAll('#sortBar span').forEach(e=>e.className='');document.getElementById('sort'+(m[0].toUpperCase()+m.slice(1))).className='active';render()}
-
-// Render
-function render(){
-const grid=document.getElementById('bookGrid');
-const filtersEl=document.getElementById('filters');
-const q=(document.getElementById('searchInput').value||'').toLowerCase().trim();
-filtersEl.innerHTML=CATS.map(c=>'<span class="tag'+(c===activeCat?' active':'')+'" onclick="setFilter(\''+c+'\')">'+c+'</span>').join('');
-let books=getBooks();
-if(activeCat!=='全部')books=books.filter(b=>b.category===activeCat);
-if(q)books=books.filter(b=>b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q)||(b.isbn&&b.isbn.includes(q)));
-if(sortMode==='cheap')books.sort((a,b)=>a.price-b.price);
-else if(sortMode==='expensive')books.sort((a,b)=>b.price-a.price);
-else books.sort((a,b)=>b.time-a.time);
-const all=getBooks();
-const avg=all.length>0?(all.reduce((s,b)=>s+b.price,0)/all.length).toFixed(1):'0';
-document.getElementById('totalBooks').textContent=all.length;
-document.getElementById('avgPrice').textContent='¥'+avg;
-if(books.length===0){
-grid.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>'+(q?'没有找到匹配的书':'还没有人发布书籍')+'</p><p class="sub">'+(!q&&activeCat==='全部'?'点右上角「卖书」来当第一个卖家 🎉':'')+'</p></div>';
-return;
-}
-grid.innerHTML=books.map(b=>{
-const cc=CC[b.condition]||'c1';
-const img=b.photos&&b.photos[0]?'<img src="'+esc(b.photos[0])+'">':(b.emoji||'📚');
-const isFav=favs.includes(b.id);
-const soldBadge=b.status==='sold'?'<div class="sold-badge">已售</div>':'';
-return '<div class="book-card" onclick="showDetail('+b.id+')">'+soldBadge+'<button class="fav-btn" onclick="event.stopPropagation();toggleFav('+b.id+')">'+(isFav?'⭐':'☆')+'</button><div class="img-wrap">'+img+'</div><div class="body"><div class="title">'+esc(b.title)+(b.status==='sold'?' <span style="color:var(--d);font-size:11px">[已售]</span>':'')+'</div><div class="author">'+esc(b.author)+'</div><div class="meta"><span class="price">¥'+b.price+'</span><span class="cond '+cc+'">'+b.condition+'</span></div><div class="time-t">'+timeAgo(b.time)+'</div></div></div>'
-}).join('');
+function handleLogout() {
+  if (supabase) {
+    supabase.auth.signOut();
+  }
+  currentUser = null;
+  renderNav(null);
+  showToast('👋 已退出');
 }
 
-function renderFavs(){
-const grid=document.getElementById('favGrid');
-const all=getBooks().filter(b=>favs.includes(b.id));
-if(all.length===0){grid.innerHTML='<div class="empty-state"><div class="icon">⭐</div><p>还没有收藏的书籍</p><p class="sub">浏览书摊时点星星收藏</p></div>';return;}
-all.sort((a,b)=>b.time-a.time);
-grid.innerHTML=all.map(b=>{
-const cc=CC[b.condition]||'c1';
-const img=b.photos&&b.photos[0]?'<img src="'+esc(b.photos[0])+'">':(b.emoji||'📚');
-return '<div class="book-card" onclick="showDetail('+b.id+')"><button class="fav-btn" onclick="event.stopPropagation();toggleFav('+b.id+');renderFavs()">⭐</button><div class="img-wrap">'+img+'</div><div class="body"><div class="title">'+esc(b.title)+'</div><div class="author">'+esc(b.author)+'</div><div class="meta"><span class="price">¥'+b.price+'</span><span class="cond '+cc+'">'+b.condition+'</span></div><div class="time-t">'+timeAgo(b.time)+'</div></div></div>'
-}).join('');
+// ====== 渲染分类筛选 ======
+function renderFilters(activeCat) {
+  var el = document.getElementById('filters');
+  el.innerHTML = CATS.map(function(c) {
+    return '<span class="px-3 py-1 rounded-full text-xs border transition-all cursor-pointer ' +
+      (c === activeCat ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-500 border-gray-200 hover:border-blue-500 hover:text-blue-600') +
+      '" onclick="setCat(\'' + c + '\')">' + c + '</span>';
+  }).join('');
 }
 
-function setFilter(c){activeCat=c;document.getElementById('filters').dataset.active=c;render()}
-function resetAll(){document.getElementById('searchInput').value='';activeCat='全部';sortMode='new';document.querySelectorAll('#sortBar span').forEach(e=>e.className='');document.getElementById('sortNew').className='active';render()}
+// ====== 渲染书籍卡片 ======
+function renderBooks(books) {
+  var grid = document.getElementById('bookGrid');
+  var count = document.getElementById('totalBooks');
+  var avg = document.getElementById('avgPrice');
 
-// Favorites
-function toggleFav(id){
-const i=favs.indexOf(id);
-if(i>-1)favs.splice(i,1);else favs.push(id);
-saveFavs();
-if(currentPage==='favorites')renderFavs();else render();
-}
+  count.textContent = books.length;
+  if (books.length > 0) {
+    var total = books.reduce(function(s, b) { return s + parseFloat(b.price || 0); }, 0);
+    avg.textContent = '¥' + (total / books.length).toFixed(1);
+  } else {
+    avg.textContent = '¥0';
+  }
 
-// ISBN lookup with fast timeout
-function lookupIsbn(){
-const isbn=document.getElementById('bookIsbn').value.trim();
-if(!isbn||isbn.length<10){showToast('请输入有效的ISBN');return;}
-const s=document.getElementById('isbnStatus');
-s.textContent='⏳ 查询中...';
+  if (books.length === 0) {
+    grid.innerHTML =
+      '<div class="col-span-full text-center py-20 text-gray-400">' +
+        '<div class="text-5xl mb-3">📭</div>' +
+        '<p class="text-sm">暂无在售书籍</p>' +
+        '<p class="text-xs text-gray-300 mt-1">去发布一本吧！</p>' +
+        '<a href="sell.html" class="inline-block mt-4 px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all">📤 发布书籍</a>' +
+      '</div>';
+    return;
+  }
 
-const ac=new AbortController();
-const timer=setTimeout(()=>ac.abort(),4000);
+  grid.innerHTML = books.map(function(b) {
+    var condColor = {
+      '全新': 'bg-green-50 text-green-700',
+      '九成新': 'bg-blue-50 text-blue-700',
+      '八成新': 'bg-amber-50 text-amber-700',
+      '有笔记': 'bg-orange-50 text-orange-700',
+      '有破损': 'bg-red-50 text-red-700',
+    }[b.condition] || 'bg-gray-50 text-gray-600';
 
-fetch('https://douban.uieee.xyz/v2/book/isbn/'+isbn,{signal:ac.signal}).then(r=>r.json()).then(d=>{
-clearTimeout(timer);
-if(d&&d.title){
-document.getElementById('bookTitle').value=d.title||'';
-if(d.author&&d.author[0])document.getElementById('bookAuthor').value=d.author[0].name||'';
-s.textContent='✅ '+esc(d.title);
-showToast('✅ ISBN 查询成功');
-updatePriceRef();
-}else{
-s.textContent='❌ 未找到该书';showToast('未找到该书信息');
-}
-}).catch(()=>{
-clearTimeout(timer);
-s.textContent='❌ 查询超时，请手动填写';
-showToast('查询失败，检查网络');
-})
-}
+    var coverHtml = b.cover_url
+      ? '<img src="' + escHtml(b.cover_url) + '" alt="封面" class="w-full h-full object-cover cover-img">'
+      : '<div class="flex items-center justify-center h-full text-3xl text-blue-500">📚</div>';
 
-// ISBN Scanner
-let html5QrCode=null
-function startScan(){
-  document.getElementById('scanModal').classList.add('open')
-  if(typeof Html5Qrcode==='undefined'){showToast('扫描库未加载，请手动输入');return}
-  html5QrCode=new Html5Qrcode('scanViewport')
-  const config={fps:10,qrbox:{width:280,height:80}}
-  html5QrCode.start({facingMode:'environment'},config,onScanSuccess,onScanError).catch(e=>{showToast('无法打开摄像头')})
-}
-function onScanSuccess(txt){
-  const m=txt.match(/\d{10,13}/);if(!m)return
-  const isbn=m[0]
-  document.getElementById('bookIsbn').value=isbn
-  stopScan()
-  showToast('✅ 扫码成功：'+isbn)
-  setTimeout(()=>lookupIsbn(),500)
-}
-function onScanError(e){}
-function stopScan(){
-  document.getElementById('scanModal').classList.remove('open')
-  if(html5QrCode){try{html5QrCode.stop().catch(()=>{})}catch(e){}html5QrCode=null}
+    return '<a href="book.html?id=' + b.id + '" class="book-card block bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">' +
+      '<div class="aspect-[3/4] overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">' + coverHtml + '</div>' +
+      '<div class="p-3">' +
+        '<div class="text-sm font-semibold leading-tight truncate">' + escHtml(b.title) + '</div>' +
+        '<div class="text-xs text-gray-400 mt-0.5 truncate">' + escHtml(b.author) + '</div>' +
+        '<div class="flex items-center justify-between mt-2">' +
+          '<span class="text-base font-bold text-red-500">¥' + b.price + '</span>' +
+          '<span class="text-[10px] font-medium px-2 py-0.5 rounded-full ' + condColor + '">' + b.condition + '</span>' +
+        '</div>' +
+      '</div>' +
+    '</a>';
+  }).join('');
 }
 
-// Price reference
-function updatePriceRef(){
-const t=document.getElementById('bookTitle').value.trim().toLowerCase();
-if(!t){document.getElementById('priceRef').textContent='';return;}
-const all=getBooks().filter(b=>b.title.toLowerCase().includes(t)&&b.status!=='sold');
-if(all.length<2){document.getElementById('priceRef').textContent='';return;}
-const avg=(all.reduce((s,b)=>s+b.price,0)/all.length).toFixed(1);
-document.getElementById('priceRef').textContent='💡 同款书均价 ¥'+avg+' ('+all.length+'本在售)';
-}
-document.getElementById('bookTitle').addEventListener('input',updatePriceRef);
-
-// Photo upload
-function previewBookPhoto(e){
-const f=e.target.files[0];if(!f)return;
-const r=new FileReader();
-r.onload=function(ev){bookPhotos.push(ev.target.result);renderPhotoPreviews()};
-r.readAsDataURL(f);e.target.value='';
-}
-function removePhoto(i){bookPhotos.splice(i,1);renderPhotoPreviews()}
-function renderPhotoPreviews(){
-document.getElementById('photoPreviews').innerHTML=bookPhotos.map((p,i)=>'<div class="img-preview"><img src="'+p+'"><button class="del" onclick="removePhoto('+i+')">&times;</button></div>').join('');
-}
-function previewQr(e){
-const f=e.target.files[0];if(!f)return;const r=new FileReader();
-r.onload=function(ev){document.getElementById('qrPreviewImg').src=ev.target.result;document.getElementById('qrPreview').style.display='block'};
-r.readAsDataURL(f);
-}
-function clearQrUpload(){document.getElementById('bookQrUpload').value='';document.getElementById('qrPreview').style.display='none'}
-
-// Submit book
-function openAddBook(){document.getElementById('addModal').classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='detailModal')document.getElementById('detailBottom').innerHTML='';if(id==='scanModal')stopScan()}
-function submitBook(e){
-e.preventDefault();
-const title=document.getElementById('bookTitle').value.trim();
-const author=document.getElementById('bookAuthor').value.trim();
-const price=parseFloat(document.getElementById('bookPrice').value);
-const condition=document.getElementById('bookCondition').value;
-const contact=document.getElementById('bookContact').value.trim();
-const category=document.getElementById('bookCategory').value;
-const desc=document.getElementById('bookDesc').value.trim();
-const isbn=document.getElementById('bookIsbn').value.trim();
-const qrInp=document.getElementById('bookQrUpload');
-const qrData=qrInp&&qrInp.files&&qrInp.files[0]?document.getElementById('qrPreviewImg').src:'';
-if(!title||!author||!price||!contact){showToast('⚠️ 请填写必填项');return;}
-const book={id:Date.now(),title,author,isbn,price,condition,desc,contact,category,emoji:EMO[category]||'📚',time:Date.now(),photos:[...bookPhotos],qrData,seller:getNick(),status:'active'};
-const books=getBooks();
-books.unshift(book);
-saveBooks(books);
-closeModal('addModal');
-e.target.reset();bookPhotos=[];document.getElementById('photoPreviews').innerHTML='';
-showPage('market');render();
-showToast('✅ 发布成功！');
+// ====== 骨架屏 ======
+function showSkeleton() {
+  var grid = document.getElementById('bookGrid');
+  grid.innerHTML = '';
+  for (var i = 0; i < 8; i++) {
+    grid.innerHTML +=
+      '<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">' +
+        '<div class="aspect-[3/4] bg-gray-100 skeleton"></div>' +
+        '<div class="p-3 space-y-2">' +
+          '<div class="h-4 bg-gray-100 rounded skeleton w-3/4"></div>' +
+          '<div class="h-3 bg-gray-100 rounded skeleton w-1/2"></div>' +
+          '<div class="flex justify-between"><div class="h-4 bg-gray-100 rounded skeleton w-16"></div><div class="h-4 bg-gray-100 rounded skeleton w-12"></div></div>' +
+        '</div>' +
+      '</div>';
+  }
 }
 
-// Detail
-function showDetail(id){
-const b=getBooks().find(x=>x.id===id);if(!b)return;
-const cc=CC[b.condition]||'c1';
-carouselIdx=0;
-const hasPhotos=b.photos&&b.photos.length>0;
-const renderCarousel=()=>{
-const imgs=hasPhotos?b.photos:[];
-const dotHtml=imgs.length>1?imgs.map((_,i)=>'<span'+(i===carouselIdx?' class="active"':'')+'></span>').join(''):'';
-const prevBtn=imgs.length>1?'<button class="nav-btn nav-prev" onclick="event.stopPropagation();carouselPrev()">‹</button>':'';
-const nextBtn=imgs.length>1?'<button class="nav-btn nav-next" onclick="event.stopPropagation();carouselNext()">›</button>':'';
-const imgHtml=imgs.length>0?'<img src="'+esc(imgs[carouselIdx])+'">':'<div class="no-img">'+(b.emoji||'📚')+'</div>';
-return prevBtn+imgHtml+nextBtn+(dotHtml?'<div class="dots">'+dotHtml+'</div>':'');
-};
-const descHtml=b.desc?'<div class="detail-sec"><div class="sec-title">📝 商品描述</div><div class="sec-body">'+esc(b.desc)+'</div></div>':'';
-const isbnHtml=b.isbn?'<div class="detail-isbn">🔖 ISBN：'+esc(b.isbn)+'</div>':'';
-const isFav=favs.includes(b.id);
-const shareHtml='<div class="detail-share"><button onclick="shareBook('+b.id+')">📤 分享</button></div>';
-const isSold=b.status==='sold';
-document.getElementById('detailContent').innerHTML=
-'<div class="detail-top"><div class="carousel" id="carousel">'+renderCarousel()+'</div></div>'+
-'<div class="detail-body">'+
-'<div class="detail-price"><span class="price">¥'+b.price+'</span>'+(isSold?' <span style="font-size:13px;color:var(--d);font-weight:600">已售出</span>':'')+
-'<div class="tags"><span class="'+cc+'" style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500">'+b.condition+'</span><span style="background:var(--pl);color:var(--p)">'+b.category+'</span>'+(isSold?' <span style="background:#fce4ec;color:var(--d)">已售</span>':'')+'</div></div>'+
-'<div class="detail-title"><h2>'+esc(b.title)+'</h2><div class="author">'+esc(b.author)+'</div></div>'+
-'<div class="detail-info"><div class="item"><div class="lb">💰 价格</div><div class="vl" style="color:var(--d)">¥'+b.price+'</div></div><div class="item"><div class="lb">📊 书况</div><div class="vl"><span class="'+cc+'" style="padding:1px 6px;border-radius:4px;font-size:12px">'+b.condition+'</span></div></div><div class="item"><div class="lb">🏷️ 分类</div><div class="vl">'+b.category+'</div></div><div class="item"><div class="lb">⏰ 发布</div><div class="vl">'+timeAgo(b.time)+'</div></div></div>'+
-isbnHtml+descHtml+
-'<div class="detail-seller"><div class="left"><div class="avatar">👤</div><div><div class="sname">'+esc(b.seller||'校园卖家')+'</div><div class="stime">'+timeAgo(b.time)+'发布</div></div></div>'+shareHtml+'</div>'+'</div>'
-'</div>'
-;
-document.getElementById('detailBottom').innerHTML=
-(!isSold?'<button class="btn btn-s btn-lg" onclick="contactSeller(\''+esc(b.contact)+'\',\''+(b.qrData||'')+'\')">📱 联系卖家</button>':'<button class="btn btn-s btn-lg" disabled style="opacity:.5">📱 已售出</button>')+
-'<button class="btn btn-d btn-lg" onclick="toggleSold('+b.id+')">'+(isSold?'🔄 重新上架':'✅ 标记已售')+'</button>';
-document.getElementById('detailModal').classList.add('open');
+// ====== 搜索 & 筛选 ======
+function handleSearch() {
+  searchQuery = document.getElementById('searchInput').value;
+  var filtered = filterBooks(allBooks, searchQuery, activeCat);
+  renderBooks(filtered);
 }
 
-function carouselNext(){const b=getBooks().find(x=>x.id===parseInt(document.querySelector('[id^=detail]')?.id?.replace('detail','')||0));if(!b||!b.photos)return;carouselIdx=(carouselIdx+1)%b.photos.length;renderCarousel()}
-function carouselPrev(){const b=getBooks().find(x=>x.id===parseInt(document.querySelector('[id^=detail]')?.id?.replace('detail','')||0));if(!b||!b.photos)return;carouselIdx=(carouselIdx-1+b.photos.length)%b.photos.length;renderCarousel()}
-function renderCarousel(){
-const el=document.getElementById('carousel');if(!el)return;
-const bEl=document.getElementById('detailContent');
-const bid=parseInt([...document.querySelectorAll('[id^=detail]')].find(e=>e.id!=='detailContent'&&e.id!=='detailBottom'&&e.id!=='detailScroll')?.id?.replace('detailContent','')||0);
-const b=getBooks().find(x=>x.id===bid);if(!b||!b.photos||b.photos.length<2)return;
-const imgs=b.photos;
-const dotHtml=imgs.map((_,i)=>'<span'+(i===carouselIdx?' class="active"':'')+'></span>').join('');
-el.innerHTML='<button class="nav-btn nav-prev" onclick="event.stopPropagation();carouselPrev()">‹</button><img src="'+esc(imgs[carouselIdx])+'"><button class="nav-btn nav-next" onclick="event.stopPropagation();carouselNext()">›</button><div class="dots">'+dotHtml+'</div>';
+function setCat(c) {
+  activeCat = c;
+  renderFilters(c);
+  var filtered = filterBooks(allBooks, searchQuery, c);
+  renderBooks(filtered);
 }
 
-// Toggle sold status
-function toggleSold(id){
-if(!confirm('确定标记为已售？可随时重新上架'))return;
-const books=getBooks();
-const b=books.find(x=>x.id===id);
-if(!b)return;
-if(b.status==='sold'){b.status='active';showToast('🔄 已重新上架')}else{b.status='sold';showToast('✅ 已标记已售')}
-saveBooks(books);
-const inDetail=document.getElementById('detailModal').classList.contains('open');
-if(inDetail)showDetail(id);else render();
-if(currentPage==='favorites')renderFavs();
+function escHtml(s) {
+  if (!s) return '';
+  var d = document.createElement('div'); d.textContent = s; return d.innerHTML;
 }
 
-// Share
-function shareBook(id){
-const b=getBooks().find(x=>x.id===id);if(!b)return;
-const url=window.location.href;
-const text='📚 '+b.title+' - ¥'+b.price+'（'+b.condition+'）';
-if(navigator.share){
-navigator.share({title:b.title,text:text,url:url}).catch(()=>{});
-}else if(navigator.clipboard&&navigator.clipboard.writeText){
-navigator.clipboard.writeText(text+' '+url).then(()=>showToast('✅ 已复制，去微信粘贴分享')).catch(()=>showToast('复制失败'));
-}else{showToast('📋 '+text+' '+url)}
-}
+// ====== 初始化 ======
+(async function() {
+  // 检查登录状态
+  if (supabase) {
+    try {
+      var { data } = await supabase.auth.getSession();
+      if (data && data.session) {
+        currentUser = data.session.user;
+      }
+    } catch(e) {}
+  }
+  renderNav(currentUser);
 
-// Nickname & Data
-function getNick(){return localStorage.getItem('nick')||'校园卖家'}
-function setNick(){
-const v=document.getElementById('nickInput').value.trim();
-if(!v){showToast('请输入昵称');return}
-localStorage.setItem('nick',v);
-document.getElementById('nickDisplay').textContent=v;
-showToast('✅ 昵称已保存');
-}
-function exportData(){
-const data={books:getBooks(),favs:favs,time:Date.now()};
-const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='book-market-data.json';a.click();
-URL.revokeObjectURL(a.href);
-showToast('✅ 数据已导出');
-}
-function importData(e){
-const file=e.target.files[0];if(!file)return;
-const reader=new FileReader();
-reader.onload=function(ev){try{
-const d=JSON.parse(ev.target.result);
-if(d.books){saveBooks(d.books);if(d.favs){favs=d.favs;saveFavs()}render();showToast('✅ 导入成功，共'+d.books.length+'本书');}
-else showToast('⚠️ 无效的数据文件');
-}catch(e){showToast('⚠️ 导入失败，文件格式错误')}};
-reader.readAsText(file);
-e.target.value='';
-}
+  // 加载书籍数据
+  showSkeleton();
+  allBooks = await fetchBooks();
 
-// Contact
-function contactSeller(contact,qrData){
-closeModal('detailModal');
-document.getElementById('contactInfoDisplay').textContent=contact;
-const btn=document.getElementById('copyContactBtn');btn.textContent='复制';btn.className='cpy';
-const container=document.getElementById('qrcodeContainer');container.innerHTML='';
-if(qrData){
-document.getElementById('qrLabel').textContent='📸 卖家上传的二维码';
-container.innerHTML='<img src="'+qrData+'" alt="二维码" style="max-width:140px;max-height:140px;border-radius:4px">';
-}else{
-document.getElementById('qrLabel').textContent='📸 扫二维码加好友';
-try{if(typeof QRCode!=='undefined'){new QRCode(container,{text:contact,width:140,height:140,colorDark:'#1e293b',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H})}else{container.innerHTML='<div style="width:140px;height:140px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center">📱</div>'}}catch(e){container.innerHTML='<div style="width:140px;height:140px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center">📱</div>'}
-}
-document.getElementById('contactModal').classList.add('open');
-}
-function copyContact(){
-const t=document.getElementById('contactInfoDisplay').textContent;if(!t)return;
-const b=document.getElementById('copyContactBtn');
-const d=function(t,b2){
-if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>{b2.textContent='已复制 ✓';b2.className='cpy ok';setTimeout(()=>{b2.textContent='复制';b2.className='cpy'},1800)}).catch(()=>{fc(t,b2)})}else{fc(t,b2)}
-};
-d(t,b);
-}
-function fc(t,b){
-const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
-document.body.appendChild(ta);ta.select();
-try{document.execCommand('copy');b.textContent='已复制 ✓';b.className='cpy ok';setTimeout(()=>{b.textContent='复制';b.className='cpy'},1800)}catch(e){showToast('复制失败')}
-document.body.removeChild(ta);
-}
-
-function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function timeAgo(ts){const d=Date.now()-ts;if(d<6e4)return'刚刚';if(d<36e5)return Math.floor(d/6e4)+'分钟前';if(d<864e5)return Math.floor(d/36e5)+'小时前';return Math.floor(d/864e5)+'天前'}
-function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2200)}
-
-document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')})});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(el=>el.classList.remove('open'))});
-render();
-
-// Auth modal
-function openAuth(){document.getElementById('authModal').classList.add('open');switchAuthTab('register')}
-function switchAuthTab(t){var r=t==='register';document.getElementById('authTitle').textContent=r?'注册':'登录';document.getElementById('authRegisterForm').style.display=r?'':'none';document.getElementById('authLoginForm').style.display=r?'none':'';document.getElementById('authTabRegister').className='auth-tab '+(r?'active':'inactive');document.getElementById('authTabLogin').className='auth-tab '+(r?'inactive':'active')}
-function doRegister(){var e=document.getElementById('authRegEmail').value.trim(),n=document.getElementById('authRegNick').value.trim(),p=document.getElementById('authRegPw').value;if(!e||!n||!p){showToast('请填写完整');return}var u=JSON.parse(localStorage.getItem('***_users')||'{}');if(u[e]){showToast('❌ 该邮箱已注册');return}u[e]={email:e,nickname:n,password:p};localStorage.setItem('***_users',JSON.stringify(u));localStorage.setItem('***_user',JSON.stringify({email:e,nickname:n}));document.getElementById('authState').textContent=n;closeModal('authModal');showToast('✅ 注册成功！')}
-function doLogin(){var e=document.getElementById('authLoginEmail').value.trim(),p=document.getElementById('authLoginPw').value;if(!e||!p){showToast('请填写完整');return}var u=JSON.parse(localStorage.getItem('***_users')||'{}');if(!u[e]){showToast('❌ 该邮箱未注册');return}if(u[e].password!==p){showToast('❌ 密码错误');return}localStorage.setItem('***_user',JSON.stringify({email:e,nickname:u[e].nickname}));document.getElementById('authState').textContent=u[e].nickname;closeModal('authModal');showToast('✅ 登录成功！')}
-(function(){var u=JSON.parse(localStorage.getItem('***_user')||'null');if(u&&u.nickname)document.getElementById('authState').textContent=u.nickname})();
+  renderFilters('全部');
+  renderBooks(allBooks);
+})();
 </script>
-<script defer src="qrcode.min.js"></script>
-<script defer src="html5-qrcode.min.js"></script>
+
 </body>
 </html>
