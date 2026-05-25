@@ -196,6 +196,7 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 <div class="logo" onclick="showPage('market')">🏛️ 泰皋阁<span class="badge">二手书</span></div>
 <nav>
 <button onclick="showPage('market')" id="navMarket">📖 书摊</button>
+<button onclick="showPage('mine')" id="navMine">👤 我的</button>
 <button onclick="showPage('favorites')" id="navFav">⭐ <span id="favCount">0</span></button>
 <button onclick="showPage('about')">ℹ️ 关于</button>
 <button class="sell-btn" onclick="openAddBook()">➕ 卖书</button>
@@ -250,6 +251,18 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 <div style="background:var(--bg);padding:12px;border-radius:var(--rs)"><div style="font-size:22px;margin-bottom:2px">📱</div><div style="font-weight:600;font-size:14px">直接联系</div><div style="font-size:12px;color:var(--t3)">看到联系方式直接跟卖家聊</div></div>
 <div style="background:var(--bg);padding:12px;border-radius:var(--rs)"><div style="font-size:22px;margin-bottom:2px">🌱</div><div style="font-weight:600;font-size:14px">环保</div><div style="font-size:12px;color:var(--t3)">让教材循环使用，减少浪费</div></div>
 </div>
+<hr style="border:0;border-top:1px solid var(--b);margin:20px 0">
+<h3 style="font-size:15px;margin-bottom:10px">👤 我的昵称</h3>
+<p style="font-size:13px;color:var(--t2);margin-bottom:6px">当前昵称：<strong id="nickDisplay">—</strong></p>
+<div style="display:flex;gap:6px"><input type="text" id="nickInput" placeholder="输入昵称" style="flex:1;padding:8px 12px;border:1px solid var(--b);border-radius:var(--rs);font-size:14px;outline:0"><button class="btn btn-p" onclick="setNick()">保存</button></div>
+<hr style="border:0;border-top:1px solid var(--b);margin:20px 0">
+<h3 style="font-size:15px;margin-bottom:10px">💾 数据管理</h3>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-p" onclick="exportData()" style="font-size:13px;padding:8px 16px">📤 导出数据</button>
+<button class="btn btn-d" onclick="document.getElementById('importInput').click()" style="font-size:13px;padding:8px 16px">📥 导入数据</button>
+<input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
+</div>
+<p style="font-size:12px;color:var(--t3);margin-top:6px">换设备时导出发给你自己，新设备导入即可同步</p>
 </div>
 </main>
 </div>
@@ -280,8 +293,6 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 </select></div></div>
 <div class="form-group"><label>描述</label><textarea id="bookDesc" placeholder="版本、使用情况、赠品等"></textarea></div>
 <div class="form-group"><label>联系方式 *</label><input type="text" id="bookContact" required placeholder="微信 / QQ / 手机号"></div>
-<div class="form-group"><label>管理密码 *</label><input type="password" id="bookPassword" required placeholder="修改/下架时需要此密码" style="max-width:200px">
-<p style="font-size:12px;color:var(--t3);margin-top:2px">🔑 之后标记已售或下架需要输入此密码，别太简单</p></div>
 <div class="form-group"><label>上传微信/QQ二维码（选填）</label>
 <input type="file" accept="image/*" id="bookQrUpload" onchange="previewQr(event)">
 <div id="qrPreview" style="display:none;margin-top:6px;position:relative">
@@ -341,14 +352,14 @@ function saveFavs(){localStorage.setItem('favs_'+KEY,JSON.stringify(favs));docum
 (function(){
 if(getBooks().length>0)return;
 saveBooks([
-{id:1,title:'高等数学（第七版）上册',author:'同济大学数学系',isbn:'978-7-04-039663-8',price:20,condition:'近新',category:'理工',desc:'第七版正版，只用了一个月，几乎全新，赠送配套习题解答。',contact:'微信: math_helper',time:Date.now()-864e5*2,emoji:'📐',photos:[],qrData:'',status:'active'},
-{id:2,title:'大学英语精读（第三版）',author:'董亚芬',isbn:'978-7-532-72024-3',price:15,condition:'良好',category:'外语',desc:'有荧光笔标注重点，不影响阅读。送四级词汇小册子。',contact:'QQ: 23456789',time:Date.now()-864e5*4,emoji:'🌍',photos:[],qrData:'',status:'active'},
-{id:3,title:'C程序设计（第五版）',author:'谭浩强',isbn:'978-7-302-42137-5',price:18,condition:'一般',category:'计算机',desc:'上课记了很多笔记，对新手很有参考价值。送习题答案。',contact:'微信: c_programmer',time:Date.now()-864e5,emoji:'💻',photos:[],qrData:'',status:'active'},
-{id:4,title:'马克思主义基本原理概论',author:'本书编写组',isbn:'978-7-040-51539-8',price:8,condition:'全新',category:'文科',desc:'全新未拆封，买了两本。',contact:'微信: marx2024',time:Date.now()-864e5*3,emoji:'📖',photos:[],qrData:'',status:'active'},
-{id:5,title:'人体解剖学彩色图谱（第3版）',author:'张朝佑',isbn:'978-7-535-74638-5',price:35,condition:'近新',category:'医学',desc:'几乎没有翻过，送配套习题册。',contact:'QQ: 87654321',time:Date.now()-864e5*6,emoji:'🏥',photos:[],qrData:'',status:'sold'},
-{id:6,title:'大学英语四级真题2024',author:'华研外语',isbn:'978-7-562-84658-3',price:12,condition:'良好',category:'考试',desc:'做完两套卷子，后面八套全新。送听力音频。',contact:'微信: pass_cet4',time:Date.now()-864e5*5,emoji:'📝',photos:[],qrData:'',status:'active'},
-{id:7,title:'线性代数（第六版）',author:'同济大学数学系',isbn:'978-7-04-042195-8',price:15,condition:'近新',category:'理工',desc:'第六版，上了半学期课，书很新。',contact:'微信: lin_algebra',time:Date.now()-864e5*7,emoji:'📐',photos:[],qrData:'',status:'active'},
-{id:8,title:'Python从入门到实践（第2版）',author:'Eric Matthes',isbn:'978-7-115-54608-1',price:25,condition:'良好',category:'计算机',desc:'中文版，前面几章有划线笔记，后面全新。',contact:'QQ: python_learner',time:Date.now()-864e5*8,emoji:'💻',photos:[],qrData:'',status:'active'},
+{id:1,title:'高等数学（第七版）上册',author:'同济大学数学系',isbn:'978-7-04-039663-8',price:20,condition:'近新',category:'理工',desc:'第七版正版，只用了一个月，几乎全新，赠送配套习题解答。',contact:'微信: math_helper',time:Date.now()-864e5*2,emoji:'📐',photos:[],qrData:'',seller:'校园卖家',status:'active'},
+{id:2,title:'大学英语精读（第三版）',author:'董亚芬',isbn:'978-7-532-72024-3',price:15,condition:'良好',category:'外语',desc:'有荧光笔标注重点。送四级词汇小册子。',contact:'QQ: 23456789',time:Date.now()-864e5*4,emoji:'🌍',photos:[],qrData:'',seller:'校园卖家',status:'active'},
+{id:3,title:'C程序设计（第五版）',author:'谭浩强',isbn:'978-7-302-42137-5',price:18,condition:'一般',category:'计算机',desc:'上课记了很多笔记，送习题答案。',contact:'微信: c_programmer',time:Date.now()-864e5,emoji:'💻',photos:[],qrData:'',seller:'校园卖家',status:'active'},
+{id:4,title:'马克思主义基本原理概论',author:'本书编写组',isbn:'978-7-040-51539-8',price:8,condition:'全新',category:'文科',desc:'全新未拆封。',contact:'微信: marx2024',time:Date.now()-864e5*3,emoji:'📖',photos:[],qrData:'',seller:'校园卖家',status:'active'},
+{id:5,title:'人体解剖学彩色图谱（第3版）',author:'张朝佑',isbn:'978-7-535-74638-5',price:35,condition:'近新',category:'医学',desc:'几乎没翻过，送习题册。',contact:'QQ: 87654321',time:Date.now()-864e5*6,emoji:'🏥',photos:[],qrData:'',seller:'校园卖家',status:'sold'},
+{id:6,title:'大学英语四级真题2024',author:'华研外语',isbn:'978-7-562-84658-3',price:12,condition:'良好',category:'考试',desc:'做完两套卷子，后面八套全新。',contact:'微信: pass_cet4',time:Date.now()-864e5*5,emoji:'📝',photos:[],qrData:'',seller:'校园卖家',status:'active'},
+{id:7,title:'线性代数（第六版）',author:'同济大学数学系',isbn:'978-7-04-042195-8',price:15,condition:'近新',category:'理工',desc:'第六版，上了半学期。',contact:'微信: lin_algebra',time:Date.now()-864e5*7,emoji:'📐',photos:[],qrData:'',seller:'校园卖家',status:'active'},
+{id:8,title:'Python从入门到实践（第2版）',author:'Eric Matthes',isbn:'978-7-115-54608-1',price:25,condition:'良好',category:'计算机',desc:'中文版，前面有划线后面全新。',contact:'QQ: python_learner',time:Date.now()-864e5*8,emoji:'💻',photos:[],qrData:'',seller:'校园卖家',status:'active'},
 ])})()
 
 // Pages
@@ -358,6 +369,7 @@ document.getElementById('heroSection').style.display=p==='market'?'block':'none'
 document.querySelector('main.container').style.display=p==='market'?'block':'none';
 document.getElementById('favPage').style.display=p==='favorites'?'block':'none';
 document.getElementById('aboutPage').style.display=p==='about'?'block':'none';
+if(p==='about')document.getElementById('nickDisplay').textContent=getNick();
 document.getElementById('navMarket').className=p==='market'?'active':'';
 document.getElementById('navFav').className=p==='favorites'?'active':'';
 if(p==='favorites')renderFavs();
@@ -514,9 +526,7 @@ const isbn=document.getElementById('bookIsbn').value.trim();
 const qrInp=document.getElementById('bookQrUpload');
 const qrData=qrInp&&qrInp.files&&qrInp.files[0]?document.getElementById('qrPreviewImg').src:'';
 if(!title||!author||!price||!contact){showToast('⚠️ 请填写必填项');return;}
-const password=document.getElementById('bookPassword').value.trim();
-if(!password){showToast('⚠️ 请设置管理密码');return;}
-const book={id:Date.now(),title,author,isbn,price,condition,desc,contact,category,emoji:EMO[category]||'📚',time:Date.now(),photos:[...bookPhotos],qrData,password:btoa(password),status:'active'};
+const book={id:Date.now(),title,author,isbn,price,condition,desc,contact,category,emoji:EMO[category]||'📚',time:Date.now(),photos:[...bookPhotos],qrData,seller:getNick(),status:'active'};
 const books=getBooks();
 books.unshift(book);
 saveBooks(books);
@@ -553,7 +563,7 @@ document.getElementById('detailContent').innerHTML=
 '<div class="detail-title"><h2>'+esc(b.title)+'</h2><div class="author">'+esc(b.author)+'</div></div>'+
 '<div class="detail-info"><div class="item"><div class="lb">💰 价格</div><div class="vl" style="color:var(--d)">¥'+b.price+'</div></div><div class="item"><div class="lb">📊 书况</div><div class="vl"><span class="'+cc+'" style="padding:1px 6px;border-radius:4px;font-size:12px">'+b.condition+'</span></div></div><div class="item"><div class="lb">🏷️ 分类</div><div class="vl">'+b.category+'</div></div><div class="item"><div class="lb">⏰ 发布</div><div class="vl">'+timeAgo(b.time)+'</div></div></div>'+
 isbnHtml+descHtml+
-'<div class="detail-seller"><div class="left"><div class="avatar">👤</div><div><div class="sname">校园卖家</div><div class="stime">'+timeAgo(b.time)+'发布</div></div></div>'+shareHtml+'</div>'+
+'<div class="detail-seller"><div class="left"><div class="avatar">👤</div><div><div class="sname">'+esc(b.seller||'校园卖家')+'</div><div class="stime">'+timeAgo(b.time)+'发布</div></div></div>'+shareHtml+'</div>'+'</div>'
 '</div>'
 ;
 document.getElementById('detailBottom').innerHTML=
@@ -575,30 +585,16 @@ el.innerHTML='<button class="nav-btn nav-prev" onclick="event.stopPropagation();
 }
 
 // Toggle sold status
-function verifyPassword(id){
-const books=getBooks();
-const b=books.find(x=>x.id===id);
-if(!b)return false;
-// 没有密码的旧书（示例数据）可以直接操作
-if(!b.password)return true;
-const pwd=prompt('🔑 需要管理密码：');
-if(!pwd)return false;
-if(btoa(pwd)!==b.password){showToast('❌ 密码错误');return false}
-return true;
-}
-
 function toggleSold(id){
-if(!verifyPassword(id))return;
+if(!confirm('确定标记为已售？可随时重新上架'))return;
 const books=getBooks();
 const b=books.find(x=>x.id===id);
 if(!b)return;
-const isCurrentlySold=b.status==='sold';
-if(isCurrentlySold){
-b.status='active';
-showToast('🔄 已重新上架');
-}else{
-b.status='sold';
-showToast('✅ 已标记为已售');
+if(b.status==='sold'){b.status='active';showToast('🔄 已重新上架')}else{b.status='sold';showToast('✅ 已标记已售')}
+saveBooks(books);
+const inDetail=document.getElementById('detailModal').classList.contains('open');
+if(inDetail)showDetail(id);else render();
+if(currentPage==='favorites')renderFavs();
 }
 saveBooks(books);
 const inDetail=document.getElementById('detailModal').classList.contains('open');
@@ -616,6 +612,34 @@ navigator.share({title:b.title,text:text,url:url}).catch(()=>{});
 }else if(navigator.clipboard&&navigator.clipboard.writeText){
 navigator.clipboard.writeText(text+' '+url).then(()=>showToast('✅ 已复制，去微信粘贴分享')).catch(()=>showToast('复制失败'));
 }else{showToast('📋 '+text+' '+url)}
+}
+
+// Nickname & Data
+function getNick(){return localStorage.getItem('nick')||'校园卖家'}
+function setNick(){
+const v=document.getElementById('nickInput').value.trim();
+if(!v){showToast('请输入昵称');return}
+localStorage.setItem('nick',v);
+document.getElementById('nickDisplay').textContent=v;
+showToast('✅ 昵称已保存');
+}
+function exportData(){
+const data={books:getBooks(),favs:favs,time:Date.now()};
+const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='book-market-data.json';a.click();
+URL.revokeObjectURL(a.href);
+showToast('✅ 数据已导出');
+}
+function importData(e){
+const file=e.target.files[0];if(!file)return;
+const reader=new FileReader();
+reader.onload=function(ev){try{
+const d=JSON.parse(ev.target.result);
+if(d.books){saveBooks(d.books);if(d.favs){favs=d.favs;saveFavs()}render();showToast('✅ 导入成功，共'+d.books.length+'本书');}
+else showToast('⚠️ 无效的数据文件');
+}catch(e){showToast('⚠️ 导入失败，文件格式错误')}};
+reader.readAsText(file);
+e.target.value='';
 }
 
 // Contact
