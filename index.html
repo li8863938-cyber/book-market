@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>校园二手书市</title>
 <script src="qrcode.min.js"></script>
+<script src="html5-qrcode.min.js"></script>
 <style>
 :root{--p:#4f46e5;--pl:#eef2ff;--pd:#3730a3;--bg:#f8fafc;--c:#fff;--t:#1e293b;--t2:#64748b;--t3:#94a3b8;--b:#e2e8f0;--s:#10b981;--d:#ef4444;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.08);--sh-lg:0 8px 30px rgba(0,0,0,.12)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -266,7 +267,7 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 <div id="photoPreviews"></div></div>
 <p style="font-size:12px;color:var(--t3);margin-top:2px">建议上传实物照片，买家更放心</p></div>
 <div class="form-group"><label>ISBN（选填，自动填信息）</label>
-<div style="display:flex;gap:6px"><input type="text" id="bookIsbn" placeholder="输入ISBN自动查询" style="flex:1"><button type="button" class="btn btn-p" style="padding:8px 14px;font-size:12px" onclick="lookupIsbn()">🔍 查询</button></div>
+<div style="display:flex;gap:6px"><input type="text" id="bookIsbn" placeholder="输入ISBN自动查询" style="flex:1"><button type="button" class="btn btn-p" style="padding:8px 14px;font-size:12px" onclick="lookupIsbn()">🔍 查询</button><button type="button" class="btn btn-s" style="padding:8px 14px;font-size:12px" onclick="startScan()">📷 扫码</button></div>
 <p id="isbnStatus" style="font-size:12px;color:var(--t3);margin-top:2px"></p></div>
 <div class="form-row">
 <div class="form-group"><label>书名 *</label><input type="text" id="bookTitle" required placeholder="高等数学（第七版）上册"></div>
@@ -309,6 +310,17 @@ nav{gap:3px}nav button{font-size:12px;padding:6px 9px}
 <div class="contact-hd"><div class="contact-av">👤</div><div class="info"><div class="nm">校园卖家</div><div class="sb">建议直接加好友</div></div></div>
 <div class="contact-fd"><div class="lft"><div class="lb">👋 联系我</div><div class="vl" id="contactInfoDisplay">—</div></div><button class="cpy" id="copyContactBtn" onclick="copyContact()">复制</button></div>
 <div class="contact-qb"><div class="ql" id="qrLabel">📸 扫二维码加好友</div><div class="qw" id="qrcodeContainer"></div><div class="qt">截图保存二维码</div></div></div></div></div>
+
+<!-- Scanner Modal -->
+<div class="modal-overlay" id="scanModal">
+<div class="modal" style="max-width:420px">
+<div class="modal-header"><h2>📷 扫描ISBN条码</h2><button class="close" onclick="stopScan()">&times;</button></div>
+<div style="padding:0 20px 20px">
+<div id="scanViewport" style="width:100%;border-radius:var(--rs);overflow:hidden"></div>
+<p style="text-align:center;font-size:12px;color:var(--t3);margin-top:8px">将书本背后的ISBN条码对准框内</p>
+</div>
+</div>
+</div>
 
 <div class="toast" id="toast"></div>
 <footer>📚 校园二手书市 · 当面验货 · 注意安全</footer>
@@ -426,6 +438,30 @@ showToast('未找到该书信息');
 }).catch(()=>{s.textContent='❌ 查询失败，请手动填写';showToast('查询失败，检查网络')})
 }
 
+// ISBN Scanner
+let html5QrCode=null
+function startScan(){
+  document.getElementById('scanModal').classList.add('open')
+  if(typeof Html5Qrcode==='undefined'){showToast('扫描库未加载，请手动输入');return}
+  html5QrCode=new Html5Qrcode('scanViewport')
+  const config={fps:10,qrbox:{width:280,height:80}}
+  html5QrCode.start({facingMode:'environment'},config,onScanSuccess,onScanError).catch(e=>{showToast('无法打开摄像头')})
+}
+function onScanSuccess(txt){
+  const m=txt.match(/\d{10,13}/);if(!m)return
+  const isbn=m[0]
+  document.getElementById('bookIsbn').value=isbn
+  stopScan()
+  showToast('✅ 扫码成功：'+isbn)
+  setTimeout(()=>lookupIsbn(),500)
+}
+function onScanError(e){}
+function stopScan(){
+  document.getElementById('scanModal').classList.remove('open')
+  if(html5QrCode){try{html5QrCode.stop().catch(()=>{})}catch(e){}html5QrCode=null}
+}
+}
+
 // Price reference
 function updatePriceRef(){
 const t=document.getElementById('bookTitle').value.trim().toLowerCase();
@@ -457,7 +493,7 @@ function clearQrUpload(){document.getElementById('bookQrUpload').value='';docume
 
 // Submit book
 function openAddBook(){document.getElementById('addModal').classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='detailModal')document.getElementById('detailBottom').innerHTML=''}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='detailModal')document.getElementById('detailBottom').innerHTML='';if(id==='scanModal')stopScan()}
 function submitBook(e){
 e.preventDefault();
 const title=document.getElementById('bookTitle').value.trim();
