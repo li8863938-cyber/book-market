@@ -1,419 +1,340 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>发布图书 · 泰皋�?/title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>发布图书 · 泰皋阁</title>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-          colors: {
-            brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3' }
-          }
-        }
-      }
+<!-- Tailwind CSS（jsdelivr CDN，国内基本可用） -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'] },
+      colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3' } }
     }
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  }
+}
+</script>
 
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: #f5f7fa;
-      color: #0f172a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .fade-in { animation: fadeUp .35s ease both; }
-    .spinner {
-      width: 16px; height: 16px;
-      border: 2.5px solid rgba(255,255,255,.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .6s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .toast {
-      position: fixed; bottom: 28px; left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      padding: 12px 28px; border-radius: 12px;
-      font-size: 14px; font-weight: 500;
-      opacity: 0; transition: all .35s cubic-bezier(.4,0,.2,1);
-      z-index: 200; pointer-events: none;
-      box-shadow: 0 6px 24px rgba(0,0,0,.18);
-      max-width: 90vw;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast.success { background: #065f46; color: #fff; }
-    .toast.error   { background: #991b1b; color: #fff; }
-    .toast.info    { background: #1e293b; color: #fff; }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    input[type="number"] { -moz-appearance: textfield; }
-    select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
-    .select-wrap { position: relative; }
-    .select-wrap::after {
-      content: ''; position: absolute; right: 14px; top: 50%;
-      transform: translateY(-50%);
-      width: 0; height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top: 5px solid #94a3b8;
-      pointer-events: none;
-    }
-  </style>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #f5f7fa; color: #0f172a; min-height: 100vh;
+  display: flex; flex-direction: column; -webkit-font-smoothing: antialiased;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+@keyframes spin { to { transform:rotate(360deg) } }
+.fade-in { animation: fadeUp .35s ease both; }
+.spinner {
+  width:16px; height:16px; border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite;
+  display:inline-block; vertical-align:middle;
+}
+.toast {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(100px);
+  padding:12px 28px; border-radius:12px; font-size:14px; font-weight:500;
+  opacity:0; transition:all .35s cubic-bezier(.4,0,.2,1);
+  z-index:200; pointer-events:none; box-shadow:0 6px 24px rgba(0,0,0,.18); max-width:90vw;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.success { background:#065f46; color:#fff; }
+.toast.error   { background:#991b1b; color:#fff; }
+.toast.info    { background:#1e293b; color:#fff; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+input[type="number"] { -moz-appearance:textfield; }
+select { -webkit-appearance:none; -moz-appearance:none; appearance:none; }
+.select-wrap { position:relative; }
+.select-wrap::after {
+  content:''; position:absolute; right:14px; top:50%; transform:translateY(-50%);
+  width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent;
+  border-top:5px solid #94a3b8; pointer-events:none;
+}
+</style>
 </head>
 <body>
 
-  <!-- ===== 导航�?===== -->
-  <header class="sticky top-0 z-50 bg-white/88 backdrop-blur-md border-b border-slate-200">
-    <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-1.5 no-underline">
-        <span class="text-lg">🏛�?/span>
-        <span class="text-[19px] font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">泰皋�?/span>
-        <span class="text-[10px] font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-1.5 py-0.5 rounded" style="-webkit-text-fill-color: #fff;">发布</span>
-      </a>
-      <a href="index.html" class="text-sm text-slate-400 hover:text-slate-500 no-underline transition-colors">�?返回书摊</a>
-    </div>
-  </header>
+<header class="sticky top-0 z-50 bg-white/88 backdrop-blur-md border-b border-slate-200">
+<div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+  <a href="index.html" class="flex items-center gap-1.5 no-underline">
+    <span class="text-lg">&#x1F3DB;&#xFE0F;</span>
+    <span class="text-[19px] font-bold tracking-tight" style="background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">&#x6CF0;&#x768A;&#x9601;</span>
+    <span class="text-[10px] font-semibold text-white px-1.5 py-0.5 rounded" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">&#x53D1;&#x5E03;</span>
+  </a>
+  <a href="index.html" class="text-sm text-slate-400 hover:text-slate-500 no-underline transition-colors">&#x2190; &#x8FD4;&#x56DE;&#x4E66;&#x644A;</a>
+</div>
+</header>
 
-  <!-- ===== 主内�?===== -->
-  <main class="flex-1 flex items-start justify-center px-4 py-8 md:py-12">
-    <div class="w-full max-w-2xl fade-in">
+<main class="flex-1 flex items-start justify-center px-4 py-8 md:py-12">
+<div class="w-full max-w-2xl fade-in">
 
-      <div class="text-center mb-6">
-        <div class="text-3xl mb-1">📖</div>
-        <h1 class="text-xl font-bold text-slate-800">发布二手�?/h1>
-        <p class="text-sm text-slate-400 mt-1">填好信息，让书找到新主人</p>
+  <div class="text-center mb-6">
+    <div class="text-3xl mb-1">&#x1F4D6;</div>
+    <h1 class="text-xl font-bold text-slate-800">&#x53D1;&#x5E03;&#x4E8C;&#x624B;&#x4E66;</h1>
+    <p class="text-sm text-slate-400 mt-1">&#x586B;&#x597D;&#x4FE1;&#x606F;&#xFF0C;&#x8BA9;&#x4E66;&#x627E;&#x5230;&#x65B0;&#x4E3B;&#x4EBA;</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+
+    <form id="sellForm" onsubmit="return false;" class="space-y-5">
+
+      <div>
+        <label for="title" class="block text-xs font-medium text-slate-500 mb-1.5">&#x4E66;&#x540D; <span class="text-red-500">*</span></label>
+        <input type="text" id="title" required placeholder="&#x4F8B;&#xFF1A;&#x9AD8;&#x7B49;&#x6570;&#x5B66;&#xFF08;&#x7B2C;&#x4E03;&#x7248;&#xFF09;&#x4E0A;&#x518C;"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
       </div>
 
-      <div class="bg-white rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,.04),0_1px_3px_rgba(0,0,0,.06)] border border-slate-200 p-6 md:p-8">
-
-        <form id="sellForm" onsubmit="return false;" class="space-y-5">
-
-          <!-- 书名 -->
-          <div>
-            <label for="title" class="block text-xs font-medium text-slate-500 mb-1.5">书名 <span class="text-red-500">*</span></label>
-            <input type="text" id="title" name="title" required
-                   placeholder="例：高等数学（第七版）上�?
-                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-          </div>
-
-          <!-- 作�?-->
-          <div>
-            <label for="author" class="block text-xs font-medium text-slate-500 mb-1.5">作�?<span class="text-red-500">*</span></label>
-            <input type="text" id="author" name="author" required
-                   placeholder="例：同济大学数学�?
-                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-          </div>
-
-          <!-- 出版�?-->
-          <div>
-            <label for="publisher" class="block text-xs font-medium text-slate-500 mb-1.5">出版�?<span class="text-slate-300 font-normal">(选填)</span></label>
-            <input type="text" id="publisher" name="publisher"
-                   placeholder="例：高等教育出版�?
-                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-          </div>
-
-          <!-- ISBN -->
-          <div>
-            <label for="isbn" class="block text-xs font-medium text-slate-500 mb-1.5">ISBN <span class="text-slate-300 font-normal">(选填)</span></label>
-            <div class="flex gap-2">
-              <input type="text" id="isbn" name="isbn"
-                     placeholder="例：9787040396638"
-                     class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-              <button type="button" id="scanBtn"
-                      class="px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
-                      title="扫码查书">📷</button>
-            </div>
-            <p class="text-[11px] text-slate-300 mt-1">扫码功能即将上线</p>
-          </div>
-
-          <!-- 封面 URL -->
-          <div>
-            <label for="cover_url" class="block text-xs font-medium text-slate-500 mb-1.5">封面图片链接 <span class="text-slate-300 font-normal">(选填)</span></label>
-            <input type="url" id="cover_url" name="cover_url"
-                   placeholder="https://img2.example.com/cover.jpg"
-                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-            <div id="coverPreview" class="mt-2 hidden">
-              <img id="coverPreviewImg" src="" alt="封面预览"
-                   class="w-24 h-32 object-cover rounded-lg border border-slate-200 shadow-sm"
-                   onerror="this.parentElement.classList.add('hidden')">
-            </div>
-          </div>
-
-          <!-- 价格 -->
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label for="original_price" class="block text-xs font-medium text-slate-500 mb-1.5">原价 <span class="text-slate-300 font-normal">¥ (选填)</span></label>
-              <input type="number" id="original_price" name="original_price" min="0" step="0.01"
-                     placeholder="0.00"
-                     class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-            </div>
-            <div>
-              <label for="price" class="block text-xs font-medium text-slate-500 mb-1.5">售价 <span class="text-red-500">*</span> ¥</label>
-              <input type="number" id="price" name="price" required min="0.01" step="0.01"
-                     placeholder="0.00"
-                     class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-            </div>
-          </div>
-
-          <!-- 品相 -->
-          <div>
-            <label for="condition" class="block text-xs font-medium text-slate-500 mb-1.5">品相 <span class="text-red-500">*</span></label>
-            <div class="select-wrap">
-              <select id="condition" name="condition" required
-                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white text-slate-800 cursor-pointer">
-                <option value="" disabled selected>请选择品相</option>
-                <option value="全新">全新</option>
-                <option value="九成�?>九成�?/option>
-                <option value="八成�?>八成�?/option>
-                <option value="有笔�?>有笔�?/option>
-                <option value="有破�?>有破�?/option>
-              </select>
-            </div>
-          </div>
-
-          <!-- 交易地点 -->
-          <div>
-            <label for="location" class="block text-xs font-medium text-slate-500 mb-1.5">交易地点 <span class="text-red-500">*</span></label>
-            <div class="select-wrap">
-              <select id="location" name="location" required
-                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white text-slate-800 cursor-pointer">
-                <option value="" disabled selected>请选择交易地点</option>
-                <option value="图书�?>图书�?/option>
-                <option value="教学楼A�?>教学楼A�?/option>
-                <option value="食堂门口">食堂门口</option>
-                <option value="其他">其他</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- 联系方式 -->
-          <div>
-            <label for="contact" class="block text-xs font-medium text-slate-500 mb-1.5">联系方式 <span class="text-slate-300 font-normal">(选填)</span></label>
-            <input type="text" id="contact" name="contact"
-                   placeholder="微信�?/ QQ / 手机�?
-                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
-          </div>
-
-          <!-- 描述 -->
-          <div>
-            <label for="description" class="block text-xs font-medium text-slate-500 mb-1.5">描述 <span class="text-slate-300 font-normal">(选填)</span></label>
-            <textarea id="description" name="description" rows="4"
-                      placeholder="说说这本书的情况，比如有无笔记、破损、缺页等�?
-                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300 resize-y"></textarea>
-            <p class="text-[11px] text-slate-300 mt-1 text-right"><span id="descCount">0</span>/500</p>
-          </div>
-
-          <!-- 提交按钮 -->
-          <button type="submit" id="submitBtn"
-                  class="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg hover:shadow-indigo-500/25 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2">
-            发布图书
-          </button>
-
-        </form>
+      <div>
+        <label for="author" class="block text-xs font-medium text-slate-500 mb-1.5">&#x4F5C;&#x8005; <span class="text-red-500">*</span></label>
+        <input type="text" id="author" required placeholder="&#x4F8B;&#xFF1A;&#x540C;&#x6D4E;&#x5927;&#x5B66;&#x6570;&#x5B66;&#x7CFB;"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
       </div>
 
-      <p class="text-center text-xs text-slate-300 mt-5">
-        发布即表示同�?<a href="#" class="text-indigo-500 no-underline hover:text-indigo-600" onclick="event.preventDefault();showToast('📌 用户协议页面开发中','info')">《用户协议�?/a>
-      </p>
-    </div>
-  </main>
+      <div>
+        <label for="publisher" class="block text-xs font-medium text-slate-500 mb-1.5">&#x51FA;&#x7248;&#x793E; <span class="text-slate-300 font-normal">(&#x9009;&#x586B;)</span></label>
+        <input type="text" id="publisher" placeholder="&#x4F8B;&#xFF1A;&#x9AD8;&#x7B49;&#x6559;&#x80B2;&#x51FA;&#x7248;&#x793E;"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+      </div>
 
-  <!-- ===== Toast ===== -->
-  <div class="toast" id="toast"></div>
+      <div>
+        <label for="isbn" class="block text-xs font-medium text-slate-500 mb-1.5">ISBN <span class="text-slate-300 font-normal">(&#x9009;&#x586B;)</span></label>
+        <div class="flex gap-2">
+          <input type="text" id="isbn" placeholder="&#x4F8B;&#xFF1A;9787040396638"
+                 class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+          <button type="button" id="scanBtn"
+                  class="px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+                  title="&#x626B;&#x7801;&#x67E5;&#x4E66;">&#x1F4F7;</button>
+        </div>
+        <p class="text-[11px] text-slate-300 mt-1">&#x626B;&#x7801;&#x529F;&#x80FD;&#x5373;&#x5C06;&#x4E0A;&#x7EBF;</p>
+      </div>
 
-  <script>
-    /* =============================================================
-     * Supabase REST API 配置（无需外部 SDK CDN�?     * ============================================================= */
-    var SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
-    var SUPABASE_ANON_KEY = 'sb_publishable_i03mX2MB2rd3b1TTrTZXbg_tvYL5iz7';
+      <div>
+        <label for="cover_url" class="block text-xs font-medium text-slate-500 mb-1.5">&#x5C01;&#x9762;&#x56FE;&#x7247;&#x94FE;&#x63A5; <span class="text-slate-300 font-normal">(&#x9009;&#x586B;)</span></label>
+        <input type="url" id="cover_url" placeholder="https://img2.example.com/cover.jpg"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+        <div id="coverPreview" class="mt-2 hidden">
+          <img id="coverPreviewImg" src="" alt="&#x5C01;&#x9762;&#x9884;&#x89C8;"
+               class="w-24 h-32 object-cover rounded-lg border border-slate-200 shadow-sm"
+               onerror="this.parentElement.classList.add('hidden')">
+        </div>
+      </div>
 
-    function supabaseHeaders(token) {
-      return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="original_price" class="block text-xs font-medium text-slate-500 mb-1.5">&#x539F;&#x4EF7; <span class="text-slate-300 font-normal">&#xFFE5; (&#x9009;&#x586B;)</span></label>
+          <input type="number" id="original_price" min="0" step="0.01" placeholder="0.00"
+                 class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+        </div>
+        <div>
+          <label for="price" class="block text-xs font-medium text-slate-500 mb-1.5">&#x552E;&#x4EF7; <span class="text-red-500">*</span> &#xFFE5;</label>
+          <input type="number" id="price" required min="0.01" step="0.01" placeholder="0.00"
+                 class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+        </div>
+      </div>
+
+      <div>
+        <label for="condition" class="block text-xs font-medium text-slate-500 mb-1.5">&#x54C1;&#x76F8; <span class="text-red-500">*</span></label>
+        <div class="select-wrap">
+          <select id="condition" required
+                  class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white text-slate-800 cursor-pointer">
+            <option value="" disabled selected>&#x8BF7;&#x9009;&#x62E9;&#x54C1;&#x76F8;</option>
+            <option value="&#x5168;&#x65B0;">&#x5168;&#x65B0;</option>
+            <option value="&#x4E5D;&#x6210;&#x65B0;">&#x4E5D;&#x6210;&#x65B0;</option>
+            <option value="&#x516B;&#x6210;&#x65B0;">&#x516B;&#x6210;&#x65B0;</option>
+            <option value="&#x6709;&#x7B14;&#x8BB0;">&#x6709;&#x7B14;&#x8BB0;</option>
+            <option value="&#x6709;&#x7834;&#x635F;">&#x6709;&#x7834;&#x635F;</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="location" class="block text-xs font-medium text-slate-500 mb-1.5">&#x4EA4;&#x6613;&#x5730;&#x70B9; <span class="text-red-500">*</span></label>
+        <div class="select-wrap">
+          <select id="location" required
+                  class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white text-slate-800 cursor-pointer">
+            <option value="" disabled selected>&#x8BF7;&#x9009;&#x62E9;&#x4EA4;&#x6613;&#x5730;&#x70B9;</option>
+            <option value="&#x56FE;&#x4E66;&#x9986;">&#x56FE;&#x4E66;&#x9986;</option>
+            <option value="&#x6559;&#x5B66;&#x697C;A&#x533A;">&#x6559;&#x5B66;&#x697C;A&#x533A;</option>
+            <option value="&#x98DF;&#x5802;&#x95E8;&#x53E3;">&#x98DF;&#x5802;&#x95E8;&#x53E3;</option>
+            <option value="&#x5176;&#x4ED6;">&#x5176;&#x4ED6;</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="contact" class="block text-xs font-medium text-slate-500 mb-1.5">&#x8054;&#x7CFB;&#x65B9;&#x5F0F; <span class="text-slate-300 font-normal">(&#x9009;&#x586B;)</span></label>
+        <input type="text" id="contact" placeholder="&#x5FAE;&#x4FE1;&#x53F7; / QQ / &#x624B;&#x673A;&#x53F7;"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300">
+      </div>
+
+      <div>
+        <label for="description" class="block text-xs font-medium text-slate-500 mb-1.5">&#x63CF;&#x8FF0; <span class="text-slate-300 font-normal">(&#x9009;&#x586B;)</span></label>
+        <textarea id="description" rows="4"
+                  placeholder="&#x8BF4;&#x8BF4;&#x8FD9;&#x672C;&#x4E66;&#x7684;&#x60C5;&#x51B5;&#xFF0C;&#x6BD4;&#x5982;&#x6709;&#x65E0;&#x7B14;&#x8BB0;&#x3001;&#x7834;&#x635F;&#x3001;&#x7F3A;&#x9875;&#x7B49;"
+                  class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none transition-all bg-slate-50 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:bg-white placeholder:text-slate-300 resize-y"></textarea>
+        <p class="text-[11px] text-slate-300 mt-1 text-right"><span id="descCount">0</span>/500</p>
+      </div>
+
+      <button type="submit" id="submitBtn"
+              class="w-full py-3 rounded-xl text-sm font-semibold text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
+        &#x53D1;&#x5E03;&#x56FE;&#x4E66;
+      </button>
+
+    </form>
+  </div>
+
+  <p class="text-center text-xs text-slate-300 mt-5">
+    &#x53D1;&#x5E03;&#x5373;&#x8868;&#x793A;&#x540C;&#x610F; <a href="#" class="text-indigo-500 no-underline hover:text-indigo-600" onclick="event.preventDefault();showToast('&#x1F4CC; &#x7528;&#x6237;&#x534F;&#x8BAE;&#x9875;&#x9762;&#x5F00;&#x53D1;&#x4E2D;','info')">&#x300A;&#x7528;&#x6237;&#x534F;&#x8BAE;&#x300B;</a>
+  </p>
+</div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* Supabase REST API 配置 */
+var SUPABASE_URL = 'https://zqhzigukoidwcbhzkysk.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_pub…5iz7';
+
+function supabaseHeaders(token) {
+  return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': '***' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
+}
+
+function getStoredSession() {
+  for (var key in localStorage) {
+    if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
+      try { var d = JSON.parse(localStorage.getItem(key)); if (d && d.access_token) return d; } catch(e) {}
     }
+  }
+  return null;
+}
 
-    /* �?localStorage 读取 Supabase session */
-    function getStoredSession() {
-      for (var key in localStorage) {
-        if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
-          try { var d = JSON.parse(localStorage.getItem(key)); if (d && d.access_token) return d; } catch(e) {}
-        }
-      }
-      return null;
-    }
+var $ = function(id) { return document.getElementById(id); };
+var form = $('sellForm');
+var submitBtn = $('submitBtn');
+var toastEl = $('toast');
+var coverUrl = $('cover_url');
+var coverPreview = $('coverPreview');
+var coverPreviewImg = $('coverPreviewImg');
+var descTextarea = $('description');
+var descCount = $('descCount');
+var _toastTimer = null;
 
-    /* =============================================================
-     * DOM 引用
-     * ============================================================= */
-    var $ = function(id) { return document.getElementById(id); };
-    var form = $('sellForm');
-    var submitBtn = $('submitBtn');
-    var toastEl = $('toast');
-    var coverUrl = $('cover_url');
-    var coverPreview = $('coverPreview');
-    var coverPreviewImg = $('coverPreviewImg');
-    var descTextarea = $('description');
-    var descCount = $('descCount');
-    var _toastTimer = null;
+function showToast(msg, type) {
+  type = type || 'info';
+  toastEl.textContent = msg;
+  toastEl.className = 'toast ' + type;
+  void toastEl.offsetWidth;
+  toastEl.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 3000);
+}
 
-    /* =============================================================
-     * 工具函数
-     * ============================================================= */
-    function showToast(msg, type) {
-      type = type || 'info';
-      toastEl.textContent = msg;
-      toastEl.className = 'toast ' + type;
-      void toastEl.offsetWidth;
-      toastEl.classList.add('show');
-      clearTimeout(_toastTimer);
-      _toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 3000);
-    }
+function setLoading(loading) {
+  submitBtn.disabled = loading;
+  submitBtn.innerHTML = loading ? '<span class="spinner"></span> \u53D1\u5E03\u4E2D...' : '\u53D1\u5E03\u56FE\u4E66';
+}
 
-    function setLoading(loading) {
-      submitBtn.disabled = loading;
-      submitBtn.innerHTML = loading ? '<span class="spinner"></span> 发布中�? : '发布图书';
-    }
+coverUrl.addEventListener('input', function() {
+  var val = this.value.trim();
+  if (val && (val.indexOf('http://') === 0 || val.indexOf('https://') === 0)) {
+    coverPreviewImg.src = val;
+    coverPreview.classList.remove('hidden');
+  } else {
+    coverPreview.classList.add('hidden');
+  }
+});
 
-    /* =============================================================
-     * 封面 URL 实时预览
-     * ============================================================= */
-    coverUrl.addEventListener('input', function() {
-      var val = this.value.trim();
-      if (val && (val.indexOf('http://') === 0 || val.indexOf('https://') === 0)) {
-        coverPreviewImg.src = val;
-        coverPreview.classList.remove('hidden');
-      } else {
-        coverPreview.classList.add('hidden');
-      }
+descTextarea.addEventListener('input', function() {
+  var len = this.value.length;
+  descCount.textContent = len;
+  if (len > 500) { this.value = this.value.substring(0, 500); descCount.textContent = 500; }
+});
+
+$('scanBtn').addEventListener('click', function() {
+  showToast('\uD83D\uDCF7 \u626B\u7801\u529F\u80FD\u5373\u5C06\u4E0A\u7EBF\uFF0C\u656C\u8BF7\u671F\u5F85', 'info');
+});
+
+function checkAuth() {
+  var session = getStoredSession();
+  if (!session) {
+    showToast('\uD83D\uDD12 \u8BF7\u5148\u767B\u5F55', 'info');
+    setTimeout(function() { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
+    return null;
+  }
+  return session;
+}
+
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  var session = getStoredSession();
+  if (!session) { checkAuth(); return; }
+
+  var title = $('title').value.trim();
+  var author = $('author').value.trim();
+  var publisher = $('publisher').value.trim() || null;
+  var isbn = $('isbn').value.trim() || null;
+  var cover_url = coverUrl.value.trim() || null;
+  var original_price = $('original_price').value ? parseFloat($('original_price').value) : null;
+  var price = parseFloat($('price').value);
+  var condition = $('condition').value;
+  var location = $('location').value;
+  var contact = $('contact').value.trim() || null;
+  var description = descTextarea.value.trim() || null;
+
+  if (!title)  { showToast('\u8BF7\u8F93\u5165\u4E66\u540D', 'error'); $('title').focus(); return; }
+  if (!author) { showToast('\u8BF7\u8F93\u5165\u4F5C\u8005', 'error'); $('author').focus(); return; }
+  if (!price || price <= 0) { showToast('\u8BF7\u8F93\u5165\u6709\u6548\u552E\u4EF7', 'error'); $('price').focus(); return; }
+  if (!condition) { showToast('\u8BF7\u9009\u62E9\u54C1\u76F8', 'error'); return; }
+  if (!location)  { showToast('\u8BF7\u9009\u62E9\u4EA4\u6613\u5730\u70B9', 'error'); return; }
+
+  var finalPrice = Math.round(price * 100) / 100;
+  var finalOriginal = original_price ? Math.round(original_price * 100) / 100 : null;
+
+  var bookData = {
+    title: title, author: author, publisher: publisher, isbn: isbn,
+    cover_url: cover_url, original_price: finalOriginal, price: finalPrice,
+    condition: condition, location: location, contact: contact,
+    description: description, status: '\u5728\u552E',
+    user_id: session.user.id, created_at: new Date().toISOString()
+  };
+
+  setLoading(true);
+
+  try {
+    var res = await fetch(SUPABASE_URL + '/rest/v1/books', {
+      method: 'POST',
+      headers: supabaseHeaders(session.access_token),
+      body: JSON.stringify(bookData)
     });
 
-    /* =============================================================
-     * 描述字数统计
-     * ============================================================= */
-    descTextarea.addEventListener('input', function() {
-      var len = this.value.length;
-      descCount.textContent = len;
-      if (len > 500) { this.value = this.value.substring(0, 500); descCount.textContent = 500; }
-    });
-
-    /* =============================================================
-     * 扫码按钮预留
-     * ============================================================= */
-    $('scanBtn').addEventListener('click', function() {
-      showToast('📷 扫码功能即将上线，敬请期�?, 'info');
-    });
-
-    /* =============================================================
-     * 检查登录状�?     * ============================================================= */
-    function checkAuth() {
-      var session = getStoredSession();
-      if (!session) {
-        showToast('�?请先登录', 'info');
-        setTimeout(function() { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
-        return null;
-      }
-      return session;
+    if (!res.ok) {
+      var errBody = await res.text();
+      throw new Error(errBody || 'HTTP ' + res.status);
     }
 
-    /* =============================================================
-     * 表单提交（REST API�?     * ============================================================= */
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
+    showToast('\u2705 \u53D1\u5E03\u6210\u529F\uFF01', 'success');
+    setTimeout(function() { window.location.href = 'index.html'; }, 1200);
+  } catch (err) {
+    console.error('\u53D1\u5E03\u5931\u8D25:', err);
+    showToast('\u274C \u53D1\u5E03\u5931\u8D25: ' + (err.message || '\u672A\u77E5\u9519\u8BEF'), 'error');
+    setLoading(false);
+  }
+});
 
-      var session = getStoredSession();
-      if (!session) { checkAuth(); return; }
+(function() {
+  var session = getStoredSession();
+  if (!session) {
+    showToast('\uD83D\uDD12 \u8BF7\u5148\u767B\u5F55', 'info');
+    setTimeout(function() { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
+  }
+})();
+</script>
 
-      var title = $('title').value.trim();
-      var author = $('author').value.trim();
-      var publisher = $('publisher').value.trim() || null;
-      var isbn = $('isbn').value.trim() || null;
-      var cover_url = coverUrl.value.trim() || null;
-      var original_price = $('original_price').value ? parseFloat($('original_price').value) : null;
-      var price = parseFloat($('price').value);
-      var condition = $('condition').value;
-      var location = $('location').value;
-      var contact = $('contact').value.trim() || null;
-      var description = descTextarea.value.trim() || null;
-
-      if (!title)  { showToast('请输入书�?, 'error'); $('title').focus(); return; }
-      if (!author) { showToast('请输入作�?, 'error'); $('author').focus(); return; }
-      if (!price || price <= 0) { showToast('请输入有效售�?, 'error'); $('price').focus(); return; }
-      if (!condition) { showToast('请选择品相', 'error'); return; }
-      if (!location)  { showToast('请选择交易地点', 'error'); return; }
-
-      var finalPrice = Math.round(price * 100) / 100;
-      var finalOriginal = original_price ? Math.round(original_price * 100) / 100 : null;
-
-      var bookData = {
-        title: title,
-        author: author,
-        publisher: publisher,
-        isbn: isbn,
-        cover_url: cover_url,
-        original_price: finalOriginal,
-        price: finalPrice,
-        condition: condition,
-        location: location,
-        contact: contact,
-        description: description,
-        user_id: session.user.id,
-        status: '在售',
-        created_at: new Date().toISOString(),
-      };
-
-      setLoading(true);
-
-      try {
-        /* REST API：POST /rest/v1/books */
-        var res = await fetch(SUPABASE_URL + '/rest/v1/books', {
-          method: 'POST',
-          headers: supabaseHeaders(session.access_token),
-          body: JSON.stringify(bookData),
-        });
-
-        if (!res.ok) {
-          var errBody = await res.text();
-          throw new Error(errBody || 'HTTP ' + res.status);
-        }
-
-        showToast('�?发布成功�?, 'success');
-        setTimeout(function() { window.location.href = 'index.html'; }, 1200);
-      } catch (err) {
-        console.error('发布失败:', err);
-        showToast('�?发布失败�? + (err.message || '未知错误'), 'error');
-        setLoading(false);
-      }
-    });
-
-    /* =============================================================
-     * 页面初始化：检查登�?     * ============================================================= */
-    (function() {
-      var session = getStoredSession();
-      if (!session) {
-        showToast('�?请先登录', 'info');
-        setTimeout(function() { window.location.href = 'auth.html?redirect=sell.html'; }, 1200);
-      }
-    })();
-  </script>
 </body>
 </html>
