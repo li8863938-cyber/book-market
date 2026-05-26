@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰皋�?· 校园二手�?/title>
+<title>泰皋阁·校园二手书</title>
 
 <!-- Tailwind CSS（jsdelivr CDN，国内基本可用） -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -54,7 +54,7 @@ body { -webkit-font-smoothing: antialiased; }
 <header class="sticky top-0 z-50 bg-white/88 backdrop-blur-md border-b border-gray-200">
 <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
   <a href="index.html" class="flex items-center gap-1.5 no-underline shrink-0">
-    <span class="text-lg">???</span>
+    <span class="text-lg">&#x1F4D6;</span>
     <span class="text-[19px] font-bold tracking-tight" style="background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">&#x6CF0;&#x768A;&#x9601;</span>
     <span class="text-[10px] font-semibold text-white px-1.5 py-0.5 rounded" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">&#x6821;&#x56ED;</span>
   </a>
@@ -107,7 +107,7 @@ body { -webkit-font-smoothing: antialiased; }
 <!-- About -->
 <section class="border-t border-gray-200 bg-white py-10 mt-4">
 <div class="max-w-3xl mx-auto px-4 text-center">
-  <div class="text-2xl mb-2">???</div>
+  <div class="text-2xl mb-2">&#x1F4D6;</div>
   <h2 class="text-sm font-bold text-gray-700">&#x5173;&#x4E8E;&#x6CF0;&#x768A;&#x9601;</h2>
   <p class="text-xs text-gray-400 mt-2 leading-relaxed max-w-md mx-auto">
     &#x300C;&#x6CF0;&#x627F;&#x6587;&#x97F5;&#xFF0C;&#x768A;&#x805A;&#x4E66;&#x9999;&#x300D;<br>
@@ -134,7 +134,7 @@ var activeFilter = 'all';
 var searchQ = '';
 
 function sh(token) {
-  return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': '***' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
+  return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY), 'Content-Type': 'application/json' };
 }
 
 var _t = null;
