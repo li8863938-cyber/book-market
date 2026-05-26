@@ -5,18 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>发布图书 · 泰皋阁</title>
 
-<!-- Tailwind CSS（jsdelivr CDN，国内基本可用） -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: { sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'] },
-      colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3' } }
-    }
-  }
-}
-</script>
+
 
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -336,5 +325,8 @@ form.addEventListener('submit', async function(e) {
 })();
 </script>
 
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>try{tailwind.config={theme:{extend:{fontFamily:{sans:['system-ui','-apple-system','Segoe UI','Roboto','sans-serif']},colors:{brand:{50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3'}}}}}}catch(e){}</script>
 </body>
 </html>
