@@ -189,13 +189,25 @@ function clearLocalSession() {
   }
 }
 
-/* ===== 登录 ===== */
 async function handleLogin() {
+  if (window._loginLocked) return;
+  window._loginLocked = true;
+
   var email = document.getElementById('loginEmail').value.trim();
   var pw = document.getElementById('loginPassword').value;
 
-  if (!email) { showToast('请输入邮箱', true); document.getElementById('loginEmail').focus(); return; }
-  if (!pw || pw.length < 6) { showToast('请输入密码（至少6位）', true); document.getElementById('loginPassword').focus(); return; }
+  if (!email) {
+    showToast('请输入邮箱', true);
+    document.getElementById('loginEmail').focus();
+    window._loginLocked = false;   // 解锁
+    return;
+  }
+  if (!pw || pw.length < 6) {
+    showToast('请输入密码（至少6位）', true);
+    document.getElementById('loginPassword').focus();
+    window._loginLocked = false;   // 解锁
+    return;
+  }
 
   setLoading('loginBtn', true);
 
@@ -216,10 +228,14 @@ async function handleLogin() {
 
     saveSessionToLocal(data);
     showToast('✅ 登录成功！');
-    setTimeout(function() { window.location.href = getRedirectUrl(); }, 800);
+    window._loginLocked = false;   // 成功解锁
+    setTimeout(function () {
+      window.location.href = getRedirectUrl();
+    }, 800);
   } catch (err) {
     showToast('❌ ' + err.message, true);
     setLoading('loginBtn', false);
+    window._loginLocked = false;   // 失败解锁
   }
 }
 
@@ -298,14 +314,18 @@ document.getElementById('forgotBtn').addEventListener('click', async function() 
 document.getElementById('loginForm').addEventListener('submit', function(e) { e.preventDefault(); handleLogin(); });
 document.getElementById('registerForm').addEventListener('submit', function(e) { e.preventDefault(); handleRegister(); });
 
-/* 页面初始化：已登录则直接跳转 */
+/* 页面初始化：已登录且 token 未过期才跳转 */
 (function() {
+  var now = Math.floor(Date.now() / 1000);
   for (var key in localStorage) {
     if (key.indexOf('sb-') === 0 && key.indexOf('-auth-token') > 0) {
       try {
         var data = JSON.parse(localStorage.getItem(key));
         if (data && data.access_token) {
-          window.location.href = getRedirectUrl();
+          var expiresAt = data.expires_at || (data.created_at + data.expires_in);
+          if (expiresAt && expiresAt > now) {
+            window.location.href = getRedirectUrl();
+          }
         }
       } catch(e) {}
       break;
